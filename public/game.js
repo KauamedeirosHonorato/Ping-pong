@@ -251,6 +251,9 @@ class RetroPingPong {
     this.screenShake = 0;
     this.gridOffset = 0;
     this.floatTexts = [];
+    this.courtLighting = [];
+    this.courtFlash = 0;
+    this.courtFlashColor = '#00f0ff';
 
     // IA Estado & Reação Humana Gradual
     this.aiReactionTimer = 0;
@@ -1167,6 +1170,14 @@ class RetroPingPong {
     } else {
       // Cliente Guest / P3 / P4 -> Interpolação suave a 60FPS com Buffer Guard de ~50ms
       this.interpolateClientState();
+    }
+
+    if (this.courtFlash > 0) this.courtFlash -= 0.04;
+    for (let i = this.courtLighting.length - 1; i >= 0; i--) {
+      const cl = this.courtLighting[i];
+      cl.life -= cl.decay || 0.035;
+      cl.radius += (cl.maxRadius - cl.radius) * 0.12;
+      if (cl.life <= 0) this.courtLighting.splice(i, 1);
     }
 
     this.updateLasers();
@@ -2263,11 +2274,14 @@ class RetroPingPong {
   }
 
   triggerGoalEffects(scorerPlayer) {
-    this.screenShake = 10;
+    this.screenShake = 12;
     const x = scorerPlayer === 1 ? CANVAS_WIDTH - 20 : 20;
     const color = scorerPlayer === 1 ? '#00f0ff' : '#ff007f';
-    this.addShockwave(x, CANVAS_HEIGHT / 2, color, 90);
-    this.createHitParticles(x, CANVAS_HEIGHT / 2, color, 30);
+    this.addShockwave(x, CANVAS_HEIGHT / 2, color, 120);
+    this.addShockwave(x, CANVAS_HEIGHT / 2, '#ffffff', 70);
+    this.createHitParticles(x, CANVAS_HEIGHT / 2, color, 36, true);
+    this.addCourtLight(x, CANVAS_HEIGHT / 2, color, 280, 0.6, 0.02);
+    this.triggerCourtFlash(color, 0.22);
     this.addFloatText(x, CANVAS_HEIGHT / 2 - 30, '+1 PONTO!', '#ffea00');
   }
 
@@ -2310,14 +2324,18 @@ class RetroPingPong {
       paddle.powerMeter = 0;
       ball.isSmash = true;
       currentSpeed = Math.min(13.0, currentSpeed * 1.35 + 1.5);
-      this.screenShake = 7;
+      this.screenShake = 8;
       window.retroAudio.playPaddleHit(true);
       this.addFloatText(ball.x, ball.y - 20, '⚡ POWER SMASH!', '#ffea00');
-      this.addShockwave(ball.x, ball.y, '#ffea00', 45);
-      this.createHitParticles(ball.x, ball.y, '#ffea00', 18);
+      this.addShockwave(ball.x, ball.y, '#ffea00', 55);
+      this.createHitParticles(ball.x, ball.y, '#ffea00', 22, true);
+      this.addCourtLight(ball.x, ball.y, '#ffea00', 220, 0.55, 0.035);
+      this.triggerCourtFlash('#ffea00', 0.18);
     } else {
       ball.isSmash = false;
       window.retroAudio.playPaddleHit(false);
+      const hitColor = playerNum === 1 ? '#00f0ff' : '#ff007f';
+      this.addCourtLight(ball.x, ball.y, hitColor, 120, 0.35, 0.045);
 
       if (Math.abs(paddle.vy) > 3.5) {
         this.addFloatText(ball.x, ball.y - 15, '🌀 SLICE!', '#00ffaa');
@@ -2437,20 +2455,39 @@ class RetroPingPong {
     document.getElementById('lan-modal').classList.remove('active');
   }
 
+  addCourtLight(x, y, color, maxRadius = 140, intensity = 0.45, decay = 0.03) {
+    this.courtLighting.push({
+      x, y, color,
+      radius: 10,
+      maxRadius,
+      intensity,
+      life: 1.0,
+      decay
+    });
+  }
+
+  triggerCourtFlash(color = '#00f0ff', intensity = 0.18) {
+    this.courtFlash = Math.max(this.courtFlash, intensity);
+    this.courtFlashColor = color;
+  }
+
   addShockwave(x, y, color, maxRadius) {
     this.shockwaves.push({
       x, y, color,
       r: 4,
       maxR: maxRadius,
-      alpha: 1.0
+      alpha: 1.0,
+      innerR: 2,
+      thickness: Math.max(3, maxRadius * 0.08)
     });
   }
 
   updateShockwaves() {
     for (let i = this.shockwaves.length - 1; i >= 0; i--) {
       const sw = this.shockwaves[i];
-      sw.r += (sw.maxR - sw.r) * 0.18 + 1.5;
-      sw.alpha -= 0.05;
+      sw.r += (sw.maxR - sw.r) * 0.18 + 1.8;
+      sw.innerR = Math.max(0, sw.r - sw.thickness);
+      sw.alpha -= 0.04;
       if (sw.alpha <= 0 || sw.r >= sw.maxR) {
         this.shockwaves.splice(i, 1);
       }
@@ -2483,31 +2520,39 @@ class RetroPingPong {
     });
   }
 
-  createHitParticles(x, y, color = '#ffffff', count = 10) {
-    for (let i = 0; i < count; i++) {
+  createHitParticles(x, y, color = '#ffffff', count = 12, isSmash = false) {
+    const totalCount = isSmash ? count * 2.2 : count;
+    for (let i = 0; i < totalCount; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 5 + 1.5;
+      const speed = (Math.random() * (isSmash ? 8.5 : 5.5) + 1.5);
+      const isSpark = Math.random() < 0.65;
       this.particles.push({
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         life: 1.0,
-        color,
-        size: Math.random() * 4 + 2
+        decay: isSmash ? (Math.random() * 0.025 + 0.025) : (Math.random() * 0.035 + 0.03),
+        color: isSmash ? (Math.random() > 0.4 ? '#ffea00' : '#ffffff') : color,
+        size: Math.random() * (isSmash ? 5 : 3.5) + 1.5,
+        isSpark,
+        length: isSpark ? Math.random() * 8 + 4 : 0,
+        rot: angle
       });
     }
   }
 
   createFlameParticles(x, y) {
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       this.particles.push({
         x: x + (Math.random() * 20 - 10),
         y: y + (Math.random() * 20 - 10),
-        vx: (Math.random() - 0.5) * 2.5,
-        vy: -Math.random() * 3.5 - 1,
-        life: 0.85,
-        color: Math.random() > 0.5 ? '#ff3300' : '#ffea00',
-        size: Math.random() * 6 + 3
+        vx: (Math.random() - 0.5) * 3,
+        vy: -Math.random() * 4 - 1.5,
+        life: 0.9,
+        decay: 0.04,
+        color: Math.random() > 0.5 ? '#ff3300' : (Math.random() > 0.3 ? '#ffea00' : '#ff7700'),
+        size: Math.random() * 7 + 3,
+        isSpark: false
       });
     }
   }
@@ -2517,7 +2562,9 @@ class RetroPingPong {
       const p = this.particles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.life -= 0.035;
+      p.vx *= 0.96;
+      p.vy *= 0.96;
+      p.life -= p.decay || 0.035;
       if (p.life <= 0) {
         this.particles.splice(i, 1);
       }
@@ -2607,6 +2654,38 @@ class RetroPingPong {
     bgGrad.addColorStop(1, '#010114');
     this.ctx.fillStyle = bgGrad;
     this.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // Iluminação Reativa da Quadra (Court Lighting Spots com Glow Aditivo)
+    if (this.courtLighting && this.courtLighting.length > 0) {
+      this.ctx.save();
+      this.ctx.globalCompositeOperation = 'lighter';
+      this.courtLighting.forEach(cl => {
+        const spotGrad = this.ctx.createRadialGradient(
+          cl.x, cl.y, 0,
+          cl.x, cl.y, cl.radius
+        );
+        const alpha = Math.max(0, cl.life * (cl.intensity || 0.45));
+        spotGrad.addColorStop(0, cl.color);
+        spotGrad.addColorStop(0.4, cl.color);
+        spotGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        this.ctx.globalAlpha = alpha;
+        this.ctx.fillStyle = spotGrad;
+        this.ctx.beginPath();
+        this.ctx.arc(cl.x, cl.y, cl.radius, 0, Math.PI * 2);
+        this.ctx.fill();
+      });
+      this.ctx.restore();
+    }
+
+    // Flash global sutil de impacto na quadra (Lightning, Smash, Goal, Fireball)
+    if (this.courtFlash > 0) {
+      this.ctx.save();
+      this.ctx.globalCompositeOperation = 'lighter';
+      this.ctx.fillStyle = this.courtFlashColor || '#00f0ff';
+      this.ctx.globalAlpha = Math.min(0.25, this.courtFlash);
+      this.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      this.ctx.restore();
+    }
 
     this.ctx.strokeStyle = 'rgba(60, 60, 160, 0.15)';
     this.ctx.lineWidth = 1;
@@ -2704,42 +2783,61 @@ class RetroPingPong {
   }
 
   renderBall(ball) {
-    for (let i = 0; i < ball.trail.length; i++) {
-      const t = ball.trail[i];
-      const alpha = (i + 1) / ball.trail.length * 0.55;
-      if (ball.isSmash) {
-        this.ctx.fillStyle = `rgba(255, 234, 0, ${alpha})`;
-      } else if (ball.fireLevel > 0) {
-        this.ctx.fillStyle = `rgba(255, ${Math.max(0, 160 - ball.fireLevel * 30)}, 0, ${alpha})`;
-      } else if (ball.hue > 0) {
-        this.ctx.fillStyle = `hsla(${ball.hue}, 100%, 60%, ${alpha})`;
-      } else {
-        this.ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+    // 1. Trilha de Partículas / Glow Aditivo
+    if (ball.trail && ball.trail.length > 0) {
+      this.ctx.save();
+      this.ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < ball.trail.length; i++) {
+        const t = ball.trail[i];
+        const progress = (i + 1) / ball.trail.length;
+        const alpha = progress * (ball.isSmash ? 0.8 : (ball.fireLevel > 0 ? 0.75 : 0.55));
+        const r = ball.radius * (0.35 + 0.65 * progress);
+
+        if (ball.isSmash) {
+          this.ctx.fillStyle = `rgba(255, 234, 0, ${alpha})`;
+          this.ctx.shadowColor = '#ffea00';
+          this.ctx.shadowBlur = 15 * progress;
+        } else if (ball.fireLevel > 0) {
+          const green = Math.max(0, 170 - ball.fireLevel * 30);
+          this.ctx.fillStyle = `rgba(255, ${green}, 0, ${alpha})`;
+          this.ctx.shadowColor = '#ff5500';
+          this.ctx.shadowBlur = 12 * progress;
+        } else if (ball.hue > 0) {
+          this.ctx.fillStyle = `hsla(${ball.hue}, 100%, 60%, ${alpha})`;
+          this.ctx.shadowColor = `hsl(${ball.hue}, 100%, 60%)`;
+          this.ctx.shadowBlur = 10 * progress;
+        } else {
+          this.ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+          this.ctx.shadowColor = '#00e5ff';
+          this.ctx.shadowBlur = 8 * progress;
+        }
+        this.ctx.beginPath();
+        this.ctx.arc(t.x, t.y, r, 0, Math.PI * 2);
+        this.ctx.fill();
       }
-      this.ctx.beginPath();
-      this.ctx.arc(t.x, t.y, ball.radius * (0.4 + 0.6 * (i / ball.trail.length)), 0, Math.PI * 2);
-      this.ctx.fill();
+      this.ctx.restore();
     }
 
+    // 2. Núcleo da Bola com Bloom Neon
     this.ctx.save();
     this.ctx.translate(ball.x, ball.y);
     this.ctx.rotate(ball.rotation);
 
     if (ball.isSmash) {
       this.ctx.shadowColor = '#ffea00';
-      this.ctx.shadowBlur = 25;
+      this.ctx.shadowBlur = 28;
       this.ctx.fillStyle = '#ffffff';
     } else if (ball.fireLevel > 0) {
       this.ctx.shadowColor = '#ff5500';
-      this.ctx.shadowBlur = 15;
+      this.ctx.shadowBlur = 20;
       this.ctx.fillStyle = '#ffea00';
     } else if (ball.hue > 0) {
       this.ctx.shadowColor = `hsl(${ball.hue}, 100%, 60%)`;
-      this.ctx.shadowBlur = 12;
+      this.ctx.shadowBlur = 16;
       this.ctx.fillStyle = `hsl(${ball.hue}, 100%, 60%)`;
     } else {
       this.ctx.shadowColor = '#00f0ff';
-      this.ctx.shadowBlur = 10;
+      this.ctx.shadowBlur = 16;
       this.ctx.fillStyle = '#ffffff';
     }
 
@@ -2747,6 +2845,7 @@ class RetroPingPong {
     this.ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
     this.ctx.fill();
 
+    // Brilho especular central retrô arcade
     this.ctx.fillStyle = '#ffffff';
     this.ctx.fillRect(-ball.radius / 2.5, -ball.radius / 2.5, ball.radius / 1.5, ball.radius / 1.5);
     this.ctx.restore();
@@ -3058,25 +3157,93 @@ class RetroPingPong {
   }
 
   renderShockwaves() {
+    this.ctx.save();
     this.shockwaves.forEach(sw => {
+      // 1. Preenchimento de onda volumétrica sutil
+      const grad = this.ctx.createRadialGradient(
+        sw.x, sw.y, Math.max(0, sw.innerR || 0),
+        sw.x, sw.y, sw.r
+      );
+      grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      grad.addColorStop(0.7, sw.color);
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+
       this.ctx.save();
+      this.ctx.globalCompositeOperation = 'lighter';
+      this.ctx.globalAlpha = sw.alpha * 0.45;
+      this.ctx.fillStyle = grad;
+      this.ctx.beginPath();
+      this.ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.restore();
+
+      // 2. Anel de Contorno Neon Brilhante
+      this.ctx.save();
+      this.ctx.globalCompositeOperation = 'lighter';
       this.ctx.strokeStyle = sw.color;
-      this.ctx.lineWidth = 3;
+      this.ctx.shadowColor = sw.color;
+      this.ctx.shadowBlur = 18;
+      this.ctx.lineWidth = Math.max(2, (sw.thickness || 4) * (sw.alpha));
       this.ctx.globalAlpha = sw.alpha;
+      this.ctx.beginPath();
+      this.ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+      this.ctx.stroke();
+
+      // Anel interno de luz branca pura
+      this.ctx.strokeStyle = '#ffffff';
+      this.ctx.lineWidth = 1.5;
+      this.ctx.globalAlpha = sw.alpha * 0.8;
       this.ctx.beginPath();
       this.ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
       this.ctx.stroke();
       this.ctx.restore();
     });
+    this.ctx.restore();
   }
 
   renderParticles() {
+    this.ctx.save();
+    this.ctx.globalCompositeOperation = 'lighter';
+
     this.particles.forEach(p => {
-      this.ctx.fillStyle = p.color;
-      this.ctx.globalAlpha = p.life;
-      this.ctx.fillRect(p.x, p.y, p.size, p.size);
+      this.ctx.save();
+      this.ctx.globalAlpha = Math.max(0, p.life);
+
+      if (p.isSpark) {
+        // Faísca Neon Direcional / Traço Alongado
+        this.ctx.strokeStyle = p.color;
+        this.ctx.shadowColor = p.color;
+        this.ctx.shadowBlur = 12;
+        this.ctx.lineWidth = p.size;
+        this.ctx.beginPath();
+        this.ctx.moveTo(p.x, p.y);
+        const len = p.length || 6;
+        this.ctx.lineTo(p.x - p.vx * len * 0.15, p.y - p.vy * len * 0.15);
+        this.ctx.stroke();
+
+        // Núcleo branco no centro da faísca
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = Math.max(1, p.size * 0.5);
+        this.ctx.beginPath();
+        this.ctx.moveTo(p.x, p.y);
+        this.ctx.lineTo(p.x - p.vx * len * 0.08, p.y - p.vy * len * 0.08);
+        this.ctx.stroke();
+      } else {
+        // Partícula / Brasa Quadrada Arcade
+        this.ctx.fillStyle = p.color;
+        this.ctx.shadowColor = p.color;
+        this.ctx.shadowBlur = 10;
+        this.ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+
+        // Brilho central
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(p.x - p.size / 4, p.y - p.size / 4, p.size / 2, p.size / 2);
+      }
+
+      this.ctx.restore();
     });
-    this.ctx.globalAlpha = 1.0;
+
+    this.ctx.restore();
   }
 
   renderShields() {

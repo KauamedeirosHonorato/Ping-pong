@@ -56,18 +56,21 @@ html, body {
 }
 
 .arcade-cabinet {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   position: relative;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
 }
 
 /* ASAS LATERAIS DO FLIPERAMA COM NEON T-MOLDING LARANJA */
 .cabinet-wing {
-  width: 28px;
+  width: 24px;
   flex-shrink: 0;
   background: linear-gradient(135deg, #111116 0%, #08080c 100%);
   position: relative;
