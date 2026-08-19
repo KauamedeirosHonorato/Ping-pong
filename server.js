@@ -259,6 +259,51 @@ wss.on('connection', (ws) => {
           break;
         }
 
+        case 'RACE_SYNC': {
+          if (currentRoomId && playerRole === 'host') {
+            broadcastToRoom(currentRoomId, {
+              type: 'RACE_SYNC',
+              state: data.state
+            }, ws);
+          }
+          break;
+        }
+
+        case 'RACE_MOVE': {
+          if (currentRoomId) {
+            broadcastToRoom(currentRoomId, {
+              type: 'RACE_MOVE',
+              role: playerRole,
+              kartData: data.kartData
+            }, ws);
+          }
+          break;
+        }
+
+        case 'RACE_USE_ITEM': {
+          if (currentRoomId) {
+            broadcastToRoom(currentRoomId, {
+              type: 'RACE_USE_ITEM',
+              role: playerRole,
+              itemData: data.itemData
+            }, ws);
+          }
+          break;
+        }
+
+        case 'RACE_DAMAGE': {
+          if (currentRoomId) {
+            broadcastToRoom(currentRoomId, {
+              type: 'RACE_DAMAGE',
+              role: playerRole,
+              targetId: data.targetId,
+              damage: data.damage,
+              attackerId: data.attackerId
+            }, ws);
+          }
+          break;
+        }
+
         case 'PING': {
           ws.send(JSON.stringify({ type: 'PONG', time: data.time }));
           break;

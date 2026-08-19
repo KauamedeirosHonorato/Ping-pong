@@ -228,9 +228,65 @@ class NetworkManager {
         if (this.onError) this.onError(data.message);
         break;
 
+      case 'RACE_SYNC':
+        if (this.onRaceSync) this.onRaceSync(data.state);
+        break;
+
+      case 'RACE_MOVE':
+        if (this.onRaceMove) this.onRaceMove(data);
+        break;
+
+      case 'RACE_USE_ITEM':
+        if (this.onRaceUseItem) this.onRaceUseItem(data);
+        break;
+
+      case 'RACE_DAMAGE':
+        if (this.onRaceDamage) this.onRaceDamage(data);
+        break;
+
       case 'PONG':
         this.ping = Date.now() - data.time;
         break;
+    }
+  }
+
+  sendRaceSync(state) {
+    if (this.role === 'host' && this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
+      if (this.ws.bufferedAmount < 16384) {
+        this.ws.send(JSON.stringify({
+          type: 'RACE_SYNC',
+          state
+        }));
+      }
+    }
+  }
+
+  sendRaceMove(kartData) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
+      this.ws.send(JSON.stringify({
+        type: 'RACE_MOVE',
+        kartData
+      }));
+    }
+  }
+
+  sendRaceUseItem(itemData) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
+      this.ws.send(JSON.stringify({
+        type: 'RACE_USE_ITEM',
+        itemData
+      }));
+    }
+  }
+
+  sendRaceDamage(targetId, damage, attackerId) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
+      this.ws.send(JSON.stringify({
+        type: 'RACE_DAMAGE',
+        targetId,
+        damage,
+        attackerId
+      }));
     }
   }
 }

@@ -89,18 +89,19 @@
           <div class="option-row">
             <div class="option-label">MODO ▶</div>
             <div class="option-buttons">
-              <button id="btn-race-1p" class="btn-toggle selected" data-race-mode="1p">🏁 1P VS BOTS</button>
+              <button id="btn-race-1p" class="btn-toggle selected" data-race-mode="1p">🏁 CORRIDA 1P</button>
+              <button id="btn-race-arena" class="btn-toggle" data-race-mode="arena">⚔️ ARENA ROYALE</button>
               <button id="btn-race-2p" class="btn-toggle" data-race-mode="2p_local">👥 2P LOCAL</button>
             </div>
           </div>
 
           <!-- TRACK ROW -->
           <div class="option-row">
-            <div class="option-label">PISTA ▶</div>
+            <div class="option-label">CENÁRIO ▶</div>
             <div class="option-buttons">
-              <button id="btn-track-0" class="btn-toggle selected" data-track="0">🌟 NEON</button>
+              <button id="btn-track-0" class="btn-toggle selected" data-track="0">🌟 METRÓPOLE</button>
               <button id="btn-track-1" class="btn-toggle" data-track="1">🌋 VULCÃO</button>
-              <button id="btn-track-2" class="btn-toggle" data-track="2">🌌 CÓSMICA</button>
+              <button id="btn-track-2" class="btn-toggle" data-track="2">⚔️ ARENA COLISEU</button>
             </div>
           </div>
 
@@ -118,7 +119,7 @@
 
         <!-- RACING PLAY BUTTON -->
         <div class="play-btn-wrapper">
-          <button id="btn-play-racing" class="btn-play" style="background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">LARGADA CORRIDA 🏎️</button>
+          <button id="btn-play-racing" class="btn-play" style="background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">INICIAR PARTIDA 🏎️⚔️</button>
         </div>
       </div>
 
@@ -375,6 +376,13 @@
           raceModeBtns.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedRaceMode = btn.getAttribute('data-race-mode');
+
+          if (selectedRaceMode === 'arena') {
+            trackBtns.forEach(b => b.classList.remove('selected'));
+            const arenaTrackBtn = document.getElementById('btn-track-2');
+            if (arenaTrackBtn) arenaTrackBtn.classList.add('selected');
+            selectedTrack = 2;
+          }
         });
       });
 

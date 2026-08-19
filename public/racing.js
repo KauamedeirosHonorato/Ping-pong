@@ -1,128 +1,148 @@
 // =============================================================================
-// CORRIDA DO OLHO DE GATO (CAT'S EYE RACING 2D) - Retro Drift Arcade Engine
+// CORRIDA DO OLHO DE GATO (CAT'S EYE RACING 2D) - Massive World & Arena Engine
 // =============================================================================
 
-const RACE_CANVAS_WIDTH = 800;
-const RACE_CANVAS_HEIGHT = 600;
+const RACE_VIEW_WIDTH = 800;
+const RACE_VIEW_HEIGHT = 600;
 
+// Pistas Gigantes & Arenas de Batalha
 const RACING_TRACKS = [
   {
-    id: 'neon_circuit',
-    name: 'CIRCUITO NEON CYBER',
-    desc: 'Pista clássica noturna iluminada com neon cyan e magenta. Ótima para drifts!',
+    id: 'neon_metropolis',
+    name: 'METRÓPOLE NEON GIGANTE',
+    type: 'circuit',
+    desc: 'Circuito urbano gigante em alta velocidade com retas longas, túneis e curvas de drift!',
     themeColor: '#00f0ff',
+    worldWidth: 2600,
+    worldHeight: 2000,
     laps: 3,
+    trackWidth: 150,
     waypoints: [
-      { x: 120, y: 480 },
-      { x: 680, y: 480 },
-      { x: 700, y: 380 },
-      { x: 680, y: 150 },
-      { x: 500, y: 120 },
-      { x: 420, y: 260 },
-      { x: 340, y: 140 },
-      { x: 140, y: 140 },
-      { x: 100, y: 300 }
+      { x: 300, y: 1700 },
+      { x: 1200, y: 1700 },
+      { x: 2200, y: 1700 },
+      { x: 2350, y: 1300 },
+      { x: 2200, y: 600 },
+      { x: 1800, y: 350 },
+      { x: 1400, y: 800 },
+      { x: 1000, y: 350 },
+      { x: 500, y: 350 },
+      { x: 250, y: 800 },
+      { x: 300, y: 1300 }
     ],
-    trackWidth: 100,
     checkpoints: [
-      { x: 120, y: 480, w: 120, h: 20, isFinish: true },
-      { x: 680, y: 480, w: 20, h: 120 },
-      { x: 680, y: 150, w: 120, h: 20 },
-      { x: 420, y: 260, w: 20, h: 120 },
-      { x: 140, y: 140, w: 120, h: 20 }
+      { x: 300, y: 1700, w: 200, h: 30, isFinish: true },
+      { x: 1200, y: 1700, w: 30, h: 200 },
+      { x: 2200, y: 1700, w: 30, h: 200 },
+      { x: 2200, y: 600, w: 30, h: 200 },
+      { x: 1400, y: 800, w: 200, h: 30 },
+      { x: 500, y: 350, w: 30, h: 200 },
+      { x: 300, y: 1300, w: 200, h: 30 }
     ],
     itemBoxes: [
-      { x: 400, y: 480, r: 16, respawn: 0 },
-      { x: 680, y: 280, r: 16, respawn: 0 },
-      { x: 240, y: 140, r: 16, respawn: 0 },
-      { x: 100, y: 390, r: 16, respawn: 0 }
+      { x: 800, y: 1700, r: 20, respawn: 0 },
+      { x: 1700, y: 1700, r: 20, respawn: 0 },
+      { x: 2300, y: 1000, r: 20, respawn: 0 },
+      { x: 1800, y: 450, r: 20, respawn: 0 },
+      { x: 1400, y: 800, r: 20, respawn: 0 },
+      { x: 800, y: 350, r: 20, respawn: 0 },
+      { x: 250, y: 1000, r: 20, respawn: 0 }
     ]
   },
   {
-    id: 'volcano_sunset',
-    name: 'VULCÃO RETRO SUNSET',
-    desc: 'Curvas fechadas perigosas, poças de óleo e bordas em chamas!',
+    id: 'volcano_highway',
+    name: 'RODOVIA DO VULCÃO SUNSET',
+    type: 'circuit',
+    desc: 'Pista vulcânica massiva com curvas perigosas, pontes sobre lava e poças de óleo!',
     themeColor: '#ff5500',
+    worldWidth: 2600,
+    worldHeight: 2000,
     laps: 3,
+    trackWidth: 145,
     waypoints: [
-      { x: 150, y: 500 },
-      { x: 400, y: 520 },
-      { x: 650, y: 420 },
-      { x: 680, y: 220 },
-      { x: 520, y: 150 },
-      { x: 300, y: 280 },
-      { x: 180, y: 180 },
-      { x: 100, y: 340 }
+      { x: 400, y: 1650 },
+      { x: 1300, y: 1750 },
+      { x: 2200, y: 1550 },
+      { x: 2350, y: 900 },
+      { x: 1800, y: 400 },
+      { x: 1200, y: 750 },
+      { x: 700, y: 450 },
+      { x: 280, y: 950 }
     ],
-    trackWidth: 95,
     checkpoints: [
-      { x: 150, y: 500, w: 120, h: 20, isFinish: true },
-      { x: 650, y: 420, w: 120, h: 20 },
-      { x: 520, y: 150, w: 20, h: 120 },
-      { x: 180, y: 180, w: 120, h: 20 }
+      { x: 400, y: 1650, w: 200, h: 30, isFinish: true },
+      { x: 1300, y: 1750, w: 30, h: 200 },
+      { x: 2350, y: 900, w: 200, h: 30 },
+      { x: 1800, y: 400, w: 30, h: 200 },
+      { x: 700, y: 450, w: 200, h: 30 }
     ],
     itemBoxes: [
-      { x: 300, y: 510, r: 16, respawn: 0 },
-      { x: 680, y: 300, r: 16, respawn: 0 },
-      { x: 400, y: 220, r: 16, respawn: 0 },
-      { x: 140, y: 260, r: 16, respawn: 0 }
+      { x: 850, y: 1700, r: 20, respawn: 0 },
+      { x: 1800, y: 1650, r: 20, respawn: 0 },
+      { x: 2300, y: 1200, r: 20, respawn: 0 },
+      { x: 1500, y: 550, r: 20, respawn: 0 },
+      { x: 500, y: 650, r: 20, respawn: 0 }
     ]
   },
   {
-    id: 'cosmic_speedway',
-    name: 'AUTÓDROMO CÓSMICO HIPERESPAÇO',
-    desc: 'Pista no vácuo estelar com pads de turbo e velocidade ultra elevada!',
-    themeColor: '#b026ff',
-    laps: 3,
+    id: 'battle_colosseum',
+    name: 'ARENA COLISEU DO OLHO DE GATO',
+    type: 'arena',
+    desc: 'Arena gigante de combate para 8 a 10 Karts! Destrua rivais e seja o último sobrevivente!',
+    themeColor: '#ff007f',
+    worldWidth: 2200,
+    worldHeight: 2200,
+    laps: 1,
+    trackWidth: 2200,
     waypoints: [
-      { x: 150, y: 450 },
-      { x: 400, y: 460 },
-      { x: 670, y: 450 },
-      { x: 670, y: 150 },
-      { x: 400, y: 140 },
-      { x: 150, y: 150 }
+      { x: 1100, y: 1100 }
     ],
-    trackWidth: 110,
-    checkpoints: [
-      { x: 150, y: 450, w: 120, h: 20, isFinish: true },
-      { x: 670, y: 450, w: 20, h: 120 },
-      { x: 400, y: 140, w: 120, h: 20 },
-      { x: 150, y: 150, w: 20, h: 120 }
-    ],
+    checkpoints: [],
     itemBoxes: [
-      { x: 300, y: 455, r: 16, respawn: 0 },
-      { x: 500, y: 455, r: 16, respawn: 0 },
-      { x: 670, y: 300, r: 16, respawn: 0 },
-      { x: 500, y: 145, r: 16, respawn: 0 },
-      { x: 300, y: 145, r: 16, respawn: 0 }
+      { x: 1100, y: 1100, r: 24, respawn: 0 },
+      { x: 600, y: 600, r: 24, respawn: 0 },
+      { x: 1600, y: 600, r: 24, respawn: 0 },
+      { x: 600, y: 1600, r: 24, respawn: 0 },
+      { x: 1600, y: 1600, r: 24, respawn: 0 },
+      { x: 1100, y: 500, r: 24, respawn: 0 },
+      { x: 1100, y: 1700, r: 24, respawn: 0 },
+      { x: 500, y: 1100, r: 24, respawn: 0 },
+      { x: 1700, y: 1100, r: 24, respawn: 0 }
+    ],
+    pillars: [
+      { x: 800, y: 800, r: 50 },
+      { x: 1400, y: 800, r: 50 },
+      { x: 800, y: 1400, r: 50 },
+      { x: 1400, y: 1400, r: 50 }
     ]
   }
 ];
 
 const CAT_RACERS = [
-  { id: 'cat_neon', name: 'Gato Neon (Olho de Gato)', icon: '🐱', color: '#00f0ff', speed: 5.4, accel: 0.18, handling: 0.065, driftPower: 1.2 },
-  { id: 'tiger_nitro', name: 'Tigre Turbo', icon: '🐯', color: '#ffea00', speed: 5.8, accel: 0.15, handling: 0.055, driftPower: 1.4 },
-  { id: 'panther_cyber', name: 'Pantera Cyber', icon: '🐆', color: '#ff007f', speed: 5.2, accel: 0.22, handling: 0.075, driftPower: 1.1 },
-  { id: 'cat_tank', name: 'Gato Blindado', icon: '🐈', color: '#39ff14', speed: 5.0, accel: 0.16, handling: 0.060, weight: 1.5, driftPower: 1.3 }
+  { id: 'cat_neon', name: 'Gato Neon (Olho de Gato)', icon: '🐱', color: '#00f0ff', speed: 6.2, accel: 0.22, handling: 0.068, driftPower: 1.25, maxHp: 100 },
+  { id: 'tiger_nitro', name: 'Tigre Turbo', icon: '🐯', color: '#ffea00', speed: 6.8, accel: 0.18, handling: 0.055, driftPower: 1.45, maxHp: 95 },
+  { id: 'panther_cyber', name: 'Pantera Cyber', icon: '🐆', color: '#ff007f', speed: 6.0, accel: 0.26, handling: 0.078, driftPower: 1.15, maxHp: 105 },
+  { id: 'cat_tank', name: 'Gato Blindado', icon: '🐈', color: '#39ff14', speed: 5.8, accel: 0.20, handling: 0.060, weight: 1.6, driftPower: 1.35, maxHp: 140 }
 ];
 
 class CatsEyeRacing {
   constructor() {
     this.canvas = document.getElementById('raceCanvas');
-    if (!this.canvas) return;
-    this.ctx = this.canvas.getContext('2d');
+    if (this.canvas) this.ctx = this.canvas.getContext('2d');
 
     this.state = 'menu'; // 'menu', 'countdown', 'racing', 'finished'
-    this.gameMode = '1p'; // '1p', '2p_local', 'gp'
+    this.gameMode = '1p'; // '1p', '2p_local', 'arena_1p', 'online'
     this.currentTrackIndex = 0;
     this.track = RACING_TRACKS[0];
 
+    this.camera = { x: 0, y: 0, zoom: 1.0 };
     this.karts = [];
     this.projectiles = [];
-    this.traps = []; // Cascas de peixe / óleo
+    this.traps = [];
     this.particles = [];
     this.shockwaves = [];
     this.floatTexts = [];
+    this.killFeed = [];
 
     this.countdown = 3;
     this.countdownTimer = 0;
@@ -131,6 +151,7 @@ class CatsEyeRacing {
 
     this.keys = {};
     this.initControls();
+    this.initNetworkListeners();
     this.loop = this.loop.bind(this);
     requestAnimationFrame(this.loop);
   }
@@ -149,11 +170,41 @@ class CatsEyeRacing {
     });
   }
 
+  initNetworkListeners() {
+    const net = window.networkManager;
+    net.onRaceSync = (state) => {
+      if (this.gameMode === 'online' && net.role === 'guest') {
+        state.karts.forEach(remoteK => {
+          const localK = this.karts.find(k => k.id === remoteK.id);
+          if (localK && !localK.isHuman) {
+            localK.x += (remoteK.x - localK.x) * 0.4;
+            localK.y += (remoteK.y - localK.y) * 0.4;
+            localK.angle = remoteK.angle;
+            localK.speed = remoteK.speed;
+            localK.hp = remoteK.hp;
+            localK.item = remoteK.item;
+          }
+        });
+      }
+    };
+
+    net.onRaceDamage = (data) => {
+      const target = this.karts.find(k => k.id === data.targetId);
+      if (target) {
+        target.hp = Math.max(0, target.hp - data.damage);
+        target.spinTimer = 40;
+        this.createHitParticles(target.x, target.y, '#ff0055', 20);
+        this.addFloatText(target.x, target.y - 20, `💥 -${data.damage} HP!`, '#ff0055');
+      }
+    };
+  }
+
   startRace(mode = '1p', trackIndex = 0, selectedRacerIndex = 0) {
     if (!this.canvas) {
       this.canvas = document.getElementById('raceCanvas');
       if (this.canvas) this.ctx = this.canvas.getContext('2d');
     }
+
     this.gameMode = mode;
     this.currentTrackIndex = trackIndex % RACING_TRACKS.length;
     this.track = RACING_TRACKS[this.currentTrackIndex];
@@ -166,79 +217,98 @@ class CatsEyeRacing {
     this.particles = [];
     this.shockwaves = [];
     this.floatTexts = [];
+    this.killFeed = [];
     this.screenShake = 0;
 
-    // Reset item boxes
     this.track.itemBoxes.forEach(b => { b.respawn = 0; });
 
-    const startWp = this.track.waypoints[0];
-    const nextWp = this.track.waypoints[1];
-    const startAngle = Math.atan2(nextWp.y - startWp.y, nextWp.x - startWp.x);
-
+    const isArena = this.track.type === 'arena';
     this.karts = [];
 
-    // Kart 1 (Player 1)
-    this.karts.push(this.createKart({
-      id: 'p1',
-      name: 'VOCÊ (GATO NEON)',
-      isHuman: true,
-      playerNum: 1,
-      racer: CAT_RACERS[selectedRacerIndex % CAT_RACERS.length],
-      x: startWp.x - 20,
-      y: startWp.y - 15,
-      angle: startAngle
-    }));
+    if (isArena) {
+      // MODO ARENA: 8 a 10 combatentes em círculo na arena gigante
+      const totalCombatants = 8;
+      const centerX = this.track.worldWidth / 2;
+      const centerY = this.track.worldHeight / 2;
+      const spawnRadius = 650;
 
-    if (mode === '2p_local') {
-      // Kart 2 (Player 2)
-      this.karts.push(this.createKart({
-        id: 'p2',
-        name: 'PLAYER 2',
-        isHuman: true,
-        playerNum: 2,
-        racer: CAT_RACERS[(selectedRacerIndex + 1) % CAT_RACERS.length],
-        x: startWp.x - 50,
-        y: startWp.y + 15,
-        angle: startAngle
-      }));
-      // 2 Bots
-      this.karts.push(this.createKart({
-        id: 'bot1',
-        name: 'TIGRE NITRO (IA)',
-        isHuman: false,
-        racer: CAT_RACERS[1],
-        x: startWp.x - 80,
-        y: startWp.y - 15,
-        angle: startAngle
-      }));
-      this.karts.push(this.createKart({
-        id: 'bot2',
-        name: 'PANTERA (IA)',
-        isHuman: false,
-        racer: CAT_RACERS[2],
-        x: startWp.x - 110,
-        y: startWp.y + 15,
-        angle: startAngle
-      }));
+      for (let i = 0; i < totalCombatants; i++) {
+        const angle = (i / totalCombatants) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * spawnRadius;
+        const y = centerY + Math.sin(angle) * spawnRadius;
+        const faceAngle = angle + Math.PI;
+        const isPlayer1 = i === 0;
+        const isPlayer2 = mode === '2p_local' && i === 1;
+        const racer = CAT_RACERS[i % CAT_RACERS.length];
+
+        this.karts.push(this.createKart({
+          id: isPlayer1 ? 'p1' : (isPlayer2 ? 'p2' : `bot_${i}`),
+          name: isPlayer1 ? 'VOCÊ (GATO NEON)' : (isPlayer2 ? 'PLAYER 2' : `${racer.name.split(' ')[0]} (IA)`),
+          isHuman: isPlayer1 || isPlayer2,
+          playerNum: isPlayer1 ? 1 : (isPlayer2 ? 2 : 0),
+          racer,
+          x,
+          y,
+          angle: faceAngle
+        }));
+      }
     } else {
-      // 3 Bots
-      for (let i = 1; i <= 3; i++) {
+      // MODO CIRCUITO GIGANTE: Grid de Largada
+      const startWp = this.track.waypoints[0];
+      const nextWp = this.track.waypoints[1];
+      const startAngle = Math.atan2(nextWp.y - startWp.y, nextWp.x - startWp.x);
+
+      // Player 1
+      this.karts.push(this.createKart({
+        id: 'p1',
+        name: 'VOCÊ (GATO NEON)',
+        isHuman: true,
+        playerNum: 1,
+        racer: CAT_RACERS[selectedRacerIndex % CAT_RACERS.length],
+        x: startWp.x - 30,
+        y: startWp.y - 25,
+        angle: startAngle
+      }));
+
+      // Player 2 se local
+      if (mode === '2p_local') {
+        this.karts.push(this.createKart({
+          id: 'p2',
+          name: 'PLAYER 2',
+          isHuman: true,
+          playerNum: 2,
+          racer: CAT_RACERS[(selectedRacerIndex + 1) % CAT_RACERS.length],
+          x: startWp.x - 70,
+          y: startWp.y + 25,
+          angle: startAngle
+        }));
+      }
+
+      // 5 Bots para corrida massiva
+      const botCount = mode === '2p_local' ? 4 : 5;
+      for (let i = 1; i <= botCount; i++) {
         const racer = CAT_RACERS[i % CAT_RACERS.length];
         this.karts.push(this.createKart({
           id: `bot${i}`,
           name: `${racer.name.split(' ')[0]} (IA)`,
           isHuman: false,
           racer,
-          x: startWp.x - (i * 35),
-          y: startWp.y + (i % 2 === 0 ? 16 : -16),
+          x: startWp.x - (i * 65) - 30,
+          y: startWp.y + (i % 2 === 0 ? 25 : -25),
           angle: startAngle
         }));
       }
     }
 
-    const menu = document.getElementById('racing-menu');
+    const p1 = this.karts[0];
+    this.camera.x = p1.x;
+    this.camera.y = p1.y;
+
+    const menu = document.getElementById('main-menu');
     const screen = document.getElementById('racing-screen');
+    const over = document.getElementById('race-game-over-screen');
     if (menu) menu.classList.remove('active');
+    if (over) over.classList.remove('active');
     if (screen) screen.classList.add('active');
 
     window.retroAudio.playCountdown(false);
@@ -253,14 +323,16 @@ class CatsEyeRacing {
       racer: config.racer,
       x: config.x,
       y: config.y,
-      vx: 0,
-      vy: 0,
       angle: config.angle,
       speed: 0,
       maxSpeed: config.racer.speed,
       accel: config.racer.accel,
       handling: config.racer.handling,
-      driftPower: config.racer.driftPower || 1.2,
+      driftPower: config.racer.driftPower || 1.25,
+      weight: config.racer.weight || 1.0,
+      hp: config.racer.maxHp || 100,
+      maxHp: config.racer.maxHp || 100,
+      kills: 0,
       isDrifting: false,
       driftDir: 0,
       driftCharge: 0,
@@ -271,9 +343,9 @@ class CatsEyeRacing {
       nextCheckpoint: 0,
       currentWaypoint: 1,
       finished: false,
-      finishTime: 0,
+      eliminated: false,
       rank: 1,
-      item: null, // 'missile', 'trap', 'nitro', 'shield', 'bomb'
+      item: null,
       trail: []
     };
   }
@@ -283,7 +355,7 @@ class CatsEyeRacing {
       this.update();
       this.render();
     } catch (err) {
-      console.warn('Racing loop error:', err);
+      console.warn('Racing loop catch:', err);
     }
     requestAnimationFrame(this.loop);
   }
@@ -324,37 +396,46 @@ class CatsEyeRacing {
 
     // Atualiza Karts
     this.karts.forEach(kart => {
-      this.updateKart(kart);
+      if (!kart.eliminated) this.updateKart(kart);
     });
 
-    // Colisão entre Karts (Bater no amigo / física de impacto)
+    // Câmera segue suavemente o Player 1
+    const p1 = this.karts.find(k => k.id === 'p1');
+    if (p1) {
+      this.camera.x += (p1.x - this.camera.x) * 0.12;
+      this.camera.y += (p1.y - this.camera.y) * 0.12;
+      this.camera.x = Math.max(RACE_VIEW_WIDTH / 2, Math.min(this.track.worldWidth - RACE_VIEW_WIDTH / 2, this.camera.x));
+      this.camera.y = Math.max(RACE_VIEW_HEIGHT / 2, Math.min(this.track.worldHeight - RACE_VIEW_HEIGHT / 2, this.camera.y));
+    }
+
+    // Colisões Físicas entre Karts (Batidas, empurrões e dano de impacto no modo arena)
     for (let i = 0; i < this.karts.length; i++) {
       for (let j = i + 1; j < this.karts.length; j++) {
-        this.handleKartCollision(this.karts[i], this.karts[j]);
+        if (!this.karts[i].eliminated && !this.karts[j].eliminated) {
+          this.handleKartCollision(this.karts[i], this.karts[j]);
+        }
       }
     }
 
-    // Atualiza Projéteis (Mísseis / Bombas)
+    // Atualiza Projéteis
     this.updateProjectiles();
 
-    // Atualiza Armadilhas (Casca de peixe / óleo)
+    // Atualiza Armadilhas
     this.updateTraps();
 
-    // Atualiza Partículas
+    // Atualiza Partículas e Shockwaves
     this.updateParticles();
-
-    // Atualiza Shockwaves
     this.updateShockwaves();
 
-    // Atualiza Posições / Ranking da Corrida
+    // Atualiza Rankings / Sobrevivência na Arena
     this.updateRankings();
   }
 
   updateKart(kart) {
     if (kart.spinTimer > 0) {
       kart.spinTimer--;
-      kart.angle += 0.25;
-      kart.speed *= 0.94;
+      kart.angle += 0.28;
+      kart.speed *= 0.93;
       kart.x += Math.cos(kart.angle) * kart.speed;
       kart.y += Math.sin(kart.angle) * kart.speed;
       return;
@@ -363,15 +444,15 @@ class CatsEyeRacing {
     if (kart.nitroTimer > 0) {
       kart.nitroTimer--;
       kart.speed = kart.maxSpeed * 1.55;
-      if (Math.random() < 0.4) {
+      if (Math.random() < 0.5) {
         this.particles.push({
-          x: kart.x - Math.cos(kart.angle) * 14,
-          y: kart.y - Math.sin(kart.angle) * 14,
-          vx: -Math.cos(kart.angle) * 3 + (Math.random() - 0.5),
-          vy: -Math.sin(kart.angle) * 3 + (Math.random() - 0.5),
+          x: kart.x - Math.cos(kart.angle) * 16,
+          y: kart.y - Math.sin(kart.angle) * 16,
+          vx: -Math.cos(kart.angle) * 4 + (Math.random() - 0.5) * 2,
+          vy: -Math.sin(kart.angle) * 4 + (Math.random() - 0.5) * 2,
           life: 0.4,
           color: Math.random() > 0.5 ? '#ffea00' : '#ff007f',
-          size: Math.random() * 5 + 3
+          size: Math.random() * 6 + 3
         });
       }
     }
@@ -402,7 +483,6 @@ class CatsEyeRacing {
         useItemKey = this.keys['NumpadEnter'] || this.keys['KeyO'];
       }
     } else {
-      // IA Competitiva e Inteligente
       const aiCmd = this.getAICommand(kart);
       accelerating = aiCmd.accelerating;
       braking = aiCmd.braking;
@@ -412,56 +492,52 @@ class CatsEyeRacing {
       useItemKey = aiCmd.useItemKey;
     }
 
-    // Disparar Poder / Item
     if (useItemKey && kart.item) {
       this.useKartItem(kart);
     }
 
-    // Aceleração e Freio
     if (accelerating) {
       kart.speed = Math.min(kart.nitroTimer > 0 ? kart.maxSpeed * 1.55 : kart.maxSpeed, kart.speed + kart.accel);
     } else if (braking) {
       kart.speed = Math.max(-kart.maxSpeed * 0.4, kart.speed - kart.accel * 1.5);
     } else {
-      kart.speed *= 0.98; // Desaceleração suave por atrito
+      kart.speed *= 0.985;
     }
 
-    // Direção & Drift
+    // Drift & Mini-Turbo
     if (driftKey && Math.abs(kart.speed) > 2.0 && (turnLeft || turnRight)) {
       if (!kart.isDrifting) {
         kart.isDrifting = true;
         kart.driftDir = turnLeft ? -1 : 1;
         kart.driftCharge = 0;
       }
-      kart.driftCharge += 1.5;
-      kart.angle += kart.driftDir * kart.handling * 1.35;
+      kart.driftCharge += 1.8;
+      kart.angle += kart.driftDir * kart.handling * 1.38;
 
-      // Faíscas de Drift
       if (Math.random() < 0.6) {
         const sparkColor = kart.driftCharge > 80 ? '#ffea00' : (kart.driftCharge > 40 ? '#00f0ff' : '#ffffff');
         this.particles.push({
-          x: kart.x - Math.cos(kart.angle) * 12,
-          y: kart.y - Math.sin(kart.angle) * 12,
-          vx: -Math.cos(kart.angle) * 2 + (Math.random() - 0.5) * 2,
-          vy: -Math.sin(kart.angle) * 2 + (Math.random() - 0.5) * 2,
-          life: 0.3,
+          x: kart.x - Math.cos(kart.angle) * 14,
+          y: kart.y - Math.sin(kart.angle) * 14,
+          vx: -Math.cos(kart.angle) * 2.5 + (Math.random() - 0.5) * 2,
+          vy: -Math.sin(kart.angle) * 2.5 + (Math.random() - 0.5) * 2,
+          life: 0.35,
           color: sparkColor,
           size: Math.random() * 4 + 2
         });
       }
     } else {
-      // Soltou o drift: Mini-Turbo!
       if (kart.isDrifting) {
         if (kart.driftCharge > 80) {
-          kart.nitroTimer = 45;
+          kart.nitroTimer = 55;
           window.retroAudio.playPaddleHit(true);
-          this.addFloatText(kart.x, kart.y - 20, '⚡ MEGA TURBO!', '#ffea00');
-          this.addShockwave(kart.x, kart.y, '#ffea00', 35);
+          this.addFloatText(kart.x, kart.y - 25, '⚡ MEGA TURBO!', '#ffea00');
+          this.addShockwave(kart.x, kart.y, '#ffea00', 45);
         } else if (kart.driftCharge > 40) {
-          kart.nitroTimer = 25;
+          kart.nitroTimer = 30;
           window.retroAudio.playPaddleHit(false);
-          this.addFloatText(kart.x, kart.y - 20, '⚡ MINI TURBO!', '#00f0ff');
-          this.addShockwave(kart.x, kart.y, '#00f0ff', 25);
+          this.addFloatText(kart.x, kart.y - 25, '⚡ MINI TURBO!', '#00f0ff');
+          this.addShockwave(kart.x, kart.y, '#00f0ff', 30);
         }
         kart.isDrifting = false;
         kart.driftCharge = 0;
@@ -471,58 +547,58 @@ class CatsEyeRacing {
       if (turnRight) kart.angle += kart.handling * (kart.speed / kart.maxSpeed);
     }
 
-    // Movimentação
     kart.x += Math.cos(kart.angle) * kart.speed;
     kart.y += Math.sin(kart.angle) * kart.speed;
 
-    // Rastro
+    // Rastro de pneu
     kart.trail.push({ x: kart.x, y: kart.y, angle: kart.angle, isDrifting: kart.isDrifting });
-    if (kart.trail.length > 10) kart.trail.shift();
+    if (kart.trail.length > 12) kart.trail.shift();
 
-    // Paredes e Bordas do Circuito
-    kart.x = Math.max(25, Math.min(RACE_CANVAS_WIDTH - 25, kart.x));
-    kart.y = Math.max(25, Math.min(RACE_CANVAS_HEIGHT - 25, kart.y));
+    // Bordas do Mundo Gigante
+    kart.x = Math.max(45, Math.min(this.track.worldWidth - 45, kart.x));
+    kart.y = Math.max(45, Math.min(this.track.worldHeight - 45, kart.y));
 
     // Coleta de Caixas de Itens
     this.track.itemBoxes.forEach(box => {
       if (box.respawn <= 0 && !kart.item) {
         const dist = Math.hypot(kart.x - box.x, kart.y - box.y);
-        if (dist < box.r + 14) {
-          box.respawn = 180; // 3 segundos
+        if (dist < box.r + 18) {
+          box.respawn = 180;
           const items = ['missile', 'trap', 'nitro', 'shield', 'bomb'];
           kart.item = items[Math.floor(Math.random() * items.length)];
           window.retroAudio.playPortal();
           this.createHitParticles(box.x, box.y, '#ffea00', 16);
-          this.addShockwave(box.x, box.y, '#00f0ff', 30);
-          this.addFloatText(kart.x, kart.y - 20, `🎁 ${this.getItemName(kart.item)}!`, '#ffea00');
+          this.addShockwave(box.x, box.y, '#00f0ff', 35);
+          this.addFloatText(kart.x, kart.y - 25, `🎁 ${this.getItemName(kart.item)}!`, '#ffea00');
         }
       }
     });
 
-    // Checkpoints e Voltas
-    const curCp = this.track.checkpoints[kart.nextCheckpoint];
-    if (curCp) {
-      if (
-        kart.x >= curCp.x - curCp.w / 2 &&
-        kart.x <= curCp.x + curCp.w / 2 &&
-        kart.y >= curCp.y - curCp.h / 2 &&
-        kart.y <= curCp.y + curCp.h / 2
-      ) {
-        kart.nextCheckpoint = (kart.nextCheckpoint + 1) % this.track.checkpoints.length;
-        if (curCp.isFinish) {
-          kart.currentLap++;
-          if (kart.isHuman) {
-            window.retroAudio.playScore(true);
-            this.addFloatText(kart.x, kart.y - 25, `VOLTA ${kart.currentLap}/${this.track.laps}!`, '#00f0ff');
-          }
-          if (kart.currentLap > this.track.laps && !kart.finished) {
-            kart.finished = true;
-            kart.finishTime = Date.now() - this.raceStartTime;
+    // Checkpoints para Modo Circuito
+    if (this.track.type === 'circuit') {
+      const curCp = this.track.checkpoints[kart.nextCheckpoint];
+      if (curCp) {
+        if (
+          kart.x >= curCp.x - curCp.w / 2 &&
+          kart.x <= curCp.x + curCp.w / 2 &&
+          kart.y >= curCp.y - curCp.h / 2 &&
+          kart.y <= curCp.y + curCp.h / 2
+        ) {
+          kart.nextCheckpoint = (kart.nextCheckpoint + 1) % this.track.checkpoints.length;
+          if (curCp.isFinish) {
+            kart.currentLap++;
             if (kart.isHuman) {
-              this.state = 'finished';
               window.retroAudio.playScore(true);
-              this.spawnConfetti();
-              this.showGameOver(kart.rank);
+              this.addFloatText(kart.x, kart.y - 30, `VOLTA ${kart.currentLap}/${this.track.laps}!`, '#00f0ff');
+            }
+            if (kart.currentLap > this.track.laps && !kart.finished) {
+              kart.finished = true;
+              if (kart.isHuman) {
+                this.state = 'finished';
+                window.retroAudio.playScore(true);
+                this.spawnConfetti();
+                this.showGameOver(kart.rank);
+              }
             }
           }
         }
@@ -546,48 +622,48 @@ class CatsEyeRacing {
     kart.item = null;
 
     if (item === 'nitro') {
-      kart.nitroTimer = 80;
+      kart.nitroTimer = 85;
       window.retroAudio.playPaddleHit(true);
-      this.addFloatText(kart.x, kart.y - 20, '⚡ NITRO MÁXIMO!', '#ffea00');
-      this.addShockwave(kart.x, kart.y, '#ffea00', 45);
+      this.addFloatText(kart.x, kart.y - 25, '⚡ NITRO MÁXIMO!', '#ffea00');
+      this.addShockwave(kart.x, kart.y, '#ffea00', 50);
     } else if (item === 'shield') {
-      kart.shieldTimer = 300; // 5 segundos
+      kart.shieldTimer = 350;
       window.retroAudio.playPortal();
-      this.addFloatText(kart.x, kart.y - 20, '🛡️ ESCUDO ATIVO!', '#00f0ff');
+      this.addFloatText(kart.x, kart.y - 25, '🛡️ ESCUDO ATIVO!', '#00f0ff');
     } else if (item === 'trap') {
       this.traps.push({
-        x: kart.x - Math.cos(kart.angle) * 24,
-        y: kart.y - Math.sin(kart.angle) * 24,
-        r: 12,
-        life: 600
+        x: kart.x - Math.cos(kart.angle) * 32,
+        y: kart.y - Math.sin(kart.angle) * 32,
+        r: 16,
+        life: 800
       });
       window.retroAudio.playWallBounce();
-      this.addFloatText(kart.x, kart.y - 20, '🐟 ARMADILHA!', '#ffaa00');
+      this.addFloatText(kart.x, kart.y - 25, '🐟 ARMADILHA!', '#ffaa00');
     } else if (item === 'missile') {
       this.projectiles.push({
         type: 'missile',
         owner: kart.id,
-        x: kart.x + Math.cos(kart.angle) * 20,
-        y: kart.y + Math.sin(kart.angle) * 20,
+        x: kart.x + Math.cos(kart.angle) * 26,
+        y: kart.y + Math.sin(kart.angle) * 26,
         angle: kart.angle,
-        speed: 9.5,
+        speed: 10.5,
         target: this.findAheadKart(kart),
-        life: 180
+        life: 220
       });
       window.retroAudio.playBlasterHit();
-      this.addFloatText(kart.x, kart.y - 20, '🚀 MÍSSIL LANÇADO!', '#ff0055');
+      this.addFloatText(kart.x, kart.y - 25, '🚀 MÍSSIL LANÇADO!', '#ff0055');
     } else if (item === 'bomb') {
       this.projectiles.push({
         type: 'bomb',
         owner: kart.id,
-        x: kart.x + Math.cos(kart.angle) * 25,
-        y: kart.y + Math.sin(kart.angle) * 25,
+        x: kart.x + Math.cos(kart.angle) * 30,
+        y: kart.y + Math.sin(kart.angle) * 30,
         angle: kart.angle,
-        speed: 6.5,
-        timer: 60
+        speed: 7.0,
+        timer: 70
       });
       window.retroAudio.playPaddleHit(false);
-      this.addFloatText(kart.x, kart.y - 20, '💣 BOMBA EMP!', '#ff00ff');
+      this.addFloatText(kart.x, kart.y - 25, '💣 BOMBA EMP!', '#ff00ff');
     }
   }
 
@@ -595,16 +671,13 @@ class CatsEyeRacing {
     let target = null;
     let minDist = Infinity;
     this.karts.forEach(k => {
-      if (k.id !== sourceKart.id) {
+      if (k.id !== sourceKart.id && !k.eliminated) {
         const dx = k.x - sourceKart.x;
         const dy = k.y - sourceKart.y;
-        const forwardDot = Math.cos(sourceKart.angle) * dx + Math.sin(sourceKart.angle) * dy;
-        if (forwardDot > 0) {
-          const dist = Math.hypot(dx, dy);
-          if (dist < minDist) {
-            minDist = dist;
-            target = k;
-          }
+        const dist = Math.hypot(dx, dy);
+        if (dist < minDist) {
+          minDist = dist;
+          target = k;
         }
       }
     });
@@ -615,7 +688,7 @@ class CatsEyeRacing {
     const dx = k2.x - k1.x;
     const dy = k2.y - k1.y;
     const dist = Math.hypot(dx, dy);
-    const minDist = 24;
+    const minDist = 30;
 
     if (dist < minDist) {
       const nx = dx / (dist || 1);
@@ -626,13 +699,46 @@ class CatsEyeRacing {
       k2.x += nx * (minDist - dist) * 0.5;
       k2.y += ny * (minDist - dist) * 0.5;
 
+      const speedDiff = Math.abs(k1.speed - k2.speed);
+      const damage = Math.round(speedDiff * 5 * (k1.weight || 1.0));
+
+      if (this.track.type === 'arena' && damage > 8) {
+        if (k1.shieldTimer <= 0) k1.hp = Math.max(0, k1.hp - damage);
+        if (k2.shieldTimer <= 0) k2.hp = Math.max(0, k2.hp - damage);
+        this.addFloatText((k1.x + k2.x) / 2, (k1.y + k2.y) / 2 - 20, `💥 RAM -${damage} HP!`, '#ffea00');
+        this.checkElimination(k1, k2);
+        this.checkElimination(k2, k1);
+      }
+
       const tempSpeed = k1.speed;
       k1.speed = k2.speed * 0.85;
       k2.speed = tempSpeed * 0.85;
 
-      this.screenShake = 3;
+      this.screenShake = 4;
       window.retroAudio.playPaddleHit(false);
-      this.createHitParticles((k1.x + k2.x) / 2, (k1.y + k2.y) / 2, '#ffea00', 8);
+      this.createHitParticles((k1.x + k2.x) / 2, (k1.y + k2.y) / 2, '#ffea00', 12);
+    }
+  }
+
+  checkElimination(victim, attacker) {
+    if (victim.hp <= 0 && !victim.eliminated) {
+      victim.eliminated = true;
+      if (attacker) attacker.kills++;
+      this.screenShake = 12;
+      this.createHitParticles(victim.x, victim.y, '#ff0055', 40);
+      this.addShockwave(victim.x, victim.y, '#ff0055', 70);
+      window.retroAudio.playBlasterHit();
+      this.addFloatText(victim.x, victim.y - 30, `☠️ ${victim.name} K.O.!`, '#ff0033');
+
+      const aliveKarts = this.karts.filter(k => !k.eliminated);
+      if (victim.isHuman && victim.id === 'p1') {
+        this.state = 'finished';
+        this.showGameOver(aliveKarts.length + 1);
+      } else if (aliveKarts.length === 1 && aliveKarts[0].id === 'p1') {
+        this.state = 'finished';
+        this.spawnConfetti();
+        this.showGameOver(1);
+      }
     }
   }
 
@@ -642,35 +748,36 @@ class CatsEyeRacing {
       p.life--;
 
       if (p.type === 'missile') {
-        if (p.target && p.target.x) {
+        if (p.target && p.target.x && !p.target.eliminated) {
           const targetAngle = Math.atan2(p.target.y - p.y, p.target.x - p.x);
           let diff = targetAngle - p.angle;
           while (diff < -Math.PI) diff += Math.PI * 2;
           while (diff > Math.PI) diff -= Math.PI * 2;
-          p.angle += diff * 0.08;
+          p.angle += diff * 0.09;
         }
         p.x += Math.cos(p.angle) * p.speed;
         p.y += Math.sin(p.angle) * p.speed;
 
-        // Fumaça
         if (Math.random() < 0.5) {
           this.particles.push({
             x: p.x, y: p.y,
-            vx: (Math.random() - 0.5), vy: (Math.random() - 0.5),
-            life: 0.3, color: '#ff5500', size: 3
+            vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2,
+            life: 0.35, color: '#ff5500', size: 4
           });
         }
 
-        // Colisão com Karts
         this.karts.forEach(k => {
-          if (k.id !== p.owner && Math.hypot(k.x - p.x, k.y - p.y) < 22) {
+          if (k.id !== p.owner && !k.eliminated && Math.hypot(k.x - p.x, k.y - p.y) < 28) {
             if (k.shieldTimer <= 0) {
-              k.spinTimer = 45;
-              this.screenShake = 7;
+              k.spinTimer = 50;
+              k.hp = Math.max(0, k.hp - 35);
+              this.screenShake = 8;
               window.retroAudio.playBlasterHit();
-              this.createHitParticles(k.x, k.y, '#ff0055', 25);
-              this.addShockwave(k.x, k.y, '#ff0055', 45);
-              this.addFloatText(k.x, k.y - 20, '💥 ACERTOU!', '#ff0055');
+              this.createHitParticles(k.x, k.y, '#ff0055', 30);
+              this.addShockwave(k.x, k.y, '#ff0055', 55);
+              this.addFloatText(k.x, k.y - 25, '💥 MÍSSIL -35 HP!', '#ff0055');
+              const attacker = this.karts.find(atk => atk.id === p.owner);
+              this.checkElimination(k, attacker);
             }
             p.life = 0;
           }
@@ -689,12 +796,14 @@ class CatsEyeRacing {
       t.life--;
 
       this.karts.forEach(k => {
-        if (Math.hypot(k.x - t.x, k.y - t.y) < t.r + 12) {
+        if (!k.eliminated && Math.hypot(k.x - t.x, k.y - t.y) < t.r + 16) {
           if (k.shieldTimer <= 0) {
-            k.spinTimer = 40;
+            k.spinTimer = 45;
+            k.hp = Math.max(0, k.hp - 15);
             window.retroAudio.playWallBounce();
-            this.createHitParticles(t.x, t.y, '#ffaa00', 16);
-            this.addFloatText(k.x, k.y - 20, '🌀 ESCORREGOU!', '#ffaa00');
+            this.createHitParticles(t.x, t.y, '#ffaa00', 20);
+            this.addFloatText(k.x, k.y - 25, '🌀 ESCORREGOU -15 HP!', '#ffaa00');
+            this.checkElimination(k, null);
           }
           t.life = 0;
         }
@@ -705,172 +814,257 @@ class CatsEyeRacing {
   }
 
   getAICommand(kart) {
-    const targetWp = this.track.waypoints[kart.currentWaypoint % this.track.waypoints.length];
-    const distToWp = Math.hypot(targetWp.x - kart.x, targetWp.y - kart.y);
+    if (this.track.type === 'arena') {
+      // IA Modo Arena: Busca caixas de itens e persegue o inimigo mais próximo!
+      let target = null;
+      let minDist = Infinity;
 
-    if (distToWp < 55) {
-      kart.currentWaypoint = (kart.currentWaypoint + 1) % this.track.waypoints.length;
+      if (!kart.item) {
+        this.track.itemBoxes.forEach(b => {
+          if (b.respawn <= 0) {
+            const dist = Math.hypot(b.x - kart.x, b.y - kart.y);
+            if (dist < minDist) {
+              minDist = dist;
+              target = b;
+            }
+          }
+        });
+      }
+
+      if (!target) {
+        this.karts.forEach(k => {
+          if (k.id !== kart.id && !k.eliminated) {
+            const dist = Math.hypot(k.x - kart.x, k.y - kart.y);
+            if (dist < minDist) {
+              minDist = dist;
+              target = k;
+            }
+          }
+        });
+      }
+
+      if (!target) target = { x: this.track.worldWidth / 2, y: this.track.worldHeight / 2 };
+
+      const targetAngle = Math.atan2(target.y - kart.y, target.x - kart.x);
+      let diff = targetAngle - kart.angle;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+
+      return {
+        accelerating: true,
+        braking: Math.abs(diff) > 1.2 && kart.speed > 4.0,
+        turnLeft: diff < -0.15,
+        turnRight: diff > 0.15,
+        driftKey: Math.abs(diff) > 0.9 && Math.random() < 0.6,
+        useItemKey: !!kart.item && Math.random() < 0.06
+      };
+    } else {
+      // IA Modo Circuito Gigante
+      const targetWp = this.track.waypoints[kart.currentWaypoint % this.track.waypoints.length];
+      const distToWp = Math.hypot(targetWp.x - kart.x, targetWp.y - kart.y);
+
+      if (distToWp < 90) {
+        kart.currentWaypoint = (kart.currentWaypoint + 1) % this.track.waypoints.length;
+      }
+
+      const targetAngle = Math.atan2(targetWp.y - kart.y, targetWp.x - kart.x);
+      let diff = targetAngle - kart.angle;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+
+      const isSharp = Math.abs(diff) > 0.8;
+      return {
+        accelerating: !isSharp || kart.speed < 4.0,
+        braking: isSharp && kart.speed > 5.0,
+        turnLeft: diff < -0.15,
+        turnRight: diff > 0.15,
+        driftKey: isSharp && Math.random() < 0.6,
+        useItemKey: !!kart.item && Math.random() < 0.05
+      };
     }
-
-    const targetAngle = Math.atan2(targetWp.y - kart.y, targetWp.x - kart.x);
-    let diff = targetAngle - kart.angle;
-    while (diff < -Math.PI) diff += Math.PI * 2;
-    while (diff > Math.PI) diff -= Math.PI * 2;
-
-    const turnLeft = diff < -0.15;
-    const turnRight = diff > 0.15;
-    const isSharpTurn = Math.abs(diff) > 0.85;
-    const driftKey = isSharpTurn && Math.random() < 0.6;
-    const useItemKey = kart.item && Math.random() < 0.05;
-
-    return {
-      accelerating: !isSharpTurn || kart.speed < 3.5,
-      braking: isSharpTurn && kart.speed > 4.5,
-      turnLeft,
-      turnRight,
-      driftKey,
-      useItemKey
-    };
   }
 
   updateRankings() {
-    this.karts.sort((a, b) => {
-      if (a.currentLap !== b.currentLap) return b.currentLap - a.currentLap;
-      if (a.nextCheckpoint !== b.nextCheckpoint) return b.nextCheckpoint - a.nextCheckpoint;
-      const cp = this.track.checkpoints[a.nextCheckpoint] || { x: 0, y: 0 };
-      return Math.hypot(a.x - cp.x, a.y - cp.y) - Math.hypot(b.x - cp.x, b.y - cp.y);
-    });
+    if (this.track.type === 'arena') {
+      const alive = this.karts.filter(k => !k.eliminated);
+      const p1 = this.karts.find(k => k.id === 'p1');
+      if (p1) {
+        const posEl = document.getElementById('race-hud-pos');
+        const lapEl = document.getElementById('race-hud-lap');
+        const itemEl = document.getElementById('race-hud-item');
+        if (posEl) posEl.innerText = `❤️ HP: ${p1.hp}/${p1.maxHp}`;
+        if (lapEl) lapEl.innerText = `VIVOS: ${alive.length}/${this.karts.length}`;
+        if (itemEl) itemEl.innerText = p1.item ? `🎁 ${this.getItemName(p1.item)}` : 'NENHUM';
+      }
+    } else {
+      this.karts.sort((a, b) => {
+        if (a.currentLap !== b.currentLap) return b.currentLap - a.currentLap;
+        if (a.nextCheckpoint !== b.nextCheckpoint) return b.nextCheckpoint - a.nextCheckpoint;
+        const cp = this.track.checkpoints[a.nextCheckpoint] || { x: 0, y: 0 };
+        return Math.hypot(a.x - cp.x, a.y - cp.y) - Math.hypot(b.x - cp.x, b.y - cp.y);
+      });
 
-    this.karts.forEach((k, idx) => {
-      k.rank = idx + 1;
-    });
+      this.karts.forEach((k, idx) => { k.rank = idx + 1; });
 
-    const p1 = this.karts.find(k => k.id === 'p1');
-    if (p1) {
-      const posEl = document.getElementById('race-hud-pos');
-      const lapEl = document.getElementById('race-hud-lap');
-      const itemEl = document.getElementById('race-hud-item');
-      if (posEl) posEl.innerText = `${p1.rank}º / ${this.karts.length}`;
-      if (lapEl) lapEl.innerText = `${Math.min(this.track.laps, p1.currentLap)}/${this.track.laps}`;
-      if (itemEl) itemEl.innerText = p1.item ? `🎁 ${this.getItemName(p1.item)}` : 'NENHUM';
+      const p1 = this.karts.find(k => k.id === 'p1');
+      if (p1) {
+        const posEl = document.getElementById('race-hud-pos');
+        const lapEl = document.getElementById('race-hud-lap');
+        const itemEl = document.getElementById('race-hud-item');
+        if (posEl) posEl.innerText = `${p1.rank}º / ${this.karts.length}`;
+        if (lapEl) lapEl.innerText = `${Math.min(this.track.laps, p1.currentLap)}/${this.track.laps}`;
+        if (itemEl) itemEl.innerText = p1.item ? `🎁 ${this.getItemName(p1.item)}` : 'NENHUM';
+      }
     }
   }
 
   render() {
     this.ctx.save();
 
-    if (this.screenShake > 0) {
-      this.ctx.translate((Math.random() - 0.5) * this.screenShake, (Math.random() - 0.5) * this.screenShake);
-    }
+    // Limpa a tela
+    this.ctx.fillStyle = '#05051a';
+    this.ctx.fillRect(0, 0, RACE_VIEW_WIDTH, RACE_VIEW_HEIGHT);
 
-    // Fundo do Autódromo
-    this.renderTrackBackground();
+    // Câmera do Mundo Gigante
+    this.ctx.save();
+    this.ctx.translate(
+      -this.camera.x + RACE_VIEW_WIDTH / 2 + (Math.random() - 0.5) * this.screenShake,
+      -this.camera.y + RACE_VIEW_HEIGHT / 2 + (Math.random() - 0.5) * this.screenShake
+    );
 
-    // Pista e Zebras
-    this.renderTrackWay();
-
-    // Checkpoints / Linha de Chegada
+    // Renderiza Mundo Gigante
+    this.renderWorldBackground();
+    this.renderTrackOrArena();
     this.renderCheckpoints();
-
-    // Caixas de Itens
     this.renderItemBoxes();
-
-    // Armadilhas na Pista
     this.renderTraps();
 
-    // Karts e Rastros
-    this.karts.forEach(k => this.renderKart(k));
+    // Karts
+    this.karts.forEach(k => {
+      if (!k.eliminated) this.renderKart(k);
+    });
 
-    // Projéteis
+    // Projéteis e Efeitos
     this.renderProjectiles();
-
-    // Efeitos Visuais
     this.renderParticles();
     this.renderShockwaves();
     this.renderFloatTexts();
 
+    this.ctx.restore(); // Restaura da câmera
+
+    // Mini-Mapa Radar
+    this.renderMiniMap();
+
     // Countdown Overlay
     if (this.state === 'countdown') {
       this.ctx.fillStyle = '#ffea00';
-      this.ctx.font = '54px "Press Start 2P"';
+      this.ctx.font = '48px "Press Start 2P"';
       this.ctx.textAlign = 'center';
       this.ctx.shadowColor = '#ffea00';
       this.ctx.shadowBlur = 20;
-      const txt = this.countdown > 0 ? this.countdown.toString() : 'LARGADA!';
-      this.ctx.fillText(txt, RACE_CANVAS_WIDTH / 2, RACE_CANVAS_HEIGHT / 2 + 18);
+      const txt = this.countdown > 0 ? this.countdown.toString() : (this.track.type === 'arena' ? 'COMBATE!' : 'LARGADA!');
+      this.ctx.fillText(txt, RACE_VIEW_WIDTH / 2, RACE_VIEW_HEIGHT / 2 + 16);
     }
 
     this.ctx.restore();
   }
 
-  renderTrackBackground() {
-    this.ctx.fillStyle = '#060620';
-    this.ctx.fillRect(0, 0, RACE_CANVAS_WIDTH, RACE_CANVAS_HEIGHT);
-
-    // Grid Cyber
-    this.ctx.strokeStyle = 'rgba(60, 60, 140, 0.15)';
-    this.ctx.lineWidth = 1;
-    for (let x = 0; x < RACE_CANVAS_WIDTH; x += 35) {
+  renderWorldBackground() {
+    // Grid Cyber Espacial
+    this.ctx.strokeStyle = 'rgba(40, 40, 110, 0.2)';
+    this.ctx.lineWidth = 2;
+    for (let x = 0; x < this.track.worldWidth; x += 100) {
       this.ctx.beginPath();
       this.ctx.moveTo(x, 0);
-      this.ctx.lineTo(x, RACE_CANVAS_HEIGHT);
+      this.ctx.lineTo(x, this.track.worldHeight);
       this.ctx.stroke();
     }
-    for (let y = 0; y < RACE_CANVAS_HEIGHT; y += 35) {
+    for (let y = 0; y < this.track.worldHeight; y += 100) {
       this.ctx.beginPath();
       this.ctx.moveTo(0, y);
-      this.ctx.lineTo(RACE_CANVAS_WIDTH, y);
+      this.ctx.lineTo(this.track.worldWidth, y);
       this.ctx.stroke();
     }
+
+    // Paredes Externas do Mundo
+    this.ctx.strokeStyle = this.track.themeColor;
+    this.ctx.lineWidth = 8;
+    this.ctx.strokeRect(20, 20, this.track.worldWidth - 40, this.track.worldHeight - 40);
   }
 
-  renderTrackWay() {
-    const wps = this.track.waypoints;
-    const tw = this.track.trackWidth;
+  renderTrackOrArena() {
+    if (this.track.type === 'arena') {
+      // Arena Coliseu Gigante
+      const cx = this.track.worldWidth / 2;
+      const cy = this.track.worldHeight / 2;
+      this.ctx.fillStyle = '#121235';
+      this.ctx.beginPath();
+      this.ctx.arc(cx, cy, 950, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.strokeStyle = '#ff007f';
+      this.ctx.lineWidth = 12;
+      this.ctx.shadowColor = '#ff007f';
+      this.ctx.shadowBlur = 25;
+      this.ctx.stroke();
+      this.ctx.shadowBlur = 0;
 
-    // Asfalto
-    this.ctx.strokeStyle = '#15153a';
-    this.ctx.lineWidth = tw;
-    this.ctx.lineCap = 'round';
-    this.ctx.lineJoin = 'round';
-    this.ctx.beginPath();
-    this.ctx.moveTo(wps[0].x, wps[0].y);
-    for (let i = 1; i < wps.length; i++) {
-      this.ctx.lineTo(wps[i].x, wps[i].y);
-    }
-    this.ctx.closePath();
-    this.ctx.stroke();
+      // Pilares de Colisão
+      if (this.track.pillars) {
+        this.track.pillars.forEach(pil => {
+          this.ctx.fillStyle = '#ff0055';
+          this.ctx.beginPath();
+          this.ctx.arc(pil.x, pil.y, pil.r, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#ffea00';
+          this.ctx.lineWidth = 4;
+          this.ctx.stroke();
+        });
+      }
+    } else {
+      // Circuito Gigante
+      const wps = this.track.waypoints;
+      const tw = this.track.trackWidth;
 
-    // Zebras Neon
-    this.ctx.strokeStyle = this.track.themeColor;
-    this.ctx.lineWidth = 4;
-    this.ctx.shadowColor = this.track.themeColor;
-    this.ctx.shadowBlur = 12;
-    this.ctx.setLineDash([16, 16]);
-    this.ctx.beginPath();
-    this.ctx.moveTo(wps[0].x, wps[0].y);
-    for (let i = 1; i < wps.length; i++) {
-      this.ctx.lineTo(wps[i].x, wps[i].y);
+      this.ctx.strokeStyle = '#151538';
+      this.ctx.lineWidth = tw;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+      this.ctx.beginPath();
+      this.ctx.moveTo(wps[0].x, wps[0].y);
+      for (let i = 1; i < wps.length; i++) this.ctx.lineTo(wps[i].x, wps[i].y);
+      this.ctx.closePath();
+      this.ctx.stroke();
+
+      // Zebras Neon
+      this.ctx.strokeStyle = this.track.themeColor;
+      this.ctx.lineWidth = 6;
+      this.ctx.shadowColor = this.track.themeColor;
+      this.ctx.shadowBlur = 15;
+      this.ctx.setLineDash([25, 25]);
+      this.ctx.beginPath();
+      this.ctx.moveTo(wps[0].x, wps[0].y);
+      for (let i = 1; i < wps.length; i++) this.ctx.lineTo(wps[i].x, wps[i].y);
+      this.ctx.closePath();
+      this.ctx.stroke();
+      this.ctx.setLineDash([]);
+      this.ctx.shadowBlur = 0;
     }
-    this.ctx.closePath();
-    this.ctx.stroke();
-    this.ctx.setLineDash([]);
-    this.ctx.shadowBlur = 0;
   }
 
   renderCheckpoints() {
-    const finish = this.track.checkpoints[0];
-    if (finish) {
+    this.track.checkpoints.forEach(cp => {
       this.ctx.save();
-      this.ctx.translate(finish.x, finish.y);
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.fillRect(-finish.w / 2, -finish.h / 2, finish.w, finish.h);
-      this.ctx.fillStyle = '#000000';
-      for (let x = -finish.w / 2; x < finish.w / 2; x += 12) {
-        this.ctx.fillRect(x, -finish.h / 2, 6, finish.h);
+      this.ctx.translate(cp.x, cp.y);
+      this.ctx.fillStyle = cp.isFinish ? '#ffffff' : 'rgba(0, 240, 255, 0.25)';
+      this.ctx.fillRect(-cp.w / 2, -cp.h / 2, cp.w, cp.h);
+      if (cp.isFinish) {
+        this.ctx.fillStyle = '#000000';
+        for (let x = -cp.w / 2; x < cp.w / 2; x += 16) {
+          this.ctx.fillRect(x, -cp.h / 2, 8, cp.h);
+        }
       }
       this.ctx.restore();
-    }
+    });
   }
 
   renderItemBoxes() {
@@ -878,19 +1072,19 @@ class CatsEyeRacing {
       if (b.respawn <= 0) {
         this.ctx.save();
         this.ctx.translate(b.x, b.y);
-        const rot = Date.now() * 0.004;
+        const rot = Date.now() * 0.003;
         this.ctx.rotate(rot);
 
         this.ctx.shadowColor = '#ffea00';
-        this.ctx.shadowBlur = 18;
-        this.ctx.fillStyle = 'rgba(255, 234, 0, 0.45)';
+        this.ctx.shadowBlur = 20;
+        this.ctx.fillStyle = 'rgba(255, 234, 0, 0.5)';
         this.ctx.fillRect(-b.r, -b.r, b.r * 2, b.r * 2);
         this.ctx.strokeStyle = '#ffea00';
         this.ctx.lineWidth = 3;
         this.ctx.strokeRect(-b.r, -b.r, b.r * 2, b.r * 2);
 
         this.ctx.fillStyle = '#ffffff';
-        this.ctx.font = '12px "Press Start 2P"';
+        this.ctx.font = '14px "Press Start 2P"';
         this.ctx.textAlign = 'center';
         this.ctx.fillText('?', 0, 5);
 
@@ -903,9 +1097,9 @@ class CatsEyeRacing {
     this.traps.forEach(t => {
       this.ctx.save();
       this.ctx.translate(t.x, t.y);
-      this.ctx.font = '16px "Press Start 2P"';
+      this.ctx.font = '18px "Press Start 2P"';
       this.ctx.textAlign = 'center';
-      this.ctx.fillText('🐟', 0, 6);
+      this.ctx.fillText('🐟', 0, 7);
       this.ctx.restore();
     });
   }
@@ -915,38 +1109,49 @@ class CatsEyeRacing {
     this.ctx.translate(k.x, k.y);
     this.ctx.rotate(k.angle);
 
+    // Barra de Vida no Modo Arena
+    if (this.track.type === 'arena') {
+      this.ctx.rotate(-k.angle);
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(-22, -26, 44, 6);
+      const hpPct = Math.max(0, k.hp / k.maxHp);
+      this.ctx.fillStyle = hpPct > 0.5 ? '#39ff14' : (hpPct > 0.25 ? '#ffea00' : '#ff0033');
+      this.ctx.fillRect(-20, -25, 40 * hpPct, 4);
+      this.ctx.rotate(k.angle);
+    }
+
     // Escudo Ativo
     if (k.shieldTimer > 0) {
       this.ctx.strokeStyle = '#00f0ff';
       this.ctx.shadowColor = '#00f0ff';
-      this.ctx.shadowBlur = 18;
-      this.ctx.lineWidth = 3;
+      this.ctx.shadowBlur = 20;
+      this.ctx.lineWidth = 4;
       this.ctx.beginPath();
-      this.ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      this.ctx.arc(0, 0, 24, 0, Math.PI * 2);
       this.ctx.stroke();
     }
 
-    // Chassi do Kart
-    this.ctx.fillStyle = '#111122';
-    this.ctx.fillRect(-12, -8, 24, 16);
+    // Chassi
+    this.ctx.fillStyle = '#101025';
+    this.ctx.fillRect(-15, -10, 30, 20);
 
     // Rodas
     this.ctx.fillStyle = '#000000';
-    this.ctx.fillRect(-11, -11, 7, 3);
-    this.ctx.fillRect(4, -11, 7, 3);
-    this.ctx.fillRect(-11, 8, 7, 3);
-    this.ctx.fillRect(4, 8, 7, 3);
+    this.ctx.fillRect(-14, -14, 9, 4);
+    this.ctx.fillRect(5, -14, 9, 4);
+    this.ctx.fillRect(-14, 10, 9, 4);
+    this.ctx.fillRect(5, 10, 9, 4);
 
     // Corpo Colorido
     this.ctx.fillStyle = k.racer.color;
     this.ctx.shadowColor = k.racer.color;
-    this.ctx.shadowBlur = 10;
-    this.ctx.fillRect(-8, -6, 16, 12);
+    this.ctx.shadowBlur = 12;
+    this.ctx.fillRect(-10, -8, 20, 16);
 
-    // Piloto (Gato)
-    this.ctx.font = '12px "Press Start 2P"';
+    // Piloto Gato
+    this.ctx.font = '14px "Press Start 2P"';
     this.ctx.textAlign = 'center';
-    this.ctx.fillText(k.racer.icon, 0, 4);
+    this.ctx.fillText(k.racer.icon, 0, 5);
 
     this.ctx.restore();
   }
@@ -956,24 +1161,55 @@ class CatsEyeRacing {
       this.ctx.save();
       this.ctx.translate(p.x, p.y);
       this.ctx.rotate(p.angle);
-      this.ctx.font = '14px "Press Start 2P"';
+      this.ctx.font = '16px "Press Start 2P"';
       this.ctx.textAlign = 'center';
-      this.ctx.fillText(p.type === 'missile' ? '🚀' : '💣', 0, 5);
+      this.ctx.fillText(p.type === 'missile' ? '🚀' : '💣', 0, 6);
       this.ctx.restore();
     });
+  }
+
+  renderMiniMap() {
+    const mapW = 160;
+    const mapH = 120;
+    const mapX = RACE_VIEW_WIDTH - mapW - 14;
+    const mapY = RACE_VIEW_HEIGHT - mapH - 14;
+
+    this.ctx.save();
+    this.ctx.fillStyle = 'rgba(8, 8, 35, 0.85)';
+    this.ctx.strokeStyle = '#00f0ff';
+    this.ctx.lineWidth = 2;
+    this.ctx.fillRect(mapX, mapY, mapW, mapH);
+    this.ctx.strokeRect(mapX, mapY, mapW, mapH);
+
+    const scaleX = mapW / this.track.worldWidth;
+    const scaleY = mapH / this.track.worldHeight;
+
+    // Karts no Radar
+    this.karts.forEach(k => {
+      if (!k.eliminated) {
+        const kx = mapX + k.x * scaleX;
+        const ky = mapY + k.y * scaleY;
+        this.ctx.fillStyle = k.id === 'p1' ? '#ffea00' : k.racer.color;
+        this.ctx.beginPath();
+        this.ctx.arc(kx, ky, k.id === 'p1' ? 4 : 3, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    });
+
+    this.ctx.restore();
   }
 
   createHitParticles(x, y, color = '#ffffff', count = 10) {
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 4 + 1;
+      const speed = Math.random() * 5 + 1;
       this.particles.push({
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         life: 1.0,
         color,
-        size: Math.random() * 4 + 2
+        size: Math.random() * 5 + 2
       });
     }
   }
@@ -995,23 +1231,23 @@ class CatsEyeRacing {
   updateShockwaves() {
     for (let i = this.shockwaves.length - 1; i >= 0; i--) {
       const sw = this.shockwaves[i];
-      sw.r += (sw.maxR - sw.r) * 0.2 + 1;
+      sw.r += (sw.maxR - sw.r) * 0.2 + 1.2;
       sw.alpha -= 0.05;
       if (sw.alpha <= 0 || sw.r >= sw.maxR) this.shockwaves.splice(i, 1);
     }
   }
 
   addFloatText(x, y, text, color = '#ffea00') {
-    this.floatTexts.push({ x, y, text, color, alpha: 1.0, vy: -1.2 });
+    this.floatTexts.push({ x, y, text, color, alpha: 1.0, vy: -1.4 });
   }
 
   renderFloatTexts() {
     this.floatTexts.forEach(ft => {
       this.ctx.save();
-      this.ctx.font = '11px "Press Start 2P"';
+      this.ctx.font = '12px "Press Start 2P"';
       this.ctx.fillStyle = ft.color;
       this.ctx.shadowColor = ft.color;
-      this.ctx.shadowBlur = 10;
+      this.ctx.shadowBlur = 12;
       this.ctx.globalAlpha = Math.max(0, ft.alpha);
       this.ctx.textAlign = 'center';
       this.ctx.fillText(ft.text, ft.x, ft.y);
@@ -1042,16 +1278,15 @@ class CatsEyeRacing {
   }
 
   spawnConfetti() {
-    // Confetes de vitória
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 50; i++) {
       this.particles.push({
-        x: Math.random() * RACE_CANVAS_WIDTH,
-        y: 0,
-        vx: (Math.random() - 0.5) * 4,
-        vy: Math.random() * 3 + 2,
-        life: 2.0,
+        x: this.camera.x + (Math.random() - 0.5) * RACE_VIEW_WIDTH,
+        y: this.camera.y - RACE_VIEW_HEIGHT / 2,
+        vx: (Math.random() - 0.5) * 5,
+        vy: Math.random() * 4 + 2,
+        life: 2.5,
         color: ['#00f0ff', '#ff007f', '#ffea00', '#39ff14'][Math.floor(Math.random() * 4)],
-        size: 5
+        size: 6
       });
     }
   }
@@ -1059,13 +1294,19 @@ class CatsEyeRacing {
   showGameOver(rank) {
     const modal = document.getElementById('race-game-over-screen');
     const title = document.getElementById('race-winner-msg');
-    if (title) title.innerText = rank === 1 ? '🏆 1º LUGAR! CAMPEÃO!' : `🏁 VOCÊ TERMINOU EM ${rank}º LUGAR!`;
+    if (title) {
+      if (this.track.type === 'arena') {
+        title.innerText = rank === 1 ? '👑 SOBREVIVENTE DA ARENA! VITÓRIA!' : `☠️ VOCÊ FOI ELIMINADO EM ${rank}º LUGAR!`;
+      } else {
+        title.innerText = rank === 1 ? '🏆 1º LUGAR! CAMPEÃO!' : `🏁 VOCÊ TERMINOU EM ${rank}º LUGAR!`;
+      }
+    }
     if (modal) modal.classList.add('active');
   }
 
   returnToMenu() {
     this.state = 'menu';
-    const menu = document.getElementById('racing-menu');
+    const menu = document.getElementById('main-menu');
     const screen = document.getElementById('racing-screen');
     const over = document.getElementById('race-game-over-screen');
     if (screen) screen.classList.remove('active');
