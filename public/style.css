@@ -274,57 +274,109 @@ html, body {
   text-shadow: 0 0 6px rgba(255, 170, 0, 0.6);
 }
 
-/* JOYSTICK RETRÔ 3D */
+/* JOYSTICK RETRÔ 3D COM FÍSICA E ILUMINAÇÃO REAL */
 .joystick-unit {
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   display: flex;
   justify-content: center;
   align-items: center;
+  perspective: 120px;
 }
 
 .joystick-base {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: radial-gradient(circle, #2a2a38 30%, #0a0a10 80%);
-  border: 2px solid #3c3c52;
+  background: radial-gradient(circle, #252538 20%, #10101c 65%, #05050a 100%);
+  border: 2px solid #3c3c58;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.7);
+  position: relative;
+}
+
+.joystick-base::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #06060c;
+  box-shadow: inset 0 0 4px #000;
 }
 
 .joystick-shaft {
   position: absolute;
-  width: 6px;
-  height: 18px;
-  background: linear-gradient(90deg, #888 0%, #eee 50%, #444 100%);
-  top: 4px;
+  width: 7px;
+  height: 24px;
+  background: linear-gradient(90deg, #666 0%, #ddd 40%, #ffffff 50%, #999 75%, #444 100%);
+  bottom: 12px;
   border-radius: 3px;
   transform-origin: center bottom;
-  transition: transform 0.06s ease-out;
+  transform-style: preserve-3d;
+  transition: transform 0.07s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.7);
+  z-index: 2;
 }
 
-.joystick-shaft.tilt-up { transform: rotateX(24deg) translateY(-3px) scale(0.96); }
-.joystick-shaft.tilt-down { transform: rotateX(-24deg) translateY(3px) scale(1.04); }
-.joystick-shaft.tilt-left { transform: rotateZ(-22deg) translateX(-4px); }
-.joystick-shaft.tilt-right { transform: rotateZ(22deg) translateX(4px); }
-.joystick-shaft.tilt-up-left { transform: rotateZ(-16deg) rotateX(16deg) translate(-3px, -2px); }
-.joystick-shaft.tilt-up-right { transform: rotateZ(16deg) rotateX(16deg) translate(3px, -2px); }
-.joystick-shaft.tilt-down-left { transform: rotateZ(-16deg) rotateX(-16deg) translate(-3px, 2px); }
-.joystick-shaft.tilt-down-right { transform: rotateZ(16deg) rotateX(-16deg) translate(3px, 2px); }
+/* FÍSICA DE INCLINAÇÃO (TILT REAL 3D COM PERSPECTIVA E DESLOCAMENTO) */
+.joystick-shaft.tilt-up {
+  transform: rotateX(28deg) translateY(-4px) scale(0.94);
+}
+.joystick-shaft.tilt-down {
+  transform: rotateX(-28deg) translateY(4px) scale(1.06);
+}
+.joystick-shaft.tilt-left {
+  transform: rotateZ(-26deg) rotateY(-12deg) translateX(-5px);
+}
+.joystick-shaft.tilt-right {
+  transform: rotateZ(26deg) rotateY(12deg) translateX(5px);
+}
+.joystick-shaft.tilt-up-left {
+  transform: rotateZ(-20deg) rotateX(20deg) translate(-4px, -3px);
+}
+.joystick-shaft.tilt-up-right {
+  transform: rotateZ(20deg) rotateX(20deg) translate(4px, -3px);
+}
+.joystick-shaft.tilt-down-left {
+  transform: rotateZ(-20deg) rotateX(-20deg) translate(-4px, 3px);
+}
+.joystick-shaft.tilt-down-right {
+  transform: rotateZ(20deg) rotateX(-20deg) translate(4px, 3px);
+}
 
 .joystick-ball {
   position: absolute;
-  top: -10px;
-  left: -7px;
-  width: 20px;
-  height: 20px;
+  top: -12px;
+  left: -8px;
+  width: 23px;
+  height: 23px;
   border-radius: 50%;
-  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.8), inset 2px 2px 4px rgba(255,255,255,0.7);
-  transition: box-shadow 0.06s ease;
+  box-shadow: 
+    inset -3px -3px 6px rgba(0, 0, 0, 0.85),
+    inset 3px 3px 6px rgba(255, 255, 255, 0.75),
+    0 4px 8px rgba(0, 0, 0, 0.7);
+  transition: transform 0.07s ease-out, box-shadow 0.07s ease-out;
 }
 
-.red-ball { background: radial-gradient(circle at 35% 35%, #ff3344, #990011); }
-.blue-ball { background: radial-gradient(circle at 35% 35%, #00d4ff, #004499); }
+.red-ball {
+  background: radial-gradient(circle at 35% 30%, #ff5566 0%, #ff1133 45%, #990011 85%, #55000a 100%);
+  filter: drop-shadow(0 0 5px rgba(255, 0, 50, 0.4));
+}
+
+.blue-ball {
+  background: radial-gradient(circle at 35% 30%, #66e5ff 0%, #00bbee 45%, #0044aa 85%, #001f55 100%);
+  filter: drop-shadow(0 0 5px rgba(0, 200, 255, 0.4));
+}
+
+/* Quando o analógico inclina, o brilho da bola muda de ângulo levemente */
+.tilt-up .joystick-ball { transform: translateY(-2px); }
+.tilt-down .joystick-ball { transform: translateY(2px); }
+.tilt-left .joystick-ball { transform: translateX(-2px); }
+.tilt-right .joystick-ball { transform: translateX(2px); }
 
 /* BOTÕES DE FLIPERAMA 3D */
 .arcade-button-cluster {
