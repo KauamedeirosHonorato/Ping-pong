@@ -382,7 +382,7 @@
         <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
           <button id="btn-mk2-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#ff0033; color:#fff;">◀ MENU DO FLIPERAMA</button>
         </div>
-        <iframe id="mk2-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
+        <iframe id="mk2-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; fullscreen; cross-origin-isolated"></iframe>
       </div>
     </div>
 
@@ -392,7 +392,7 @@
         <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
           <button id="btn-mario-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#39ff14; color:#000; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
         </div>
-        <iframe id="mario-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
+        <iframe id="mario-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; fullscreen; cross-origin-isolated"></iframe>
       </div>
     </div>
 
@@ -402,7 +402,7 @@
         <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
           <button id="btn-umk3-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#ff0055; color:#fff; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
         </div>
-        <iframe id="umk3-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
+        <iframe id="umk3-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; fullscreen; cross-origin-isolated"></iframe>
       </div>
     </div>
 
@@ -480,7 +480,6 @@
   <script src="audio.js"></script>
   <script src="network.js"></script>
   <script src="game.js"></script>
-  <script src="fighting.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedPlayer = '1p';
@@ -558,8 +557,8 @@
           if (menu) menu.classList.remove('active');
           if (umk3Screen) umk3Screen.classList.add('active');
           if (iframe) {
-            // Emulador Oficial Arcade / SNES Ultimate Mortal Kombat 3
-            iframe.src = "https://emulatoronline.com/snes-games/ultimate-mortal-kombat-3/";
+            // Emulador Oficial Ultimate Mortal Kombat 3 (Versus & 2v2 Tag Team)
+            iframe.src = "https://www.retrogames.cc/embed/41728-ultimate-mortal-kombat-3-usa.html";
           }
         });
       }
