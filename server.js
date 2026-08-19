@@ -80,18 +80,20 @@ function broadcastToRoom(roomId, message, senderWs = null) {
   const room = rooms.get(roomId);
   if (!room) return;
   const msgStr = typeof message === 'string' ? message : JSON.stringify(message);
-  
-  if (room.hostWs && room.hostWs.readyState === WebSocket.OPEN && room.hostWs !== senderWs) {
-    room.hostWs.send(msgStr);
-  }
-  if (room.guestWs && room.guestWs.readyState === WebSocket.OPEN && room.guestWs !== senderWs) {
-    room.guestWs.send(msgStr);
+
+  const clients = room.clients || [room.hostWs, room.guestWs, room.p3Ws, room.p4Ws].filter(Boolean);
+  for (const client of clients) {
+    if (client && client.readyState === WebSocket.OPEN && client !== senderWs) {
+      if (client.bufferedAmount < 65536) {
+        client.send(msgStr);
+      }
+    }
   }
 }
 
 wss.on('connection', (ws) => {
   let currentRoomId = null;
-  let playerRole = null;
+  let playerRole = null; // 'host' (p1), 'guest' (p2), 'p3', 'p4'
 
   ws.on('message', (raw) => {
     try {
@@ -102,22 +104,29 @@ wss.on('connection', (ws) => {
           const roomId = generateRoomCode();
           currentRoomId = roomId;
           playerRole = 'host';
+          const maxPlayers = data.maxPlayers || (data.modeType === '4p' || data.gameType === '4p_lan' ? 4 : 2);
           
           rooms.set(roomId, {
             id: roomId,
+            maxPlayers,
             hostWs: ws,
             guestWs: null,
-            hostReady: false,
-            guestReady: false,
-            gameMode: data.gameMode || 'action', // Default para ACTION se não especificado!
-            actionSubmode: data.actionSubmode || 'random'
+            p3Ws: null,
+            p4Ws: null,
+            clients: [ws],
+            playerRoles: new Map([[ws, 'host']]),
+            readyMap: new Map([['host', false]]),
+            gameMode: data.gameMode || 'action',
+            actionSubmode: data.actionSubmode || 'random',
+            is4P: maxPlayers === 4
           });
 
           ws.send(JSON.stringify({
             type: 'ROOM_CREATED',
             roomId,
             role: 'host',
-            gameMode: data.gameMode || 'action'
+            gameMode: data.gameMode || 'action',
+            maxPlayers
           }));
           break;
         }
@@ -134,32 +143,49 @@ wss.on('connection', (ws) => {
             return;
           }
 
-          if (room.guestWs && room.guestWs.readyState === WebSocket.OPEN) {
+          // Atribuir slot disponível
+          let assignedRole = null;
+          if (!room.guestWs || room.guestWs.readyState !== WebSocket.OPEN) {
+            assignedRole = 'guest'; // P2
+            room.guestWs = ws;
+          } else if (room.is4P && (!room.p3Ws || room.p3Ws.readyState !== WebSocket.OPEN)) {
+            assignedRole = 'p3'; // P3 (Equipe P1)
+            room.p3Ws = ws;
+          } else if (room.is4P && (!room.p4Ws || room.p4Ws.readyState !== WebSocket.OPEN)) {
+            assignedRole = 'p4'; // P4 (Equipe P2)
+            room.p4Ws = ws;
+          } else {
             ws.send(JSON.stringify({
               type: 'ERROR',
-              message: 'Esta sala já está cheia (2/2 jogadores).'
+              message: `Esta sala já está cheia (${room.maxPlayers}/${room.maxPlayers} jogadores).`
             }));
             return;
           }
 
           currentRoomId = requestedId;
-          playerRole = 'guest';
-          room.guestWs = ws;
+          playerRole = assignedRole;
+          if (!room.clients.includes(ws)) room.clients.push(ws);
+          room.playerRoles.set(ws, assignedRole);
+          room.readyMap.set(assignedRole, false);
 
           ws.send(JSON.stringify({
             type: 'ROOM_JOINED',
             roomId: currentRoomId,
-            role: 'guest',
+            role: assignedRole,
             gameMode: room.gameMode,
-            actionSubmode: room.actionSubmode
+            actionSubmode: room.actionSubmode,
+            is4P: room.is4P,
+            maxPlayers: room.maxPlayers
           }));
 
-          if (room.hostWs && room.hostWs.readyState === WebSocket.OPEN) {
-            room.hostWs.send(JSON.stringify({
-              type: 'OPPONENT_JOINED',
-              roomId: currentRoomId
-            }));
-          }
+          // Notificar demais participantes
+          broadcastToRoom(currentRoomId, {
+            type: 'OPPONENT_JOINED',
+            roomId: currentRoomId,
+            role: assignedRole,
+            playerCount: room.clients.filter(c => c && c.readyState === WebSocket.OPEN).length,
+            maxPlayers: room.maxPlayers
+          }, ws);
           break;
         }
 
@@ -167,20 +193,37 @@ wss.on('connection', (ws) => {
           const room = rooms.get(currentRoomId);
           if (!room) return;
           
-          if (playerRole === 'host') room.hostReady = true;
-          if (playerRole === 'guest') room.guestReady = true;
+          room.readyMap.set(playerRole, true);
 
-          broadcastToRoom(currentRoomId, {
+          const readyStatusObj = {
             type: 'READY_STATUS',
-            hostReady: room.hostReady,
-            guestReady: room.guestReady
-          });
+            readyMap: Object.fromEntries(room.readyMap),
+            hostReady: !!room.readyMap.get('host'),
+            guestReady: !!room.readyMap.get('guest'),
+            p3Ready: !!room.readyMap.get('p3'),
+            p4Ready: !!room.readyMap.get('p4')
+          };
 
-          if (room.hostReady && room.guestReady) {
+          broadcastToRoom(currentRoomId, readyStatusObj);
+
+          // Verificar se todos os players conectados estão prontos
+          const activePlayers = [];
+          if (room.hostWs && room.hostWs.readyState === WebSocket.OPEN) activePlayers.push('host');
+          if (room.guestWs && room.guestWs.readyState === WebSocket.OPEN) activePlayers.push('guest');
+          if (room.is4P) {
+            if (room.p3Ws && room.p3Ws.readyState === WebSocket.OPEN) activePlayers.push('p3');
+            if (room.p4Ws && room.p4Ws.readyState === WebSocket.OPEN) activePlayers.push('p4');
+          }
+
+          const minPlayers = room.is4P ? 4 : 2;
+          const allReady = activePlayers.length >= minPlayers && activePlayers.every(r => room.readyMap.get(r) === true);
+
+          if (allReady) {
             broadcastToRoom(currentRoomId, {
               type: 'MATCH_START',
               gameMode: room.gameMode,
-              actionSubmode: room.actionSubmode
+              actionSubmode: room.actionSubmode,
+              is4P: room.is4P
             });
           }
           break;
@@ -202,7 +245,9 @@ wss.on('connection', (ws) => {
           if (currentRoomId && playerRole === 'host') {
             broadcastToRoom(currentRoomId, {
               type: 'SYNC_GAME_STATE',
-              state: data.state
+              state: data.state,
+              d: data.d,
+              t: data.t || Date.now()
             }, ws);
           }
           break;
@@ -214,7 +259,8 @@ wss.on('connection', (ws) => {
               type: 'PADDLE_MOVE',
               role: playerRole,
               y: data.y,
-              vy: data.vy
+              vy: data.vy,
+              t: data.t || Date.now()
             }, ws);
           }
           break;
@@ -248,8 +294,9 @@ wss.on('connection', (ws) => {
           if (currentRoomId) {
             const room = rooms.get(currentRoomId);
             if (room) {
-              room.hostReady = false;
-              room.guestReady = false;
+              for (let key of room.readyMap.keys()) {
+                room.readyMap.set(key, false);
+              }
               broadcastToRoom(currentRoomId, {
                 type: 'REMATCH_REQUESTED',
                 by: playerRole
@@ -263,7 +310,8 @@ wss.on('connection', (ws) => {
           if (currentRoomId && playerRole === 'host') {
             broadcastToRoom(currentRoomId, {
               type: 'RACE_SYNC',
-              state: data.state
+              state: data.state,
+              t: data.t || Date.now()
             }, ws);
           }
           break;
@@ -318,22 +366,26 @@ wss.on('connection', (ws) => {
     if (currentRoomId && rooms.has(currentRoomId)) {
       const room = rooms.get(currentRoomId);
       if (playerRole === 'host') {
-        if (room.guestWs && room.guestWs.readyState === WebSocket.OPEN) {
-          room.guestWs.send(JSON.stringify({
-            type: 'OPPONENT_DISCONNECTED',
-            message: 'O anfitrião saiu da sala.'
-          }));
-        }
+        broadcastToRoom(currentRoomId, {
+          type: 'OPPONENT_DISCONNECTED',
+          message: 'O anfitrião encerrou a sala.',
+          role: 'host'
+        }, ws);
         rooms.delete(currentRoomId);
-      } else if (playerRole === 'guest') {
-        room.guestWs = null;
-        room.guestReady = false;
-        if (room.hostWs && room.hostWs.readyState === WebSocket.OPEN) {
-          room.hostWs.send(JSON.stringify({
-            type: 'OPPONENT_DISCONNECTED',
-            message: 'O oponente desconectou.'
-          }));
-        }
+      } else {
+        if (room.playerRoles) room.playerRoles.delete(ws);
+        if (room.readyMap) room.readyMap.delete(playerRole);
+        if (room.clients) room.clients = room.clients.filter(c => c !== ws);
+
+        if (playerRole === 'guest') room.guestWs = null;
+        if (playerRole === 'p3') room.p3Ws = null;
+        if (playerRole === 'p4') room.p4Ws = null;
+
+        broadcastToRoom(currentRoomId, {
+          type: 'OPPONENT_DISCONNECTED',
+          message: `Um jogador (${playerRole ? playerRole.toUpperCase() : 'desconhecido'}) desconectou.`,
+          role: playerRole
+        }, ws);
       }
     }
   });

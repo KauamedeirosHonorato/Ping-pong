@@ -1,4 +1,4 @@
-// RETRO PING PONG - Ultra Polish Edition (14 Action Modes, Smash & Spin Physics, Synthwave VFX)
+// RETRO PING PONG - Ultra Polish Edition (36 Action Modes, Smash & Spin Physics, Synthwave VFX)
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
@@ -251,6 +251,20 @@ class RetroPingPong {
     this.screenShake = 0;
     this.gridOffset = 0;
     this.floatTexts = [];
+
+    // IA Estado & Reação Humana Gradual
+    this.aiReactionTimer = 0;
+    this.aiTargetY = CANVAS_HEIGHT / 2;
+    this.aiCurrentTargetY = CANVAS_HEIGHT / 2;
+    this.aiLastBallVx = 0;
+    this.aiReactionDelay = 0;
+    this.aiDodgeTimer = 0;
+    this.aiDodgeOffset = 0;
+
+    // Buffer Guard & Interpolação Multiplayer 60FPS
+    this.netStateBuffer = [];
+    this.netInterpDelay = 50; // 50ms buffer guard para suavizar jitter de rede sem atraso perceptível
+    this.lastNetSyncTs = 0;
 
     // Jogadores / Raquetes com Física de Força, Spin & Smash
     this.p1 = {
@@ -545,20 +559,28 @@ class RetroPingPong {
       document.getElementById('lan-ready-btn').style.display = 'inline-block';
     };
 
-    net.onOpponentJoined = () => {
-      document.getElementById('lan-status-msg').innerText = 'Oponente conectado! Clique em ESTOU PRONTO!';
+    net.onOpponentJoined = (data) => {
+      const msg = data && data.playerCount ? `Jogador conectado (${data.playerCount}/${data.maxPlayers || 2})! Clique em ESTOU PRONTO!` : 'Oponente conectado! Clique em ESTOU PRONTO!';
+      document.getElementById('lan-status-msg').innerText = msg;
       document.getElementById('lan-ready-btn').style.display = 'inline-block';
     };
 
     net.onReadyStatus = (status) => {
-      const p1Status = status.hostReady ? '✅ Host Pronto' : '⏳ Host esperando';
-      const p2Status = status.guestReady ? '✅ Guest Pronto' : '⏳ Guest esperando';
-      document.getElementById('lan-status-msg').innerText = `${p1Status} | ${p2Status}`;
+      if (status.readyMap) {
+        const statuses = Object.entries(status.readyMap).map(([role, isReady]) => {
+          return `${isReady ? '✅' : '⏳'} ${role.toUpperCase()}`;
+        });
+        document.getElementById('lan-status-msg').innerText = statuses.join(' | ');
+      } else {
+        const p1Status = status.hostReady ? '✅ Host Pronto' : '⏳ Host esperando';
+        const p2Status = status.guestReady ? '✅ Guest Pronto' : '⏳ Guest esperando';
+        document.getElementById('lan-status-msg').innerText = `${p1Status} | ${p2Status}`;
+      }
     };
 
     net.onMatchStart = (data) => {
       document.getElementById('lan-modal').classList.remove('active');
-      this.startLanMatch(data.gameMode || 'action', data.actionSubmode);
+      this.startLanMatch(data.gameMode || 'action', data.actionSubmode, data.is4P);
     };
 
     net.onRoundStart = (data) => {
@@ -584,46 +606,65 @@ class RetroPingPong {
       this.state = 'countdown';
       this.countdown = 3;
       this.countdownTimer = Date.now();
+      this.netStateBuffer = [];
       this.updateHUD();
       window.retroAudio.playCountdown(false);
     };
 
     net.onOpponentMove = (data) => {
-      if (data.role === 'host') this.p1.y = data.y;
-      if (data.role === 'guest') this.p2.y = data.y;
+      const myRole = net.role;
+      if (data.role === 'host' && myRole !== 'host') {
+        this.p1.targetY = data.y;
+        this.p1.vy = data.vy || 0;
+      } else if (data.role === 'guest' && myRole !== 'guest') {
+        this.p2.targetY = data.y;
+        this.p2.vy = data.vy || 0;
+      } else if (data.role === 'p3' && myRole !== 'p3') {
+        this.p3.targetY = data.y;
+        this.p3.vy = data.vy || 0;
+      } else if (data.role === 'p4' && myRole !== 'p4') {
+        this.p4.targetY = data.y;
+        this.p4.vy = data.vy || 0;
+      }
     };
 
     net.onBlasterFired = (data) => {
       if (data.role === 'guest') this.fireLaser('p2', data.y);
       if (data.role === 'host') this.fireLaser('p1', data.y);
+      if (data.role === 'p3') this.fireLaser('p1', data.y);
+      if (data.role === 'p4') this.fireLaser('p2', data.y);
     };
 
-    net.onStateSync = (state) => {
-      if (net.role === 'guest') {
-        this.p1.y = state.p1Y;
-        if (state.balls && Array.isArray(state.balls)) {
-          this.balls = state.balls.map((b, idx) => {
-            const existing = (this.balls && this.balls[idx]) ? this.balls[idx] : {};
-            const trail = existing.trail || [];
-            trail.push({ x: b.x, y: b.y, fire: b.fireLevel, isSmash: b.isSmash, hue: b.hue });
-            if (trail.length > 14) trail.shift();
-            return {
-              x: b.x,
-              y: b.y,
-              vx: b.vx || 0,
-              vy: b.vy || 0,
-              spin: b.spin || 0,
-              radius: b.radius || this.defaultBallRadius,
-              isSmash: !!b.isSmash,
-              fireLevel: b.fireLevel || 0,
-              hue: b.hue || 0,
-              trail,
-              rotation: (existing.rotation || 0) + 0.1
-            };
-          });
+    net.onStateSync = (state, timestamp, isDelta) => {
+      if (net.role !== 'host') {
+        const ts = timestamp || Date.now();
+        this.netStateBuffer.push({ t: ts, state });
+        
+        // Manter no máximo 30 snapshots (~1s a 30Hz)
+        if (this.netStateBuffer.length > 30) {
+          this.netStateBuffer.shift();
         }
-        this.score1 = state.score1;
-        this.score2 = state.score2;
+
+        // Se o buffer for novo ou vazio, inicializa imediatamente
+        if (this.balls.length === 0 && state.balls) {
+          this.balls = state.balls.map(b => ({
+            x: b.x,
+            y: b.y,
+            vx: b.vx || 0,
+            vy: b.vy || 0,
+            spin: b.spin || 0,
+            radius: b.radius || this.defaultBallRadius,
+            isSmash: !!b.isSmash,
+            fireLevel: b.fireLevel || 0,
+            hue: b.hue || 0,
+            trail: [],
+            rotation: 0
+          }));
+        }
+
+        // Metadados não físicos instantâneos
+        if (state.score1 !== undefined) this.score1 = state.score1;
+        if (state.score2 !== undefined) this.score2 = state.score2;
         if (state.bumpers) this.bumpers = state.bumpers;
         if (state.kitty !== undefined) this.kitty = state.kitty;
         if (state.secretWall !== undefined) this.secretWall = state.secretWall;
@@ -634,10 +675,14 @@ class RetroPingPong {
         if (state.shields2) this.shields2 = state.shields2;
         if (state.blackHole) this.blackHole = state.blackHole;
         if (state.magnets) this.magnets = state.magnets;
-        this.p1.hitsTaken = state.p1Hits || 0;
-        this.p2.hitsTaken = state.p2Hits || 0;
-        this.p1.powerMeter = state.p1Power || 0;
-        this.p2.powerMeter = state.p2Power || 0;
+        if (state.p1Hits !== undefined) this.p1.hitsTaken = state.p1Hits;
+        if (state.p2Hits !== undefined) this.p2.hitsTaken = state.p2Hits;
+        if (state.p3Hits !== undefined) this.p3.hitsTaken = state.p3Hits;
+        if (state.p4Hits !== undefined) this.p4.hitsTaken = state.p4Hits;
+        if (state.p1Power !== undefined) this.p1.powerMeter = state.p1Power;
+        if (state.p2Power !== undefined) this.p2.powerMeter = state.p2Power;
+        if (state.p3Power !== undefined) this.p3.powerMeter = state.p3Power;
+        if (state.p4Power !== undefined) this.p4.powerMeter = state.p4Power;
         this.updateHUD();
       }
     };
@@ -653,7 +698,7 @@ class RetroPingPong {
     };
 
     net.onOpponentLeft = (msg) => {
-      alert(msg || 'Oponente desconectou.');
+      alert(msg || 'Um jogador desconectou da partida.');
       this.returnToMenu();
     };
 
@@ -695,17 +740,26 @@ class RetroPingPong {
     this.startRound();
   }
 
-  startLanMatch(mode = 'action', actionSubmode) {
-    this.gameType = '2p_lan';
+  startLanMatch(mode = 'action', actionSubmode, is4P = false) {
+    this.gameType = is4P ? '4p_lan' : '2p_lan';
     this.gameMode = mode;
     this.score1 = 0;
     this.score2 = 0;
     this.currentActionIndex = 0;
     this.shuffleActionModes();
 
-    const isHost = window.networkManager.role === 'host';
-    this.p1.name = isHost ? 'VOCÊ (P1)' : 'OPONENTE (P1)';
-    this.p2.name = isHost ? 'OPONENTE (P2)' : 'VOCÊ (P2)';
+    const role = window.networkManager.role;
+    const isHost = role === 'host';
+
+    if (this.gameType === '4p_lan') {
+      this.p1.name = role === 'host' ? 'VOCÊ (P1)' : 'P1 (TIME AZUL)';
+      this.p3.name = role === 'p3' ? 'VOCÊ (P3)' : 'P3 (TIME AZUL)';
+      this.p2.name = role === 'guest' ? 'VOCÊ (P2)' : 'P2 (TIME ROSA)';
+      this.p4.name = role === 'p4' ? 'VOCÊ (P4)' : 'P4 (TIME ROSA)';
+    } else {
+      this.p1.name = isHost ? 'VOCÊ (P1)' : 'OPONENTE (P1)';
+      this.p2.name = isHost ? 'OPONENTE (P2)' : 'VOCÊ (P2)';
+    }
 
     document.getElementById('main-menu').classList.remove('active');
     document.getElementById('game-screen').classList.add('active');
@@ -1168,60 +1222,335 @@ class RetroPingPong {
       window.networkManager.sendPaddleMove(this.p2.y, this.p2.vy);
     } else if (this.gameType === '1p') {
       this.updateAI();
+    } else if (this.gameType === '4p_local') {
+      // Caso 4P local tenha bots não controlados por humanos, mantém suporte para IA em duplas
+      this.update2v2AI();
     }
   }
 
-  updateAI() {
-    if (this.balls.length === 0) return;
-    let targetBall = this.balls[0];
-    for (let b of this.balls) {
-      if (b.vx > 0 && b.x > targetBall.x) targetBall = b;
+  // Previsão de trajetória vetorial com reflexão em paredes e consideração de obstáculos
+  predictBallTrajectory(ball, targetX, maxBounces = 4) {
+    if (!ball || Math.abs(ball.vx) < 0.001) return ball ? ball.y : CANVAS_HEIGHT / 2;
+
+    let simX = ball.x;
+    let simY = ball.y;
+    let simVx = ball.vx;
+    let simVy = ball.vy;
+    let simSpin = ball.spin || 0;
+    const radius = ball.radius || 8;
+    const topLimit = radius + 6;
+    const bottomLimit = CANVAS_HEIGHT - radius - 6;
+
+    const movingTowardsTarget = (targetX > simX && simVx > 0) || (targetX < simX && simVx < 0);
+    if (!movingTowardsTarget) {
+      return CANVAS_HEIGHT / 2;
     }
 
-    let speed = 4.8;
-    let errorMargin = 16;
-    let targetY = targetBall.y;
+    let bounces = 0;
+    const maxSteps = 300;
+    let steps = 0;
+
+    while (steps < maxSteps && bounces < maxBounces) {
+      steps++;
+      
+      // Aplicar efeito de spin se houver
+      if (simSpin !== 0) {
+        simVy += simSpin;
+        simSpin *= 0.98;
+      }
+
+      simX += simVx;
+      simY += simVy;
+
+      // Colisão com teto e chão (reflexão vetorial perfeita)
+      if (simY <= topLimit) {
+        simY = topLimit;
+        simVy = -simVy;
+        bounces++;
+      } else if (simY >= bottomLimit) {
+        simY = bottomLimit;
+        simVy = -simVy;
+        bounces++;
+      }
+
+      // Desvio/interação com Parede Secreta se ativa
+      if (this.currentAction && this.currentAction.id === 'secret_wall' && this.secretWall) {
+        const sw = this.secretWall;
+        if (
+          simX + radius >= sw.x &&
+          simX - radius <= sw.x + sw.width &&
+          simY + radius >= sw.y &&
+          simY - radius <= sw.y + sw.height
+        ) {
+          simVx = -simVx;
+          bounces++;
+        }
+      }
+
+      // Chegou no plano X do alvo
+      if ((simVx > 0 && simX >= targetX) || (simVx < 0 && simX <= targetX)) {
+        return Math.max(20, Math.min(CANVAS_HEIGHT - 20, simY));
+      }
+    }
+
+    return Math.max(20, Math.min(CANVAS_HEIGHT - 20, simY));
+  }
+
+  // Previsão e evasão de obstáculos críticos (gatinho, buraco negro, torretas)
+  getAIObstacleAvoidanceOffset(paddleY, paddleHeight) {
+    let offset = 0;
+    const act = this.currentAction ? this.currentAction.id : null;
+    const paddleCenter = paddleY + paddleHeight / 2;
+
+    // 1. Modo Kitty: Não acertar o gatinho se a bola estiver próxima a ele
+    if (act === 'kitty' && this.kitty) {
+      const k = this.kitty;
+      // Se o gatinho estiver na metade da quadra da CPU e na mesma faixa Y
+      if (k.x > CANVAS_WIDTH * 0.45 && Math.abs(k.y - paddleCenter) < paddleHeight * 0.9) {
+        offset += k.y < paddleCenter ? 35 : -35;
+      }
+    }
+
+    // 2. Modo Torretas / Lasers: evitar alinhamento direto quando estiverem prontas para atirar
+    if (act === 'laser_turrets' && this.turrets && this.turrets.length > 0) {
+      this.turrets.forEach(t => {
+        if (t.timer < 15 && Math.abs(t.y - paddleCenter) < 40) {
+          offset += t.y < paddleCenter ? 25 : -25;
+        }
+      });
+    }
+
+    return offset;
+  }
+
+  // Lógica de Evasão e Disparo Tático no modo Blaster
+  updateBlasterTactics(paddle, isP2 = true) {
+    if (!this.currentAction || this.currentAction.id !== 'blaster') return 0;
+
+    const opponent = isP2 ? this.p1 : this.p2;
+    let dodgeOffset = 0;
+
+    // 1. Evasão de Lasers Inimigos que se aproximam
+    const incomingLasers = this.lasers.filter(l => (isP2 ? l.owner === 'p1' && l.vx > 0 : l.owner === 'p2' && l.vx < 0));
+    
+    for (let laser of incomingLasers) {
+      const distToPaddle = isP2 ? paddle.x - laser.x : laser.x - (paddle.x + paddle.width);
+      if (distToPaddle > 0 && distToPaddle < 260) {
+        // Laser em trajetória de colisão com a raquete
+        const paddleTop = paddle.y - 10;
+        const paddleBottom = paddle.y + paddle.height + 10;
+        if (laser.y >= paddleTop && laser.y <= paddleBottom) {
+          // Desviar inteligentemente para o lado com mais espaço livre
+          const spaceAbove = paddle.y;
+          const spaceBelow = CANVAS_HEIGHT - (paddle.y + paddle.height);
+          if (spaceAbove > spaceBelow) {
+            dodgeOffset = -paddle.height * 0.75;
+          } else {
+            dodgeOffset = paddle.height * 0.75;
+          }
+          break;
+        }
+      }
+    }
+
+    // 2. Disparo Tático no Momento Ideal
+    if (paddle.laserCooldown <= 0) {
+      const paddleCenter = paddle.y + paddle.height / 2;
+      const oppCenter = opponent.y + opponent.height / 2;
+      const isAligned = Math.abs(paddleCenter - oppCenter) < (opponent.height * 0.7);
+
+      // Probabilidade de tiro varia conforme a habilidade
+      let shootChance = 0.08;
+      if (this.aiSkill === 'veteran') shootChance = 0.20;
+      if (this.aiSkill === 'ace') shootChance = 0.40;
+
+      // Disparar quando bem alinhado ou para forçar erro de posicionamento do oponente
+      if (isAligned && Math.random() < shootChance) {
+        this.fireLaser(isP2 ? 'p2' : 'p1');
+      } else if (!isAligned && Math.random() < (shootChance * 0.25)) {
+        // Tiro de cobertura/pressão psicológica
+        this.fireLaser(isP2 ? 'p2' : 'p1');
+      }
+    }
+
+    return dodgeOffset;
+  }
+
+  // Sistema Principal de IA dos Bots CPU (Rookie, Veteran, Ace)
+  updateAI() {
+    if (this.balls.length === 0) return;
+
+    // Seleção de bola prioritária (mais perigosa vindo na direção da CPU)
+    let targetBall = this.balls[0];
+    let highestThreat = -9999;
+
+    for (let b of this.balls) {
+      let threat = 0;
+      if (b.vx > 0) {
+        threat = (b.x / CANVAS_WIDTH) * 100 + (b.speed || 5) * 10;
+      } else {
+        threat = -b.x;
+      }
+      if (threat > highestThreat) {
+        highestThreat = threat;
+        targetBall = b;
+      }
+    }
+
+    const now = Date.now();
+    const ballHeadingToAI = targetBall.vx > 0;
+
+    // Atualização de Reação Humana Gradual com base no nível
+    if (this.aiReactionTimer === 0 || now >= this.aiReactionTimer) {
+      let reactionInterval = 100;
+      let humanNoise = 0;
+      let calculatedTargetY = targetBall.y;
+
+      if (this.aiSkill === 'rookie') {
+        // Rookie: Tempo de reação lento (~350ms-500ms), erro humano visível, oscilação orgânica
+        reactionInterval = 320 + Math.random() * 180;
+        humanNoise = (Math.random() - 0.5) * 45 + Math.sin(now * 0.003) * 25;
+        
+        if (ballHeadingToAI) {
+          calculatedTargetY = targetBall.y + humanNoise;
+        } else {
+          // Descanso próximo ao centro com lentidão
+          calculatedTargetY = CANVAS_HEIGHT / 2 + Math.sin(now * 0.002) * 60;
+        }
+      } else if (this.aiSkill === 'veteran') {
+        // Veteran: Reação moderada (~160ms-240ms), previsão linear com compensação básica de quique
+        reactionInterval = 160 + Math.random() * 80;
+        humanNoise = (Math.random() - 0.5) * 16;
+
+        if (ballHeadingToAI) {
+          const time = (this.p2.x - targetBall.x) / (targetBall.vx || 1);
+          let simplePredict = targetBall.y + targetBall.vy * Math.min(time, 45);
+          // Quique simples nas paredes
+          if (simplePredict < 20 || simplePredict > CANVAS_HEIGHT - 20) {
+            simplePredict = this.predictBallTrajectory(targetBall, this.p2.x, 1);
+          }
+          calculatedTargetY = simplePredict + humanNoise;
+        } else {
+          calculatedTargetY = CANVAS_HEIGHT / 2 + Math.sin(now * 0.002) * 30;
+        }
+      } else if (this.aiSkill === 'ace') {
+        // Ace: Reação esportiva de elite (~60ms-110ms), previsão vetorial avançada com reflexões completas
+        reactionInterval = 65 + Math.random() * 45;
+        // Variação orgânica humana sutil (estilo de efeito / slice)
+        const organicSlice = (targetBall.y > CANVAS_HEIGHT / 2 ? -14 : 14) + (Math.random() - 0.5) * 8;
+
+        if (ballHeadingToAI) {
+          const preciseY = this.predictBallTrajectory(targetBall, this.p2.x, 5);
+          calculatedTargetY = preciseY + organicSlice;
+        } else {
+          // Posicionamento de guarda ativo na linha de retorno provável
+          calculatedTargetY = CANVAS_HEIGHT / 2 + (targetBall.y - CANVAS_HEIGHT / 2) * 0.35;
+        }
+      }
+
+      this.aiTargetY = calculatedTargetY;
+      this.aiReactionTimer = now + reactionInterval;
+    }
+
+    // Suavização do movimento em direção ao alvo previsto
+    let speed = 5.2;
+    let deadzone = 12;
 
     if (this.aiSkill === 'rookie') {
       speed = 4.4;
-      errorMargin = 18;
-      targetY = targetBall.y + Math.sin(Date.now() * 0.003) * 20;
+      deadzone = 16;
     } else if (this.aiSkill === 'veteran') {
-      speed = 5.8;
-      errorMargin = 10;
-      if (targetBall.vx > 0) {
-        const time = (this.p2.x - targetBall.x) / (targetBall.vx || 1);
-        targetY = targetBall.y + targetBall.vy * Math.min(time, 40);
-      }
+      speed = 6.2;
+      deadzone = 8;
     } else if (this.aiSkill === 'ace') {
-      speed = 7.2;
-      errorMargin = 4;
-      if (targetBall.vx > 0) {
-        const timeToReach = (this.p2.x - targetBall.x) / (targetBall.vx || 1);
-        let predict = targetBall.y + targetBall.vy * timeToReach;
-        while (predict < 8 || predict > CANVAS_HEIGHT - 8) {
-          if (predict < 8) predict = 16 - predict;
-          if (predict > CANVAS_HEIGHT - 8) predict = 2 * (CANVAS_HEIGHT - 8) - predict;
-        }
-        targetY = predict + (targetBall.y > CANVAS_HEIGHT / 2 ? -16 : 16);
-      }
-
-      if (this.currentAction && this.currentAction.id === 'blaster' && this.p2.laserCooldown <= 0) {
-        if (Math.abs(this.p2.y - this.p1.y) < 70 && Math.random() < 0.15) {
-          this.fireLaser('p2');
-        }
-      }
+      speed = 7.8;
+      deadzone = 4;
     }
 
+    // Integrar tática de Blaster e desvio de projéteis
+    const blasterDodge = this.updateBlasterTactics(this.p2, true);
+    
+    // Integrar desvio de obstáculos
+    const obstacleAvoid = this.getAIObstacleAvoidanceOffset(this.p2.y, this.p2.height);
+
+    let finalTargetY = this.aiTargetY + blasterDodge + obstacleAvoid;
     const paddleCenter = this.p2.y + this.p2.height / 2;
-    if (paddleCenter < targetY - errorMargin) {
+
+    if (paddleCenter < finalTargetY - deadzone) {
       this.p2.y += speed;
-    } else if (paddleCenter > targetY + errorMargin) {
+    } else if (paddleCenter > finalTargetY + deadzone) {
       this.p2.y -= speed;
     }
 
     this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
     this.p2.vy = this.p2.y - this.p2.prevY;
+  }
+
+  // Posicionamento estratégico e coordenação para suporte em duplas 2v2
+  update2v2AI() {
+    if (this.balls.length === 0) return;
+    const primaryBall = this.balls[0];
+    const isBallInP3Zone = primaryBall.vx < 0 && primaryBall.x < CANVAS_WIDTH * 0.45;
+    const isBallInP4Zone = primaryBall.vx > 0 && primaryBall.x > CANVAS_WIDTH * 0.55;
+
+    // Coordenação P1 + P3 (Time Azul - Esquerda)
+    if (this.p3) {
+      const p1Center = this.p1.y + this.p1.height / 2;
+      let p3TargetY = CANVAS_HEIGHT * 0.7; // Posição padrão de cobertura inferior
+
+      if (isBallInP3Zone) {
+        // Se a bola for para o setor do P3 ou P1 estiver cobrindo a outra zona
+        if (p1Center < CANVAS_HEIGHT / 2) {
+          p3TargetY = this.predictBallTrajectory(primaryBall, this.p3.x, 3);
+        } else {
+          // P1 está embaixo, P3 sobe para cobrir a parte superior sem colidir
+          p3TargetY = Math.min(CANVAS_HEIGHT * 0.35, this.predictBallTrajectory(primaryBall, this.p3.x, 3));
+        }
+      } else {
+        // Manter formação em dupla equilibrada (divisão de setores superior/inferior)
+        p3TargetY = p1Center < CANVAS_HEIGHT / 2 ? CANVAS_HEIGHT * 0.68 : CANVAS_HEIGHT * 0.28;
+      }
+
+      // Evitar bloquear ou sobrepor com o parceiro P1
+      if (Math.abs(p3TargetY - p1Center) < 55) {
+        p3TargetY += (p3TargetY > p1Center ? 50 : -50);
+      }
+
+      const p3Center = this.p3.y + this.p3.height / 2;
+      if (p3Center < p3TargetY - 6) this.p3.y += 5.5;
+      else if (p3Center > p3TargetY + 6) this.p3.y -= 5.5;
+
+      this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, this.p3.y));
+      this.p3.vy = this.p3.y - this.p3.prevY;
+    }
+
+    // Coordenação P2 + P4 (Time Rosa - Direita)
+    if (this.p4) {
+      const p2Center = this.p2.y + this.p2.height / 2;
+      let p4TargetY = CANVAS_HEIGHT * 0.3; // Posição padrão de cobertura superior
+
+      if (isBallInP4Zone) {
+        if (p2Center > CANVAS_HEIGHT / 2) {
+          p4TargetY = this.predictBallTrajectory(primaryBall, this.p4.x, 3);
+        } else {
+          p4TargetY = Math.max(CANVAS_HEIGHT * 0.65, this.predictBallTrajectory(primaryBall, this.p4.x, 3));
+        }
+      } else {
+        p4TargetY = p2Center > CANVAS_HEIGHT / 2 ? CANVAS_HEIGHT * 0.28 : CANVAS_HEIGHT * 0.68;
+      }
+
+      // Evitar bloquear ou sobrepor com o parceiro P2
+      if (Math.abs(p4TargetY - p2Center) < 55) {
+        p4TargetY += (p4TargetY > p2Center ? 50 : -50);
+      }
+
+      const p4Center = this.p4.y + this.p4.height / 2;
+      if (p4Center < p4TargetY - 6) this.p4.y += 5.5;
+      else if (p4Center > p4TargetY + 6) this.p4.y -= 5.5;
+
+      this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, this.p4.y));
+      this.p4.vy = this.p4.y - this.p4.prevY;
+    }
   }
 
   updatePhysics() {

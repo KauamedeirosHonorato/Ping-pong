@@ -70,13 +70,14 @@ class NetworkManager {
     }, 3000);
   }
 
-  createRoom(gameMode, actionSubmode) {
+  createRoom(gameMode, actionSubmode, maxPlayers = 2) {
     this.connect();
     const sendCreate = () => {
       this.ws.send(JSON.stringify({
         type: 'CREATE_ROOM',
         gameMode,
-        actionSubmode
+        actionSubmode,
+        maxPlayers
       }));
     };
 
@@ -111,11 +112,14 @@ class NetworkManager {
 
   sendPaddleMove(y, vy) {
     if (this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
-      this.ws.send(JSON.stringify({
-        type: 'PADDLE_MOVE',
-        y,
-        vy
-      }));
+      if (this.ws.bufferedAmount < 16384) {
+        this.ws.send(JSON.stringify({
+          type: 'PADDLE_MOVE',
+          y: Math.round(y * 10) / 10,
+          vy: Math.round((vy || 0) * 10) / 10,
+          t: Date.now()
+        }));
+      }
     }
   }
 
@@ -123,7 +127,7 @@ class NetworkManager {
     if (this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
       this.ws.send(JSON.stringify({
         type: 'FIRE_BLASTER',
-        y
+        y: Math.round(y * 10) / 10
       }));
     }
   }
@@ -139,12 +143,14 @@ class NetworkManager {
     }
   }
 
-  sendGameState(state) {
+  sendGameState(state, isDelta = false) {
     if (this.role === 'host' && this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
       if (this.ws.bufferedAmount < 16384) {
         this.ws.send(JSON.stringify({
           type: 'SYNC_GAME_STATE',
-          state
+          d: isDelta ? 1 : 0,
+          state,
+          t: Date.now()
         }));
       }
     }
@@ -175,12 +181,14 @@ class NetworkManager {
       case 'ROOM_CREATED':
         this.roomId = data.roomId;
         this.role = 'host';
-        if (this.onRoomCreated) this.onRoomCreated(data.roomId);
+        this.is4P = !!data.is4P;
+        if (this.onRoomCreated) this.onRoomCreated(data.roomId, data);
         break;
 
       case 'ROOM_JOINED':
         this.roomId = data.roomId;
-        this.role = 'guest';
+        this.role = data.role;
+        this.is4P = !!data.is4P;
         if (this.onRoomJoined) this.onRoomJoined(data);
         break;
 
@@ -209,7 +217,7 @@ class NetworkManager {
         break;
 
       case 'SYNC_GAME_STATE':
-        if (this.onStateSync) this.onStateSync(data.state);
+        if (this.onStateSync) this.onStateSync(data.state, data.t, data.d);
         break;
 
       case 'ROUND_EVENT':
@@ -221,7 +229,7 @@ class NetworkManager {
         break;
 
       case 'OPPONENT_DISCONNECTED':
-        if (this.onOpponentLeft) this.onOpponentLeft(data.message);
+        if (this.onOpponentLeft) this.onOpponentLeft(data.message, data.role);
         break;
 
       case 'ERROR':
