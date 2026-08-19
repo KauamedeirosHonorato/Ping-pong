@@ -382,6 +382,21 @@ class RetroPingPong {
           } else {
             this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, touchY - this.p2.height / 2));
           }
+        } else if (this.gameType === '4p_local') {
+          // 4 Quadrantes: Superior Esquerdo (P1), Inferior Esquerdo (P3), Superior Direito (P2), Inferior Direito (P4)
+          if (touchX < CANVAS_WIDTH / 2) {
+            if (touchY < CANVAS_HEIGHT / 2) {
+              this.p1.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p1.height - 10, touchY - this.p1.height / 2));
+            } else {
+              this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, touchY - this.p3.height / 2));
+            }
+          } else {
+            if (touchY < CANVAS_HEIGHT / 2) {
+              this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, touchY - this.p2.height / 2));
+            } else {
+              this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, touchY - this.p4.height / 2));
+            }
+          }
         } else if (this.gameType === '2p_lan') {
           if (window.networkManager.role === 'host') {
             this.p1.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p1.height - 10, touchY - this.p1.height / 2));
@@ -613,8 +628,26 @@ class RetroPingPong {
     this.countdown = 3;
     this.countdownTimer = Date.now();
 
-    this.p1.y = CANVAS_HEIGHT / 2 - this.p1.height / 2;
-    this.p2.y = CANVAS_HEIGHT / 2 - this.p2.height / 2;
+    if (this.gameType === '4p_local' || this.gameType === '4p_lan') {
+      this.p1.x = 24;
+      this.p1.y = 120;
+      this.p3.x = 85;
+      this.p3.y = 360;
+      this.p2.x = CANVAS_WIDTH - 24 - 14;
+      this.p2.y = 120;
+      this.p4.x = CANVAS_WIDTH - 85 - 14;
+      this.p4.y = 360;
+      this.p3.hitsTaken = 0;
+      this.p4.hitsTaken = 0;
+      this.p3.powerMeter = 0;
+      this.p4.powerMeter = 0;
+    } else {
+      this.p1.x = 30;
+      this.p1.y = CANVAS_HEIGHT / 2 - this.p1.height / 2;
+      this.p2.x = CANVAS_WIDTH - 30 - 14;
+      this.p2.y = CANVAS_HEIGHT / 2 - this.p2.height / 2;
+    }
+
     this.p1.hitsTaken = 0;
     this.p2.hitsTaken = 0;
     this.multiballScore1 = 0;
@@ -997,15 +1030,15 @@ class RetroPingPong {
       this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
       this.p2.vy = this.p2.y - this.p2.prevY;
 
-      const p3Up = this.keys['KeyF'] || this.keys['f'] || this.keys['F'];
-      const p3Down = this.keys['KeyV'] || this.keys['v'] || this.keys['V'];
+      const p3Up = this.keys['KeyF'] || this.keys['f'] || this.keys['F'] || this.keys['KeyA'] || this.keys['a'];
+      const p3Down = this.keys['KeyV'] || this.keys['v'] || this.keys['V'] || this.keys['KeyZ'] || this.keys['z'];
       if (p3Up) this.p3.y -= this.p3.speed;
       if (p3Down) this.p3.y += this.p3.speed;
       this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, this.p3.y));
       this.p3.vy = this.p3.y - this.p3.prevY;
 
-      const p4Up = this.keys['KeyI'] || this.keys['i'] || this.keys['I'] || this.keys['Numpad8'];
-      const p4Down = this.keys['KeyK'] || this.keys['k'] || this.keys['K'] || this.keys['Numpad2'];
+      const p4Up = this.keys['KeyI'] || this.keys['i'] || this.keys['I'] || this.keys['Numpad8'] || this.keys['KeyO'] || this.keys['o'];
+      const p4Down = this.keys['KeyK'] || this.keys['k'] || this.keys['K'] || this.keys['Numpad2'] || this.keys['KeyL'] || this.keys['l'];
       if (p4Up) this.p4.y -= this.p4.speed;
       if (p4Down) this.p4.y += this.p4.speed;
       this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, this.p4.y));
@@ -1384,16 +1417,21 @@ class RetroPingPong {
 
       const inFog = act === 'fog_zone' && Math.abs(ball.x - CANVAS_WIDTH / 2) < 110;
 
-      // Paredes Superior e Inferior (Quique Absoluto Sem Vazamento)
-      if (ball.y - ball.radius <= 0) {
-        ball.y = ball.radius;
-        ball.vy = Math.abs(ball.vy); // Garante que sempre rebate para baixo
+      // Paredes Superior e Inferior (Quique Preciso & Simétrico)
+      const topBound = 8;
+      const bottomBound = CANVAS_HEIGHT - 8;
+
+      if (ball.y - ball.radius <= topBound) {
+        ball.y = topBound + ball.radius;
+        ball.vy = Math.abs(ball.vy);
+        if (ball.spin) ball.spin *= 0.6;
         if (!inFog) window.retroAudio.playWallBounce();
         this.createHitParticles(ball.x, ball.y, '#ffffff', 8);
         this.addShockwave(ball.x, ball.y, '#00e5ff', 25);
-      } else if (ball.y + ball.radius >= CANVAS_HEIGHT) {
-        ball.y = CANVAS_HEIGHT - ball.radius;
-        ball.vy = -Math.abs(ball.vy); // Garante que sempre rebate para cima
+      } else if (ball.y + ball.radius >= bottomBound) {
+        ball.y = bottomBound - ball.radius;
+        ball.vy = -Math.abs(ball.vy);
+        if (ball.spin) ball.spin *= 0.6;
         if (!inFog) window.retroAudio.playWallBounce();
         this.createHitParticles(ball.x, ball.y, '#ffffff', 8);
         this.addShockwave(ball.x, ball.y, '#00e5ff', 25);
