@@ -52,7 +52,7 @@
       <!-- SELETOR DE JOGOS DO HUB -->
       <div class="game-hub-tabs">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 RETRO PING PONG</button>
-        <button id="tab-game-racing" class="hub-tab">🏎️ CORRIDA DO OLHO DE GATO</button>
+        <button id="tab-game-fighting" class="hub-tab">🥊 RETRO STREET FIGHTER</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -110,51 +110,61 @@
         </div>
       </div>
 
-      <!-- PAINEL CORRIDA DO OLHO DE GATO -->
-      <div id="racing-menu-panel" style="display: none;">
+      <!-- PAINEL RETRO STREET FIGHTER -->
+      <div id="fighting-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#ffea00;">🏎️ 3D SUPER KART RACING</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ff007f;">CORRIDA DO OLHO DE GATO</div>
+            <div class="retro-sub" style="color:#ffea00;">🥋 SUPER 2D ARCADE</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ff0033;">RETRO STREET FIGHTER</div>
           </div>
         </div>
 
         <div class="menu-options">
-          <!-- RACING PLAYERS ROW -->
+          <!-- FIGHT PLAYERS ROW -->
           <div class="option-row">
             <div class="option-label">MODO ▶</div>
             <div class="option-buttons">
-              <button id="btn-race-1p" class="btn-toggle selected" data-race-mode="1p">🏁 CORRIDA 1P</button>
-              <button id="btn-race-arena" class="btn-toggle" data-race-mode="arena">⚔️ ARENA ROYALE</button>
-              <button id="btn-race-2p" class="btn-toggle" data-race-mode="2p_local">👥 2P LOCAL</button>
+              <button id="btn-fight-1p" class="btn-toggle selected" data-fight-mode="1p">🥊 1P VS IA</button>
+              <button id="btn-fight-2p" class="btn-toggle" data-fight-mode="2p_local">👥 2P LOCAL</button>
             </div>
           </div>
 
-          <!-- TRACK ROW -->
+          <!-- FIGHTER 1 ROW -->
+          <div class="option-row">
+            <div class="option-label">PLAYER 1 ▶</div>
+            <div class="option-buttons">
+              <button class="btn-toggle selected" data-char1="0">🥋 RYU</button>
+              <button class="btn-toggle" data-char1="1">🥊 KEN</button>
+              <button class="btn-toggle" data-char1="2">🎖️ GUILE</button>
+              <button class="btn-toggle" data-char1="3">👹 AKUMA</button>
+            </div>
+          </div>
+
+          <!-- FIGHTER 2 / CPU ROW -->
+          <div class="option-row">
+            <div class="option-label">OPONENTE ▶</div>
+            <div class="option-buttons">
+              <button class="btn-toggle" data-char2="0">🥋 RYU</button>
+              <button class="btn-toggle selected" data-char2="1">🥊 KEN</button>
+              <button class="btn-toggle" data-char2="2">🎖️ GUILE</button>
+              <button class="btn-toggle" data-char2="3">👹 AKUMA</button>
+            </div>
+          </div>
+
+          <!-- STAGE ROW -->
           <div class="option-row">
             <div class="option-label">CENÁRIO ▶</div>
             <div class="option-buttons">
-              <button id="btn-track-0" class="btn-toggle selected" data-track="0">🌟 METRÓPOLE</button>
-              <button id="btn-track-1" class="btn-toggle" data-track="1">🌋 VULCÃO</button>
-              <button id="btn-track-2" class="btn-toggle" data-track="2">⚔️ ARENA COLISEU</button>
-            </div>
-          </div>
-
-          <!-- RACER ROW -->
-          <div class="option-row">
-            <div class="option-label">PILOTO ▶</div>
-            <div class="option-buttons">
-              <button id="btn-racer-0" class="btn-toggle selected" data-racer="0">🐱 GATO NEON</button>
-              <button id="btn-racer-1" class="btn-toggle" data-racer="1">🐯 TIGRE NITRO</button>
-              <button id="btn-racer-2" class="btn-toggle" data-racer="2">🐆 PANTERA</button>
-              <button id="btn-racer-3" class="btn-toggle" data-racer="3">🐈 BLINDADO</button>
+              <button class="btn-toggle selected" data-stage="0">🏮 DOJO</button>
+              <button class="btn-toggle" data-stage="1">⚡ TEMPLO NEON</button>
+              <button class="btn-toggle" data-stage="2">✈️ BASE AÉREA</button>
             </div>
           </div>
         </div>
 
-        <!-- RACING PLAY BUTTON -->
+        <!-- FIGHT PLAY BUTTON -->
         <div class="play-btn-wrapper">
-          <button id="btn-play-racing" class="btn-play" style="background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">INICIAR PARTIDA 🏎️⚔️</button>
+          <button id="btn-play-fight" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #ffea00); color:#000;">ROUND 1... FIGHT! 🥊🔥</button>
         </div>
       </div>
 
@@ -163,13 +173,10 @@
         <button id="btn-sound-toggle" class="btn-icon-retro" title="Som">
           <span id="sound-icon">🔊 SOM: ON</span>
         </button>
-
-        <button id="btn-fullscreen" class="btn-icon-retro" title="Tela Cheia">
-          ⛶ TELA CHEIA
+        <button id="btn-instructions" class="btn-icon-retro" title="Controles e Regras">
+          <span>📜 REGRAS</span>
         </button>
-
-        <button id="btn-instructions" class="btn-icon-retro">
-          📖 REGRAS
+        <button id="btn-fullscreen" class="btn-icon-retro" title="Tela Cheia">
         </button>
 
         <button id="btn-open-lan" class="btn-icon-retro" style="border-color:#00e5ff; color:#00e5ff;">
@@ -453,101 +460,106 @@
   <script src="audio.js"></script>
   <script src="network.js"></script>
   <script src="game.js"></script>
-  <script src="racing.js"></script>
+  <script src="fighting.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedPlayer = '1p';
       let selectedMode = 'action';
       let selectedSkill = 'rookie';
 
-      let selectedRaceMode = '1p';
-      let selectedTrack = 0;
-      let selectedRacer = 0;
+      let selectedFightMode = '1p';
+      let selectedChar1 = 0;
+      let selectedChar2 = 1;
+      let selectedStage = 0;
 
-      // Abas do Hub Arcade (Alternar entre Ping Pong e Corrida)
+      // Abas do Hub Arcade (Alternar entre Ping Pong e Street Fighter)
       const tabPingpong = document.getElementById('tab-game-pingpong');
-      const tabRacing = document.getElementById('tab-game-racing');
+      const tabFighting = document.getElementById('tab-game-fighting');
       const panelPingpong = document.getElementById('pingpong-menu-panel');
-      const panelRacing = document.getElementById('racing-menu-panel');
+      const panelFighting = document.getElementById('fighting-menu-panel');
 
       tabPingpong.addEventListener('click', () => {
         window.retroAudio.playClick();
         tabPingpong.classList.add('selected');
-        tabRacing.classList.remove('selected');
+        tabFighting.classList.remove('selected');
         panelPingpong.style.display = 'block';
-        panelRacing.style.display = 'none';
+        panelFighting.style.display = 'none';
       });
 
-      tabRacing.addEventListener('click', () => {
+      tabFighting.addEventListener('click', () => {
         window.retroAudio.playClick();
-        tabRacing.classList.add('selected');
+        tabFighting.classList.add('selected');
         tabPingpong.classList.remove('selected');
-        panelRacing.style.display = 'block';
+        panelFighting.style.display = 'block';
         panelPingpong.style.display = 'none';
       });
 
-      // Seletor de Modo Corrida
-      const raceModeBtns = document.querySelectorAll('[data-race-mode]');
-      raceModeBtns.forEach(btn => {
+      // Seletor de Modo Luta
+      const fightModeBtns = document.querySelectorAll('[data-fight-mode]');
+      fightModeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           window.retroAudio.playClick();
-          raceModeBtns.forEach(b => b.classList.remove('selected'));
+          fightModeBtns.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          selectedRaceMode = btn.getAttribute('data-race-mode');
-
-          if (selectedRaceMode === 'arena') {
-            trackBtns.forEach(b => b.classList.remove('selected'));
-            const arenaTrackBtn = document.getElementById('btn-track-2');
-            if (arenaTrackBtn) arenaTrackBtn.classList.add('selected');
-            selectedTrack = 2;
-          }
+          selectedFightMode = btn.getAttribute('data-fight-mode');
         });
       });
 
-      // Seletor de Pista Corrida
-      const trackBtns = document.querySelectorAll('[data-track]');
-      trackBtns.forEach(btn => {
+      // Seletor de Personagem 1
+      const char1Btns = document.querySelectorAll('[data-char1]');
+      char1Btns.forEach(btn => {
         btn.addEventListener('click', () => {
           window.retroAudio.playClick();
-          trackBtns.forEach(b => b.classList.remove('selected'));
+          char1Btns.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          selectedTrack = parseInt(btn.getAttribute('data-track'), 10);
+          selectedChar1 = parseInt(btn.getAttribute('data-char1'), 10);
         });
       });
 
-      // Seletor de Piloto Corrida
-      const racerBtns = document.querySelectorAll('[data-racer]');
-      racerBtns.forEach(btn => {
+      // Seletor de Personagem 2
+      const char2Btns = document.querySelectorAll('[data-char2]');
+      char2Btns.forEach(btn => {
         btn.addEventListener('click', () => {
           window.retroAudio.playClick();
-          racerBtns.forEach(b => b.classList.remove('selected'));
+          char2Btns.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          selectedRacer = parseInt(btn.getAttribute('data-racer'), 10);
+          selectedChar2 = parseInt(btn.getAttribute('data-char2'), 10);
         });
       });
 
-      // Iniciar Corrida
-      document.getElementById('btn-play-racing').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        window.catsEyeRacing.startRace(selectedRaceMode, selectedTrack, selectedRacer);
+      // Seletor de Cenário
+      const stageBtns = document.querySelectorAll('[data-stage]');
+      stageBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          stageBtns.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedStage = parseInt(btn.getAttribute('data-stage'), 10);
+        });
       });
 
-      // Voltar ao menu da corrida
-      document.getElementById('btn-race-menu').addEventListener('click', () => {
+      // Iniciar Luta
+      document.getElementById('btn-play-fight').addEventListener('click', () => {
         window.retroAudio.playClick();
-        window.catsEyeRacing.returnToMenu();
+        window.retroStreetFighter.startFight(selectedFightMode, selectedChar1, selectedChar2, selectedStage);
       });
 
-      document.getElementById('btn-race-back-menu').addEventListener('click', () => {
+      // Voltar ao menu da luta
+      document.getElementById('btn-fight-menu').addEventListener('click', () => {
         window.retroAudio.playClick();
-        window.catsEyeRacing.returnToMenu();
+        window.retroStreetFighter.returnToMenu();
       });
 
-      document.getElementById('btn-race-rematch').addEventListener('click', () => {
+      document.getElementById('btn-fight-back-menu').addEventListener('click', () => {
         window.retroAudio.playClick();
-        const over = document.getElementById('race-game-over-screen');
+        window.retroStreetFighter.returnToMenu();
+      });
+
+      document.getElementById('btn-fight-rematch').addEventListener('click', () => {
+        window.retroAudio.playClick();
+        const over = document.getElementById('fight-game-over-screen');
         if (over) over.classList.remove('active');
-        window.catsEyeRacing.startRace(selectedRaceMode, selectedTrack, selectedRacer);
+        window.retroStreetFighter.startFight(selectedFightMode, selectedChar1, selectedChar2, selectedStage);
       });
 
       // Atualiza info de rede LAN (IP e QR Code) de forma assíncrona não-bloqueante
