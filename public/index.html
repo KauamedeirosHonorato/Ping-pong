@@ -49,15 +49,15 @@
 
             <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
             <div id="main-menu" class="screen active">
-      <!-- SELETOR DE JOGOS DO HUB NATIVO (6 JOGOS CLÁSSICOS) -->
+      <!-- SELETOR DE JOGOS DO HUB NATIVO (JOGOS ORIGINAIS & CLÁSSICOS) -->
       <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:6px;">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
+        <button id="tab-game-mario" class="hub-tab" style="border-color:#39ff14; color:#ffea00; font-weight:bold;">🍄 SUPER MARIO LAND (ROM)</button>
         <button id="tab-game-invaders" class="hub-tab" style="border-color:#39ff14; color:#39ff14;">👾 SPACE INVADERS</button>
         <button id="tab-game-asteroids" class="hub-tab" style="border-color:#00f0ff; color:#00f0ff;">🚀 ASTEROIDS</button>
         <button id="tab-game-pacmaze" class="hub-tab" style="border-color:#ffea00; color:#ffea00;">🟡 PAC-MANIA</button>
         <button id="tab-game-breakout" class="hub-tab" style="border-color:#ff0055; color:#ff0055;">🧱 BRICK BREAKER</button>
         <button id="tab-game-snake" class="hub-tab" style="border-color:#39ff14; color:#ffea00;">🐍 SNAKE RETRO</button>
-        <button id="tab-game-flappy" class="hub-tab" style="border-color:#ff7700; color:#ff7700;">🐤 FLAPPY NEON</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -112,6 +112,24 @@
         <!-- PLAY BUTTON -->
         <div class="play-btn-wrapper">
           <button id="btn-play-game" class="btn-play">PLAY PING PONG 🏓</button>
+        </div>
+      </div>
+
+      <!-- PAINEL SUPER MARIO LAND (ROM ORIGINAL .GB) -->
+      <div id="mario-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#39ff14;">🍄 NINTENDO 1989 • ROM ORIGINAL</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">SUPER MARIO LAND</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,30,10,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ccffcc; line-height:1.6;">
+          <p>• <strong>ARQUIVO REAL (.GB):</strong> Rodando direto do arquivo <code style="color:#ffea00;">public/roms/Super Mario Land (World).gb</code> via WebAssembly Core!</p>
+          <p>• <strong>CONTROLES:</strong> Setas / [W A S D] = Mover | [Z / J / Espaço] = Pular | [X / K] = Correr / Fogo!</p>
+          <p>• <strong>100% ORIGINAL:</strong> Trilha chiptune, física de pulo, castelos e chefões originais da Nintendo!</p>
+        </div>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-mario-rom" class="btn-play" style="background:linear-gradient(135deg, #ff0000, #ffea00); color:#000; border:2px solid #ffea00; font-weight:bold; font-size:1rem; padding:14px 28px;">CARREGAR ROM ORIGINAL 🍄⭐</button>
         </div>
       </div>
 
@@ -413,13 +431,23 @@
       </div>
     </div>
 
-    <!-- TELA DOS JOGOS CLÁSSICOS NATIVOS DE FLIPERAMA -->
+    <!-- TELA DOS JOGOS CLÁSSICOS NATIVOS DE FLIPERAMA (CANVAS) -->
     <div id="arcade-games-screen" class="screen">
       <div class="canvas-wrapper" style="position:relative;">
         <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
           <button id="btn-arcade-games-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 12px; background:#ff0055; color:#fff; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
         </div>
         <canvas id="arcadeHubCanvas" width="800" height="600" style="width:100%; height:100%; border-radius:4px; aspect-ratio:4/3; background:#000;"></canvas>
+      </div>
+    </div>
+
+    <!-- TELA DO EMULADOR DE ROMS ORIGINAIS (SUPER MARIO LAND, MK, ETC.) -->
+    <div id="rom-emulator-screen" class="screen">
+      <div class="canvas-wrapper" style="position:relative; width:100%; height:100%;">
+        <div style="position:absolute; top:8px; left:12px; z-index:1000; pointer-events:auto;">
+          <button id="btn-rom-emulator-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 12px; background:#ff0055; color:#fff; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
+        </div>
+        <div id="emulatorjs-container" style="width:100%; height:100%; min-height:500px;"></div>
       </div>
     </div>
 
@@ -504,39 +532,39 @@
       let selectedMode = 'action';
       let selectedSkill = 'rookie';
 
-      // Abas do Hub Arcade Nativo (Ping Pong, Space Invaders, Asteroids, Pac-Mania, Brick Breaker, Snake, Flappy)
+      // Abas do Hub Arcade (Ping Pong, Super Mario Land ROM, Space Invaders, Asteroids, Pac-Mania, Brick Breaker, Snake)
       const tabPingpong = document.getElementById('tab-game-pingpong');
+      const tabMario = document.getElementById('tab-game-mario');
       const tabInvaders = document.getElementById('tab-game-invaders');
       const tabAsteroids = document.getElementById('tab-game-asteroids');
       const tabPacmaze = document.getElementById('tab-game-pacmaze');
       const tabBreakout = document.getElementById('tab-game-breakout');
       const tabSnake = document.getElementById('tab-game-snake');
-      const tabFlappy = document.getElementById('tab-game-flappy');
 
       const panelPingpong = document.getElementById('pingpong-menu-panel');
+      const panelMario = document.getElementById('mario-menu-panel');
       const panelInvaders = document.getElementById('invaders-menu-panel');
       const panelAsteroids = document.getElementById('asteroids-menu-panel');
       const panelPacmaze = document.getElementById('pacmaze-menu-panel');
       const panelBreakout = document.getElementById('breakout-menu-panel');
       const panelSnake = document.getElementById('snake-menu-panel');
-      const panelFlappy = document.getElementById('flappy-menu-panel');
 
       function hideAllPanels() {
         tabPingpong.classList.remove('selected');
+        if (tabMario) tabMario.classList.remove('selected');
         if (tabInvaders) tabInvaders.classList.remove('selected');
         if (tabAsteroids) tabAsteroids.classList.remove('selected');
         if (tabPacmaze) tabPacmaze.classList.remove('selected');
         if (tabBreakout) tabBreakout.classList.remove('selected');
         if (tabSnake) tabSnake.classList.remove('selected');
-        if (tabFlappy) tabFlappy.classList.remove('selected');
 
         panelPingpong.style.display = 'none';
+        if (panelMario) panelMario.style.display = 'none';
         if (panelInvaders) panelInvaders.style.display = 'none';
         if (panelAsteroids) panelAsteroids.style.display = 'none';
         if (panelPacmaze) panelPacmaze.style.display = 'none';
         if (panelBreakout) panelBreakout.style.display = 'none';
         if (panelSnake) panelSnake.style.display = 'none';
-        if (panelFlappy) panelFlappy.style.display = 'none';
       }
 
       tabPingpong.addEventListener('click', () => {
@@ -545,6 +573,15 @@
         tabPingpong.classList.add('selected');
         panelPingpong.style.display = 'block';
       });
+
+      if (tabMario) {
+        tabMario.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          hideAllPanels();
+          tabMario.classList.add('selected');
+          panelMario.style.display = 'block';
+        });
+      }
 
       if (tabInvaders) {
         tabInvaders.addEventListener('click', () => {
@@ -591,12 +628,47 @@
         });
       }
 
-      if (tabFlappy) {
-        tabFlappy.addEventListener('click', () => {
+      // Iniciar Super Mario Land ROM Original (.GB) via EmulatorJS WebAssembly
+      const btnPlayMarioRom = document.getElementById('btn-play-mario-rom');
+      if (btnPlayMarioRom) {
+        btnPlayMarioRom.addEventListener('click', () => {
           window.retroAudio.playClick();
-          hideAllPanels();
-          tabFlappy.classList.add('selected');
-          panelFlappy.style.display = 'block';
+          const menu = document.getElementById('main-menu');
+          const romScreen = document.getElementById('rom-emulator-screen');
+          const container = document.getElementById('emulatorjs-container');
+          if (menu) menu.classList.remove('active');
+          if (romScreen) romScreen.classList.add('active');
+
+          if (container) {
+            container.innerHTML = `
+              <div id="game-frame" style="width:100%; height:100%; min-height:520px;"></div>
+            `;
+
+            // Configuração do EmulatorJS Core Oficial Game Boy
+            window.EJS_player = '#game-frame';
+            window.EJS_core = 'gb';
+            window.EJS_gameUrl = 'roms/Super%20Mario%20Land%20(World).gb';
+            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+            window.EJS_color = '#39ff14';
+            window.EJS_startOnLoaded = true;
+
+            const script = document.createElement('script');
+            script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+            document.body.appendChild(script);
+          }
+        });
+      }
+
+      const btnRomMenu = document.getElementById('btn-rom-emulator-menu');
+      if (btnRomMenu) {
+        btnRomMenu.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const romScreen = document.getElementById('rom-emulator-screen');
+          const container = document.getElementById('emulatorjs-container');
+          if (romScreen) romScreen.classList.remove('active');
+          if (container) container.innerHTML = '';
+          if (menu) menu.classList.add('active');
         });
       }
 
