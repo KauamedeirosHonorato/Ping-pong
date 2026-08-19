@@ -123,6 +123,102 @@ const ACTION_MODES = [
     name: 'BOLA FANTASMA DIMENSIONAL', 
     desc: 'A bola oscila entre dimensões, tornando-se translúcida com clones falsos!',
     color: '#e066ff'
+  },
+  { 
+    id: 'meteor_shower', 
+    name: 'CHUVA DE METEOROS CADENTES', 
+    desc: 'Meteoros flamejantes despencam do céu e criam crateras energéticas!',
+    color: '#ff4400'
+  },
+  { 
+    id: 'ice_rink', 
+    name: 'PISTA DE GELO FRICÇÃO ZERO', 
+    desc: 'Sem atrito! As raquetes deslizam e aceleram com inércia pura!',
+    color: '#a0f0ff'
+  },
+  { 
+    id: 'laser_grid', 
+    name: 'GRADE DE LASERS DE SEGURANÇA', 
+    desc: 'Feixes verticais cortam a quadra! Cruzar no timing certo dá turbo!',
+    color: '#ff0033'
+  },
+  { 
+    id: 'wind_tunnel', 
+    name: 'TÚNEL DE VENTO FURACÃO', 
+    desc: 'Rajadas de vento empurram a bola para cima e para baixo em ondas!',
+    color: '#00ffcc'
+  },
+  { 
+    id: 'disco_chaos', 
+    name: 'DISCO INFERNO SYNTHWAVE', 
+    desc: 'Música pulsante, luzes estroboscópicas e trilha multicolorida a cada hit!',
+    color: '#ff00ff'
+  },
+  { 
+    id: 'shrink_ray', 
+    name: 'PRISMA DE RAIO ENCOLHEDOR', 
+    desc: 'O prisma central altera o tamanho da bola entre micro-bala e bola gigante!',
+    color: '#ffff00'
+  },
+  { 
+    id: 'mirror_dimension', 
+    name: 'DIMENSÃO ESPELHO INVERTIDA', 
+    desc: 'Ao cruzar o espelho central, os controles e trajetória se invertem!',
+    color: '#9933ff'
+  },
+  { 
+    id: 'plasma_cannon', 
+    name: 'CANHÃO CENTRAL DE PLASMA', 
+    desc: 'Uma torre giratória no centro dispara esferas de plasma em alta velocidade!',
+    color: '#00e5ff'
+  },
+  { 
+    id: 'anti_gravity', 
+    name: 'ANTI-GRAVIDADE ORBITAL', 
+    desc: 'A gravidade oscila e empurra a bola e partículas em direção ao teto!',
+    color: '#cc00ff'
+  },
+  { 
+    id: 'chain_lightning', 
+    name: 'BOBINAS DE TESLA 50.000V', 
+    desc: 'Arcos elétricos conectam as raquetes e a bola com faíscas supersônicas!',
+    color: '#ffff33'
+  },
+  { 
+    id: 'cyber_barrier', 
+    name: 'COMPORTAS CIBERNÉTICAS', 
+    desc: 'Portas blindadas abrem e fecham ritmicamente no centro da mesa!',
+    color: '#00ffaa'
+  },
+  { 
+    id: 'drone_patrol', 
+    name: 'DRONES DE SEGURANÇA CYBER', 
+    desc: 'Mini drones voam em órbita interceptando e rebatendo tiros!',
+    color: '#ff3366'
+  },
+  { 
+    id: 'hyper_jump', 
+    name: 'HIPER-SALTO ESTELAR', 
+    desc: 'A bola teleporta instantaneamente 120px para a frente em saltos quânticos!',
+    color: '#33ccff'
+  },
+  { 
+    id: 'bubble_shield', 
+    name: 'BOLHAS DE FORÇA ELÁSTICAS', 
+    desc: 'Bolhas flutuantes absorvem e disparam a bola com física de mola!',
+    color: '#ff66cc'
+  },
+  { 
+    id: 'sonic_boom', 
+    name: 'ESTRONDO SÔNICO DE IMPACTO', 
+    desc: 'Toda rebatida gera uma onda de choque expansiva que repele objetos!',
+    color: '#ffaa00'
+  },
+  { 
+    id: 'boss_invasion', 
+    name: 'INVASÃO DO MEGABOSS RETRO', 
+    desc: 'Um Boss alienígena invade o centro com barras de vida e lasers!',
+    color: '#ff0044'
   }
 ];
 
@@ -757,11 +853,9 @@ class RetroPingPong {
       const cx = CANVAS_WIDTH / 2;
       const cy = CANVAS_HEIGHT / 2;
       this.bumpers = [
-        { x: cx, y: cy, r: 26, pulse: 0, glow: 0, rot: 0 },
-        { x: cx, y: cy - 145, r: 22, pulse: 0, glow: 0, rot: 0 },
-        { x: cx, y: cy + 145, r: 22, pulse: 0, glow: 0, rot: 0 },
-        { x: cx - 135, y: cy, r: 20, pulse: 0, glow: 0, rot: 0 },
-        { x: cx + 135, y: cy, r: 20, pulse: 0, glow: 0, rot: 0 }
+        { x: cx, y: cy - 135, r: 24, pulse: 0, cooldown: 0 },
+        { x: cx, y: cy + 135, r: 24, pulse: 0, cooldown: 0 },
+        { x: cx, y: cy, r: 22, pulse: 0, cooldown: 0 }
       ];
     } else if (act === 'gravity_well') {
       this.gravityWells = [
@@ -959,26 +1053,40 @@ class RetroPingPong {
       this.updatePhysics();
 
       if (this.gameType === '2p_lan') {
-        window.networkManager.sendGameState({
-          p1Y: this.p1.y,
-          balls: this.balls.map(b => ({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, spin: b.spin, isSmash: b.isSmash, radius: b.radius, fireLevel: b.fireLevel, hue: b.hue })),
-          score1: this.score1,
-          score2: this.score2,
-          bumpers: this.bumpers,
-          kitty: this.kitty,
-          secretWall: this.secretWall,
-          gravityWells: this.gravityWells,
-          portals: this.portals,
-          asteroids: this.asteroids,
-          shields1: this.shields1,
-          shields2: this.shields2,
-          blackHole: this.blackHole,
-          magnets: this.magnets,
-          p1Hits: this.p1.hitsTaken,
-          p2Hits: this.p2.hitsTaken,
-          p1Power: this.p1.powerMeter,
-          p2Power: this.p2.powerMeter
-        });
+        const now = Date.now();
+        if (!this.lastSyncTime || now - this.lastSyncTime >= 32) {
+          this.lastSyncTime = now;
+          window.networkManager.sendGameState({
+            p1Y: Math.round(this.p1.y),
+            balls: this.balls.map(b => ({
+              x: Math.round(b.x * 10) / 10,
+              y: Math.round(b.y * 10) / 10,
+              vx: Math.round(b.vx * 100) / 100,
+              vy: Math.round(b.vy * 100) / 100,
+              spin: Math.round((b.spin || 0) * 100) / 100,
+              isSmash: !!b.isSmash,
+              radius: b.radius,
+              fireLevel: b.fireLevel || 0,
+              hue: b.hue || 0
+            })),
+            score1: this.score1,
+            score2: this.score2,
+            bumpers: this.bumpers,
+            kitty: this.kitty,
+            secretWall: this.secretWall,
+            gravityWells: this.gravityWells,
+            portals: this.portals,
+            asteroids: this.asteroids,
+            shields1: this.shields1,
+            shields2: this.shields2,
+            blackHole: this.blackHole,
+            magnets: this.magnets,
+            p1Hits: this.p1.hitsTaken,
+            p2Hits: this.p2.hitsTaken,
+            p1Power: this.p1.powerMeter,
+            p2Power: this.p2.powerMeter
+          });
+        }
       }
     }
 
@@ -1247,43 +1355,38 @@ class RetroPingPong {
         }
       }
 
-      // ⏳ CAMPO TEMPORAL (BULLET TIME - IMUNE A TRAVAMENTOS)
+      // ⏳ CAMPO TEMPORAL (BULLET TIME - SUAVE & FLUIDO)
       if (act === 'time_warp') {
         const cx = CANVAS_WIDTH / 2;
-        const distTime = Math.abs(ball.x - cx);
-        const inField = distTime < 90;
+        const inField = Math.abs(ball.x - cx) < 95;
 
         if (inField) {
-          // Mantém velocidade de câmera lenta constante e controlada (~1.6 px/frame)
-          const dirX = ball.vx >= 0 ? 1 : -1;
-          const dirY = ball.vy >= 0 ? 1 : -1;
-          ball.vx = dirX * 1.6;
-          ball.vy = dirY * Math.min(1.2, Math.max(0.4, Math.abs(ball.vy) * 0.4));
-
-          if (Math.random() < 0.2) {
+          if (!ball.inTimeWarp) {
+            ball.inTimeWarp = true;
+            ball.origVx = ball.vx;
+            ball.origVy = ball.vy;
+            ball.vx *= 0.38;
+            ball.vy *= 0.38;
+            window.retroAudio.playTimeWarp();
+            this.addFloatText(ball.x, ball.y - 20, '⏳ SLOW-MO', '#00ffaa');
+          }
+          if (Math.random() < 0.25) {
             this.particles.push({
               x: ball.x,
               y: ball.y,
-              vx: (Math.random() - 0.5) * 1.5,
-              vy: (Math.random() - 0.5) * 1.5,
-              life: 0.4,
+              vx: (Math.random() - 0.5) * 1.2,
+              vy: (Math.random() - 0.5) * 1.2,
+              life: 0.45,
               color: '#00ffaa',
-              size: 3
+              size: 2.5
             });
           }
-
-          if (Math.random() < 0.05) window.retroAudio.playTimeWarp();
-        } else {
-          // Fora do campo: recupera a velocidade real normal do jogo instantaneamente!
-          const curSpeed = Math.hypot(ball.vx, ball.vy);
-          const targetSpeed = Math.max(4.0, 3.8 + (ball.hitCount || 0) * 0.28);
-          if (curSpeed < targetSpeed) {
-            const dirX = ball.vx >= 0 ? 1 : -1;
-            const dirY = ball.vy >= 0 ? 1 : -1;
-            ball.vx = dirX * targetSpeed * 0.85;
-            ball.vy = dirY * targetSpeed * 0.5;
-            this.addFloatText(ball.x, ball.y - 15, '⚡ TIME BURST!', '#00ffaa');
-          }
+        } else if (ball.inTimeWarp) {
+          ball.inTimeWarp = false;
+          ball.vx = (ball.origVx || ball.vx * 2.6);
+          ball.vy = (ball.origVy || ball.vy * 2.6);
+          this.addFloatText(ball.x, ball.y - 15, '⚡ TIME BURST!', '#00ffaa');
+          this.addShockwave(ball.x, ball.y, '#00ffaa', 35);
         }
       }
 
@@ -1461,23 +1564,29 @@ class RetroPingPong {
         }
       }
 
-      // Bumpers
+      // Bumpers (Arcade Pinball - Fluido, Sem Armadilhas e com Disparo Dinâmico)
       if (act === 'bumper_ball') {
         this.bumpers.forEach(b => {
+          if (b.cooldown > 0) b.cooldown--;
           const dx = ball.x - b.x;
           const dy = ball.y - b.y;
           const dist = Math.hypot(dx, dy);
-          if (dist < b.r + ball.radius) {
-            const nx = dx / dist;
-            const ny = dy / dist;
-            const dot = ball.vx * nx + ball.vy * ny;
-            ball.vx = (ball.vx - 2 * dot * nx) * 1.12;
-            ball.vy = (ball.vy - 2 * dot * ny) * 1.12;
+          if (dist < b.r + ball.radius && (!b.cooldown || b.cooldown <= 0)) {
+            b.cooldown = 18;
+            const nx = dx / (dist || 1);
+            const ny = dy / (dist || 1);
+            ball.x = b.x + nx * (b.r + ball.radius + 3);
+            ball.y = b.y + ny * (b.r + ball.radius + 3);
+            const currentSpeed = Math.min(8.5, Math.hypot(ball.vx, ball.vy) * 1.06 + 0.4);
+            const bounceAngle = Math.atan2(ny, nx);
+            ball.vx = currentSpeed * Math.cos(bounceAngle);
+            ball.vy = currentSpeed * Math.sin(bounceAngle);
             b.pulse = 1.0;
-            this.screenShake = 3;
+            this.screenShake = 4;
             window.retroAudio.playBumperHit();
-            this.createHitParticles(b.x + nx * b.r, b.y + ny * b.r, '#00ffaa', 14);
+            this.createHitParticles(ball.x, ball.y, '#00ffaa', 14);
             this.addShockwave(b.x, b.y, '#00ffaa', 40);
+            this.addFloatText(b.x, b.y - 20, '⚡ PINBALL!', '#00ffaa');
           }
         });
       }

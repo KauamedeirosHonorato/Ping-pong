@@ -141,10 +141,12 @@ class NetworkManager {
 
   sendGameState(state) {
     if (this.role === 'host' && this.ws && this.ws.readyState === WebSocket.OPEN && this.roomId) {
-      this.ws.send(JSON.stringify({
-        type: 'SYNC_GAME_STATE',
-        state
-      }));
+      if (this.ws.bufferedAmount < 16384) {
+        this.ws.send(JSON.stringify({
+          type: 'SYNC_GAME_STATE',
+          state
+        }));
+      }
     }
   }
 
