@@ -8,12 +8,47 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏓</text></svg>">
 </head>
 <body>
-  <div id="app-container">
-    <div class="scanlines"></div>
+  <div class="arcade-room-scene">
+    <!-- GABINETE DO FLIPERAMA (ESTILO ATARI CLÁSSICO REAL) -->
+    <div class="arcade-cabinet">
+      <!-- ASA LATERAL ESQUERDA COM T-MOLDING NEON LARANJA -->
+      <div class="cabinet-wing left-wing">
+        <div class="neon-t-molding"></div>
+        <div class="side-art-container">
+          <div class="atari-side-logo">
+            <div class="atari-icon-side"></div>
+            <div class="side-logo-text">ATARI</div>
+          </div>
+        </div>
+      </div>
 
-    <!-- TELA DE MENU PRINCIPAL -->
-    <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
-    <div id="main-menu" class="screen active">
+      <!-- CORPO CENTRAL DO FLIPERAMA -->
+      <div class="cabinet-main-body">
+        <!-- MARQUEE SUPERIOR ILUMINADO COM BACKLIGHT E MADEIRA -->
+        <div class="arcade-marquee">
+          <div class="wood-trim top-wood"></div>
+          <div class="marquee-glass">
+            <div class="atari-marquee-logo">
+              <div class="atari-icon"></div>
+              <div class="marquee-text">ATARI</div>
+              <div class="marquee-sub">ARCADE SYSTEM • COOLMATH EDITION</div>
+            </div>
+            <div class="marquee-backlight"></div>
+          </div>
+          <div class="wood-trim bottom-wood"></div>
+        </div>
+
+        <!-- MOLDURA CRT DO MONITOR COM CURVATURA & VIDRO REFLEXIVO -->
+        <div class="arcade-crt-bezel">
+          <div class="crt-inner-shadow"></div>
+          <div class="crt-glass-glare"></div>
+
+          <!-- A TELA DO JOGO / CANVAS CONTAINER -->
+          <div id="app-container">
+            <div class="scanlines"></div>
+
+            <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
+            <div id="main-menu" class="screen active">
       <!-- SELETOR DE JOGOS DO HUB -->
       <div class="game-hub-tabs">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 RETRO PING PONG</button>
@@ -328,10 +363,74 @@
         <button id="btn-race-rematch" class="btn-play" style="padding:14px 30px; font-size:1rem; background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">CORRER NOVAMENTE</button>
         <button id="btn-race-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
       </div>
-    </div>
-  </div>
+        </div><!-- Fim app-container -->
+      </div><!-- Fim arcade-crt-bezel -->
 
-  <!-- Scripts -->
+      <!-- MESA DE CONTROLES DO FLIPERAMA (JOYSTICKS + BOTÕES RETRÔ 3D) -->
+      <div class="arcade-control-panel">
+        <div class="control-panel-surface">
+          <!-- P1 CONTROLS -->
+          <div class="player-station p1-station">
+            <div class="station-label">1 PLAYER</div>
+            <div class="joystick-unit">
+              <div class="joystick-base"></div>
+              <div class="joystick-shaft">
+                <div class="joystick-ball red-ball"></div>
+              </div>
+            </div>
+            <div class="arcade-button-cluster">
+              <button class="arcade-physical-btn btn-red" title="Ação 1"></button>
+              <button class="arcade-physical-btn btn-blue" title="Ação 2"></button>
+              <button class="arcade-physical-btn btn-yellow" title="Ação 3"></button>
+            </div>
+          </div>
+
+          <!-- COIN SLOTS & ATARI LOGO -->
+          <div class="coin-door-section">
+            <div class="insert-coin-led blink">INSERT COIN [1 CREDIT]</div>
+            <div class="coin-slots-pair">
+              <div class="coin-reject-slot">
+                <span class="coin-val">25¢</span>
+                <div class="coin-intake"></div>
+              </div>
+              <div class="coin-reject-slot">
+                <span class="coin-val">25¢</span>
+                <div class="coin-intake"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- P2 CONTROLS -->
+          <div class="player-station p2-station">
+            <div class="station-label">2 PLAYERS</div>
+            <div class="joystick-unit">
+              <div class="joystick-base"></div>
+              <div class="joystick-shaft">
+                <div class="joystick-ball blue-ball"></div>
+              </div>
+            </div>
+            <div class="arcade-button-cluster">
+              <button class="arcade-physical-btn btn-red" title="Ação 1"></button>
+              <button class="arcade-physical-btn btn-blue" title="Ação 2"></button>
+              <button class="arcade-physical-btn btn-green" title="Ação 3"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- Fim cabinet-main-body -->
+
+    <!-- ASA LATERAL DIREITA COM T-MOLDING NEON LARANJA -->
+    <div class="cabinet-wing right-wing">
+      <div class="neon-t-molding"></div>
+      <div class="side-art-container">
+        <div class="atari-side-logo">
+          <div class="atari-icon-side"></div>
+          <div class="side-logo-text">ATARI</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- Fim arcade-cabinet -->
+</div><!-- Fim arcade-room-scene -->
   <script src="audio.js"></script>
   <script src="network.js"></script>
   <script src="game.js"></script>
@@ -595,6 +694,30 @@
       document.getElementById('btn-back-menu').addEventListener('click', () => {
         window.retroAudio.playClick();
         window.retroPingPong.returnToMenu();
+      });
+
+      // Efeitos Interativos do Gabinete Físico de Fliperama
+      const coinSlots = document.querySelectorAll('.coin-reject-slot');
+      coinSlots.forEach(slot => {
+        slot.addEventListener('click', () => {
+          window.retroAudio.playScore(true);
+          const led = document.querySelector('.insert-coin-led');
+          if (led) {
+            led.innerText = '🪙 COIN INSERTED! [2 CREDITS]';
+            led.style.color = '#39ff14';
+            setTimeout(() => {
+              led.innerText = 'INSERT COIN [1 CREDIT]';
+              led.style.color = '#ff3344';
+            }, 2500);
+          }
+        });
+      });
+
+      const physicalBtns = document.querySelectorAll('.arcade-physical-btn');
+      physicalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.retroAudio.playPaddleHit(true);
+        });
       });
     });
   </script>
