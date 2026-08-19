@@ -821,7 +821,7 @@ class RetroPingPong {
         this.bannerEl.style.display = 'none';
       }, 2800);
 
-      if (this.gameType === '2p_lan' && window.networkManager.role === 'host') {
+      if ((this.gameType === '2p_lan' || this.gameType === '4p_lan') && window.networkManager.role === 'host') {
         window.networkManager.sendRoundStart(this.currentAction.id, this.score1, this.score2);
       }
     } else {
@@ -836,7 +836,7 @@ class RetroPingPong {
       this.asteroids = [];
       this.bannerEl.style.display = 'none';
 
-      if (this.gameType === '2p_lan' && window.networkManager.role === 'host') {
+      if ((this.gameType === '2p_lan' || this.gameType === '4p_lan') && window.networkManager.role === 'host') {
         window.networkManager.sendRoundStart(null, this.score1, this.score2);
       }
     }
