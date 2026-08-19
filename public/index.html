@@ -51,8 +51,9 @@
             <div id="main-menu" class="screen active">
       <!-- SELETOR DE JOGOS DO HUB -->
       <div class="game-hub-tabs">
-        <button id="tab-game-pingpong" class="hub-tab selected">🏓 RETRO PING PONG</button>
-        <button id="tab-game-fighting" class="hub-tab">🥊 RETRO STREET FIGHTER</button>
+        <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
+        <button id="tab-game-fighting" class="hub-tab">🥊 STREET FIGHTER</button>
+        <button id="tab-game-mk2" class="hub-tab" style="border-color:#ff0033; color:#ffea00;">🐉 MORTAL KOMBAT II</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -165,6 +166,28 @@
         <!-- FIGHT PLAY BUTTON -->
         <div class="play-btn-wrapper">
           <button id="btn-play-fight" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #ffea00); color:#000;">ROUND 1... FIGHT! 🥊🔥</button>
+        </div>
+      </div>
+
+      <!-- PAINEL MORTAL KOMBAT II ARCADE -->
+      <div id="mk2-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#ffea00;">🐉 MIDWAY 1994 ORIGINAL</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ff0033;">MORTAL KOMBAT II</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,0,0,0.85); border:2px solid #ff0033; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.6rem; color:#ffcccc; line-height:1.6;">
+          <div style="font-size:0.75rem; color:#ffea00; font-weight:bold; margin-bottom:6px;">🔥 ARCADE / DOS ORIGINAL (48 MB)</div>
+          <p>• <strong>FATALITIES, BABALITIES & FRIENDSHIPS</strong></p>
+          <p>• <strong>PERSONAGENS:</strong> Liu Kang, Kung Lao, Sub-Zero, Scorpion, Raiden, Reptile, Kitana, Mileena, Jax, Baraka, Shang Tsung!</p>
+          <p>• <strong>CONTROLES:</strong> WASD / Setas + Teclas [A, S, D, Z, X, C] ou Joysticks Físicos do Arcade!</p>
+        </div>
+
+        <!-- MK2 PLAY BUTTON -->
+        <div class="play-btn-wrapper">
+          <button id="btn-play-mk2" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #000); border:2px solid #ffea00; color:#ffea00; font-size:1rem; padding:16px 32px;">INICIAR MORTAL KOMBAT II 🐉💀</button>
         </div>
       </div>
 
@@ -410,6 +433,16 @@
       </div>
     </div><!-- Fim fight-game-over-screen -->
 
+    <!-- TELA DO JOGO MORTAL KOMBAT II EMULADOR ARCADE / DOS -->
+    <div id="mk2-screen" class="screen">
+      <div class="canvas-wrapper" style="position:relative;">
+        <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
+          <button id="btn-mk2-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#ff0033; color:#fff;">◀ MENU DO FLIPERAMA</button>
+        </div>
+        <iframe id="mk2-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
+      </div>
+    </div>
+
           </div><!-- Fim app-container -->
         </div><!-- Fim arcade-crt-bezel -->
 
@@ -496,27 +529,75 @@
       let selectedChar2 = 1;
       let selectedStage = 0;
 
-      // Abas do Hub Arcade (Alternar entre Ping Pong e Street Fighter)
+      // Abas do Hub Arcade (Alternar entre Ping Pong, Street Fighter e Mortal Kombat II)
       const tabPingpong = document.getElementById('tab-game-pingpong');
       const tabFighting = document.getElementById('tab-game-fighting');
+      const tabMk2 = document.getElementById('tab-game-mk2');
       const panelPingpong = document.getElementById('pingpong-menu-panel');
       const panelFighting = document.getElementById('fighting-menu-panel');
+      const panelMk2 = document.getElementById('mk2-menu-panel');
+
+      function hideAllPanels() {
+        tabPingpong.classList.remove('selected');
+        tabFighting.classList.remove('selected');
+        if (tabMk2) tabMk2.classList.remove('selected');
+        panelPingpong.style.display = 'none';
+        panelFighting.style.display = 'none';
+        if (panelMk2) panelMk2.style.display = 'none';
+      }
 
       tabPingpong.addEventListener('click', () => {
         window.retroAudio.playClick();
+        hideAllPanels();
         tabPingpong.classList.add('selected');
-        tabFighting.classList.remove('selected');
         panelPingpong.style.display = 'block';
-        panelFighting.style.display = 'none';
       });
 
       tabFighting.addEventListener('click', () => {
         window.retroAudio.playClick();
+        hideAllPanels();
         tabFighting.classList.add('selected');
-        tabPingpong.classList.remove('selected');
         panelFighting.style.display = 'block';
-        panelPingpong.style.display = 'none';
       });
+
+      if (tabMk2) {
+        tabMk2.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          hideAllPanels();
+          tabMk2.classList.add('selected');
+          panelMk2.style.display = 'block';
+        });
+      }
+
+      // Iniciar Mortal Kombat II Emulador
+      const btnPlayMk2 = document.getElementById('btn-play-mk2');
+      if (btnPlayMk2) {
+        btnPlayMk2.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const mk2Screen = document.getElementById('mk2-screen');
+          const iframe = document.getElementById('mk2-emulator-frame');
+          if (menu) menu.classList.remove('active');
+          if (mk2Screen) mk2Screen.classList.add('active');
+          if (iframe) {
+            // Emulador Online WASM integrado de Mortal Kombat II 1994
+            iframe.src = "https://www.retrogames.cc/embed/41724-mortal-kombat-ii-world.html";
+          }
+        });
+      }
+
+      const btnMk2Menu = document.getElementById('btn-mk2-menu');
+      if (btnMk2Menu) {
+        btnMk2Menu.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const mk2Screen = document.getElementById('mk2-screen');
+          const iframe = document.getElementById('mk2-emulator-frame');
+          if (mk2Screen) mk2Screen.classList.remove('active');
+          if (iframe) iframe.src = "";
+          if (menu) menu.classList.add('active');
+        });
+      }
 
       // Seletor de Modo Luta
       const fightModeBtns = document.querySelectorAll('[data-fight-mode]');
