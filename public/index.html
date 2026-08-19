@@ -198,16 +198,19 @@
         <div class="lan-grid">
           <!-- Coluna Esquerda: QR Code e Link -->
           <div class="lan-col-left">
-            <div style="font-size: 0.65rem; color: #00e5ff; font-weight: bold; margin-bottom: 4px;">1. CONECTAR VIA CELULAR</div>
+            <div style="font-size: 0.65rem; color: #00e5ff; font-weight: bold; margin-bottom: 4px;">1. CONECTAR VIA WI-FI / CELULAR</div>
             <div class="qr-box" id="qr-container">
               <img id="qr-image" src="" alt="QR Code Wi-Fi">
             </div>
-            <div style="font-size: 0.55rem; color: #a5a5f5; margin-bottom: 6px;">Aponte a câmera do celular</div>
+            <div style="font-size: 0.55rem; color: #a5a5f5; margin-bottom: 6px;">Aponte a câmera do celular para entrar</div>
 
             <div class="lan-ip-badge">
-              <div style="font-size: 0.55rem; color: #aaa;">OU DIGITE NO NAVEGADOR:</div>
-              <div id="lan-url-text" style="font-size:0.75rem; color:#00e5ff; margin:4px 0; word-break:break-all;">Carregando IP...</div>
-              <button id="btn-copy-url" class="btn-secondary" style="font-size:0.6rem; padding:6px 12px;">📋 COPIAR LINK</button>
+              <div style="font-size: 0.55rem; color: #aaa;">LINK DIRETO PARA O AMIGO:</div>
+              <div id="lan-url-text" style="font-size:0.75rem; color:#00e5ff; margin:4px 0; word-break:break-all;">Carregando link...</div>
+              <div style="display:flex; gap:6px; justify-content:center; margin-top:4px;">
+                <button id="btn-copy-url" class="btn-secondary" style="font-size:0.6rem; padding:6px 10px;">📋 COPIAR LINK</button>
+                <button id="btn-share-whatsapp" class="btn-play" style="font-size:0.6rem; padding:6px 10px; background:#25D366; color:#000;">📱 WHATSAPP</button>
+              </div>
             </div>
           </div>
 
@@ -231,14 +234,14 @@
             </div>
 
             <div id="room-controls-host">
-              <button id="btn-create-room" class="btn-play" style="padding: 12px 24px; font-size: 0.9rem; width: 100%;">CRIAR SALA</button>
+              <button id="btn-create-room" class="btn-play" style="padding: 12px 24px; font-size: 0.9rem; width: 100%;">CRIAR SALA (1-CLIQUE)</button>
             </div>
 
-            <div style="margin: 10px 0; color: #8b8be6; font-size: 0.65rem;">─── OU ENTRE EM UMA SALA ───</div>
+            <div style="margin: 10px 0; color: #8b8be6; font-size: 0.65rem;">─── OU DIGITE O CÓDIGO DA SALA ───</div>
 
             <div>
               <div class="lan-input-group">
-                <input type="text" id="input-room-code" class="retro-input" placeholder="CÓDIGO" maxlength="4">
+                <input type="text" id="input-room-code" class="retro-input" placeholder="CÓDIGO (EX: A7K9)" maxlength="4" style="text-transform:uppercase;">
                 <button id="btn-join-room" class="btn-secondary">ENTRAR</button>
               </div>
             </div>
@@ -247,7 +250,8 @@
             <div id="lan-room-info" style="display:none; margin-top: 10px;">
               <div style="font-size: 0.65rem; color: #ffea00;">CÓDIGO DA SALA:</div>
               <div id="lan-room-code" class="room-code-display">----</div>
-              <div id="lan-status-msg" style="font-size:0.65rem; color:#00e5ff; margin-bottom: 6px;">Aguardando oponente...</div>
+              <button id="btn-copy-invite-link" class="btn-secondary" style="font-size:0.6rem; padding:4px 8px; margin:4px 0; width:100%;">🔗 COPIAR CONVITE DIRETO COM CÓDIGO</button>
+              <div id="lan-status-msg" style="font-size:0.65rem; color:#00e5ff; margin-bottom: 6px;">Aguardando oponente no Wi-Fi...</div>
               <button id="lan-ready-btn" class="btn-play" style="padding: 10px 20px; font-size: 0.85rem; width: 100%; display: none;">ESTOU PRONTO!</button>
             </div>
           </div>
@@ -675,6 +679,50 @@
         window.retroAudio.playClick();
         lanModal.classList.remove('active');
       });
+
+      // WhatsApp Share & Direct Link
+      const btnWhatsapp = document.getElementById('btn-share-whatsapp');
+      if (btnWhatsapp) {
+        btnWhatsapp.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const baseUrl = window.location.href.split('?')[0];
+          const roomCode = document.getElementById('lan-room-code').innerText;
+          const isRoomActive = roomCode && roomCode !== '----';
+          const inviteUrl = isRoomActive ? `${baseUrl}?room=${roomCode}` : baseUrl;
+          const msg = `🎮 Bora jogar Ping Pong / Street Fighter no Arcade comigo? Acesse agora: ${inviteUrl}${isRoomActive ? ` (Sala: ${roomCode})` : ''}`;
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+        });
+      }
+
+      const btnCopyInvite = document.getElementById('btn-copy-invite-link');
+      if (btnCopyInvite) {
+        btnCopyInvite.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const baseUrl = window.location.href.split('?')[0];
+          const roomCode = document.getElementById('lan-room-code').innerText;
+          const inviteUrl = (roomCode && roomCode !== '----') ? `${baseUrl}?room=${roomCode}` : baseUrl;
+          navigator.clipboard.writeText(inviteUrl).then(() => {
+            alert(`Link com a sala ${roomCode} copiado! Mande para seu amigo entrar com 1 clique.`);
+          }).catch(() => {
+            prompt('Copie o link abaixo:', inviteUrl);
+          });
+        });
+      }
+
+      // Auto-join se o link tiver ?room=CÓDIGO
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlRoom = urlParams.get('room');
+      if (urlRoom) {
+        setTimeout(() => {
+          const lanModal = document.getElementById('lan-modal');
+          if (lanModal) lanModal.classList.add('active');
+          const codeInput = document.getElementById('input-room-code');
+          if (codeInput) codeInput.value = urlRoom.toUpperCase();
+          window.networkManager.joinRoom(urlRoom.toUpperCase());
+          const roomInfo = document.getElementById('lan-room-info');
+          if (roomInfo) roomInfo.style.display = 'block';
+        }, 1200);
+      }
 
       // Copiar URL do Wi-Fi
       document.getElementById('btn-copy-url').addEventListener('click', () => {
