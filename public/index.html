@@ -359,32 +359,52 @@
       </div>
     </div>
 
-    <!-- TELA DO JOGO CORRIDA DO OLHO DE GATO -->
-    <div id="racing-screen" class="screen">
+    <!-- TELA DO JOGO RETRO STREET FIGHTER -->
+    <div id="fighting-screen" class="screen">
       <div class="canvas-wrapper">
-        <div class="racing-hud">
-          <button id="btn-race-menu" class="btn-icon-retro" style="pointer-events:auto; font-size:0.55rem; padding:6px 8px;">◀ MENU</button>
-          <div class="race-hud-badge">POSIÇÃO: <span id="race-hud-pos">1º / 4</span></div>
-          <div class="race-hud-badge">VOLTA: <span id="race-hud-lap">1/3</span></div>
-          <div class="race-hud-badge">PODER: <span id="race-hud-item">NENHUM</span></div>
+        <div class="fight-hud">
+          <div class="fight-player-side">
+            <div class="fight-name-badge">PLAYER 1 (RYU)</div>
+            <div class="fight-hp-track">
+              <div id="fight-p1-hp" class="fight-hp-bar"></div>
+            </div>
+            <div class="fight-super-track">
+              <div id="fight-p1-super" class="fight-super-bar"></div>
+            </div>
+          </div>
+
+          <div class="fight-center-timer">
+            <button id="btn-fight-menu" class="btn-icon-retro" style="pointer-events:auto; font-size:0.50rem; padding:4px 6px; margin-bottom:4px;">◀ MENU</button>
+            <div id="fight-timer" class="fight-timer-box">99</div>
+          </div>
+
+          <div class="fight-player-side" style="align-items: flex-end;">
+            <div class="fight-name-badge">PLAYER 2 (KEN)</div>
+            <div class="fight-hp-track">
+              <div id="fight-p2-hp" class="fight-hp-bar"></div>
+            </div>
+            <div class="fight-super-track">
+              <div id="fight-p2-super" class="fight-super-bar"></div>
+            </div>
+          </div>
         </div>
 
-        <div class="racing-controls-hint">
-          🎮 PILOTAR: <strong>[W A S D] ou [SETAS]</strong> | 🚀 ATIRAR/PODER: <strong>[ESPAÇO]</strong> | ⚡ DRIFT: <strong>[SHIFT]</strong>
+        <div class="fight-controls-hint">
+          🥊 MOVER/PULAR: <strong>[W A S D] / [SETAS]</strong> | 💥 SOCO: <strong>[J / ESPAÇO]</strong> | ⚡ CHUTE: <strong>[K / E]</strong> | 🌀 ESPECIAL: <strong>[L / Q]</strong> | 🔥 SUPER: <strong>[SHIFT / F]</strong>
         </div>
 
-        <canvas id="raceCanvas" width="800" height="600"></canvas>
+        <canvas id="fightCanvas" width="800" height="600"></canvas>
       </div>
     </div>
 
-    <!-- TELA DE FIM DE JOGO (VITÓRIA CORRIDA) -->
-    <div id="race-game-over-screen" class="screen">
-      <div id="race-winner-msg" class="winner-text">🏆 1º LUGAR! CAMPEÃO!</div>
+    <!-- TELA DE FIM DE JOGO (VITÓRIA LUTA) -->
+    <div id="fight-game-over-screen" class="screen">
+      <div id="fight-winner-msg" class="winner-text">👑 PLAYER 1 VENCEU!</div>
       <div class="game-over-buttons">
-        <button id="btn-race-rematch" class="btn-play" style="padding:14px 30px; font-size:1rem; background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">CORRER NOVAMENTE</button>
-        <button id="btn-race-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
+        <button id="btn-fight-rematch" class="btn-play" style="padding:14px 30px; font-size:1rem; background:linear-gradient(135deg, #ff0033, #ffea00); color:#000;">LUTAR NOVAMENTE</button>
+        <button id="btn-fight-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
       </div>
-    </div><!-- Fim race-game-over-screen -->
+    </div><!-- Fim fight-game-over-screen -->
 
           </div><!-- Fim app-container -->
         </div><!-- Fim arcade-crt-bezel -->
