@@ -50,10 +50,11 @@
             <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
             <div id="main-menu" class="screen active">
       <!-- SELETOR DE JOGOS DO HUB -->
-      <div class="game-hub-tabs">
+      <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:6px;">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
         <button id="tab-game-fighting" class="hub-tab">🥊 STREET FIGHTER</button>
-        <button id="tab-game-mk2" class="hub-tab" style="border-color:#ff0033; color:#ffea00;">🐉 MORTAL KOMBAT II</button>
+        <button id="tab-game-mk2" class="hub-tab" style="border-color:#ff0033; color:#ffea00;">🐉 MK II</button>
+        <button id="tab-game-mario" class="hub-tab" style="border-color:#39ff14; color:#ffea00;">🍄 SUPER MARIO</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -127,6 +128,7 @@
             <div class="option-buttons">
               <button id="btn-fight-1p" class="btn-toggle selected" data-fight-mode="1p">🥊 1P VS IA</button>
               <button id="btn-fight-2p" class="btn-toggle" data-fight-mode="2p_local">👥 2P LOCAL</button>
+              <button id="btn-fight-online" class="btn-toggle" data-fight-mode="online" style="border-color:#00e5ff; color:#00e5ff;">🌐 1v1 ONLINE</button>
             </div>
           </div>
 
@@ -183,11 +185,35 @@
           <p>• <strong>FATALITIES, BABALITIES & FRIENDSHIPS</strong></p>
           <p>• <strong>PERSONAGENS:</strong> Liu Kang, Kung Lao, Sub-Zero, Scorpion, Raiden, Reptile, Kitana, Mileena, Jax, Baraka, Shang Tsung!</p>
           <p>• <strong>CONTROLES:</strong> WASD / Setas + Teclas [A, S, D, Z, X, C] ou Joysticks Físicos do Arcade!</p>
+          <p>• <strong>MULTIPLAYER LOCAL / NETPLAY:</strong> Modo 2 Jogadores no mesmo teclado ou compartilhe a tela via Wi-Fi!</p>
         </div>
 
         <!-- MK2 PLAY BUTTON -->
-        <div class="play-btn-wrapper">
-          <button id="btn-play-mk2" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #000); border:2px solid #ffea00; color:#ffea00; font-size:1rem; padding:16px 32px;">INICIAR MORTAL KOMBAT II 🐉💀</button>
+        <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
+          <button id="btn-play-mk2" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #000); border:2px solid #ffea00; color:#ffea00; font-size:0.9rem; padding:14px 24px;">JOGAR MORTAL KOMBAT II 🐉</button>
+          <button id="btn-mk2-online-invite" class="btn-secondary" style="border-color:#25D366; color:#25D366; font-size:0.8rem; padding:14px 20px;">📱 CONVIDAR AMIGO</button>
+        </div>
+      </div>
+
+      <!-- PAINEL SUPER MARIO LAND GAME BOY -->
+      <div id="mario-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#39ff14;">🍄 NINTENDO 1989 CLÁSSICO</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">SUPER MARIO LAND</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,30,10,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.6rem; color:#ccffcc; line-height:1.6;">
+          <div style="font-size:0.75rem; color:#ffea00; font-weight:bold; margin-bottom:6px;">⭐ ROM OFICIAL GAME BOY (.GB)</div>
+          <p>• <strong>MUNDOS:</strong> Birabuto, Muda, Easton e Chai Kingdom!</p>
+          <p>• <strong>ITENS:</strong> Super Cogumelo 🍄, Flor de Fogo 🔥, Estrela de Invencibilidade ⭐ e Submarino Marine Pop!</p>
+          <p>• <strong>CONTROLES:</strong> Setas / WASD = Mover | [Z / J / Espaço] = Pular | [X / K] = Correr / Bola de Fogo!</p>
+        </div>
+
+        <!-- MARIO PLAY BUTTON -->
+        <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
+          <button id="btn-play-mario" class="btn-play" style="background:linear-gradient(135deg, #ff0000, #ffea00); color:#000; font-size:0.95rem; padding:14px 26px;">JOGAR SUPER MARIO LAND 🍄⭐</button>
         </div>
       </div>
 
@@ -443,6 +469,16 @@
       </div>
     </div>
 
+    <!-- TELA DO JOGO SUPER MARIO LAND GAME BOY -->
+    <div id="mario-screen" class="screen">
+      <div class="canvas-wrapper" style="position:relative;">
+        <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
+          <button id="btn-mario-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#39ff14; color:#000; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
+        </div>
+        <iframe id="mario-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
+      </div>
+    </div>
+
           </div><!-- Fim app-container -->
         </div><!-- Fim arcade-crt-bezel -->
 
@@ -529,21 +565,25 @@
       let selectedChar2 = 1;
       let selectedStage = 0;
 
-      // Abas do Hub Arcade (Alternar entre Ping Pong, Street Fighter e Mortal Kombat II)
+      // Abas do Hub Arcade (Alternar entre Ping Pong, Street Fighter, Mortal Kombat II e Super Mario Land)
       const tabPingpong = document.getElementById('tab-game-pingpong');
       const tabFighting = document.getElementById('tab-game-fighting');
       const tabMk2 = document.getElementById('tab-game-mk2');
+      const tabMario = document.getElementById('tab-game-mario');
       const panelPingpong = document.getElementById('pingpong-menu-panel');
       const panelFighting = document.getElementById('fighting-menu-panel');
       const panelMk2 = document.getElementById('mk2-menu-panel');
+      const panelMario = document.getElementById('mario-menu-panel');
 
       function hideAllPanels() {
         tabPingpong.classList.remove('selected');
         tabFighting.classList.remove('selected');
         if (tabMk2) tabMk2.classList.remove('selected');
+        if (tabMario) tabMario.classList.remove('selected');
         panelPingpong.style.display = 'none';
         panelFighting.style.display = 'none';
         if (panelMk2) panelMk2.style.display = 'none';
+        if (panelMario) panelMario.style.display = 'none';
       }
 
       tabPingpong.addEventListener('click', () => {
@@ -569,6 +609,15 @@
         });
       }
 
+      if (tabMario) {
+        tabMario.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          hideAllPanels();
+          tabMario.classList.add('selected');
+          panelMario.style.display = 'block';
+        });
+      }
+
       // Iniciar Mortal Kombat II Emulador
       const btnPlayMk2 = document.getElementById('btn-play-mk2');
       if (btnPlayMk2) {
@@ -580,9 +629,18 @@
           if (menu) menu.classList.remove('active');
           if (mk2Screen) mk2Screen.classList.add('active');
           if (iframe) {
-            // Emulador Online WASM integrado de Mortal Kombat II 1994
             iframe.src = "https://www.retrogames.cc/embed/41724-mortal-kombat-ii-world.html";
           }
+        });
+      }
+
+      const btnMk2Invite = document.getElementById('btn-mk2-online-invite');
+      if (btnMk2Invite) {
+        btnMk2Invite.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const baseUrl = window.location.href.split('?')[0];
+          const msg = `🐉 Bora jogar Mortal Kombat II (1994) / Street Fighter no Arcade comigo? Acesse agora: ${baseUrl}`;
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
         });
       }
 
@@ -599,6 +657,36 @@
         });
       }
 
+      // Iniciar Super Mario Land Emulador
+      const btnPlayMario = document.getElementById('btn-play-mario');
+      if (btnPlayMario) {
+        btnPlayMario.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const marioScreen = document.getElementById('mario-screen');
+          const iframe = document.getElementById('mario-emulator-frame');
+          if (menu) menu.classList.remove('active');
+          if (marioScreen) marioScreen.classList.add('active');
+          if (iframe) {
+            // Emulador Oficial Game Boy Super Mario Land
+            iframe.src = "https://www.retrogames.cc/embed/41818-super-mario-land-world.html";
+          }
+        });
+      }
+
+      const btnMarioMenu = document.getElementById('btn-mario-menu');
+      if (btnMarioMenu) {
+        btnMarioMenu.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const marioScreen = document.getElementById('mario-screen');
+          const iframe = document.getElementById('mario-emulator-frame');
+          if (marioScreen) marioScreen.classList.remove('active');
+          if (iframe) iframe.src = "";
+          if (menu) menu.classList.add('active');
+        });
+      }
+
       // Seletor de Modo Luta
       const fightModeBtns = document.querySelectorAll('[data-fight-mode]');
       fightModeBtns.forEach(btn => {
@@ -607,6 +695,10 @@
           fightModeBtns.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedFightMode = btn.getAttribute('data-fight-mode');
+
+          if (selectedFightMode === 'online') {
+            document.getElementById('lan-modal').classList.add('active');
+          }
         });
       });
 
