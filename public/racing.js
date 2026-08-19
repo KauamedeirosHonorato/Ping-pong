@@ -150,6 +150,10 @@ class CatsEyeRacing {
   }
 
   startRace(mode = '1p', trackIndex = 0, selectedRacerIndex = 0) {
+    if (!this.canvas) {
+      this.canvas = document.getElementById('raceCanvas');
+      if (this.canvas) this.ctx = this.canvas.getContext('2d');
+    }
     this.gameMode = mode;
     this.currentTrackIndex = trackIndex % RACING_TRACKS.length;
     this.track = RACING_TRACKS[this.currentTrackIndex];

@@ -336,7 +336,7 @@
   <script src="game.js"></script>
   <script src="racing.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', () => {
       let selectedPlayer = '1p';
       let selectedMode = 'action';
       let selectedSkill = 'rookie';
@@ -424,14 +424,15 @@
         window.catsEyeRacing.startRace(selectedRaceMode, selectedTrack, selectedRacer);
       });
 
-      // Atualiza info de rede LAN (IP e QR Code)
-      const netInfo = await window.networkManager.fetchNetworkInfo();
-      if (netInfo) {
-        document.getElementById('lan-url-text').innerText = netInfo.lanUrl;
-        if (netInfo.qrCodeDataUrl) {
-          document.getElementById('qr-image').src = netInfo.qrCodeDataUrl;
+      // Atualiza info de rede LAN (IP e QR Code) de forma assíncrona não-bloqueante
+      window.networkManager.fetchNetworkInfo().then(netInfo => {
+        if (netInfo) {
+          const urlEl = document.getElementById('lan-url-text');
+          const qrEl = document.getElementById('qr-image');
+          if (urlEl) urlEl.innerText = netInfo.lanUrl;
+          if (qrEl && netInfo.qrCodeDataUrl) qrEl.src = netInfo.qrCodeDataUrl;
         }
-      }
+      }).catch(e => console.warn('Network info error:', e));
 
       // Alternância de Players Ping Pong
       const playerBtns = document.querySelectorAll('[data-player]');
