@@ -205,13 +205,20 @@
           </div>
 
           <!-- Coluna Direita: Criar ou Entrar em Sala -->
-          <div class="lan-col-right">
-            <!-- Seletor de Modo na Sala -->
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 0.65rem; color: #ffea00; margin-bottom: 6px;">MODO DE JOGO DA SALA:</div>
+            <!-- Seletor de Formato (1v1 ou 2v2) e Modo na Sala -->
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 0.65rem; color: #00e5ff; margin-bottom: 4px;">FORMATO DA SALA:</div>
               <div style="display: flex; gap: 8px;">
-                <button id="lan-mode-action" class="btn-toggle selected" style="padding:8px 4px; font-size:0.65rem;">⚡ ACTION</button>
-                <button id="lan-mode-classic" class="btn-toggle" style="padding:8px 4px; font-size:0.65rem;">CLASSIC</button>
+                <button id="lan-type-1v1" class="btn-toggle selected" style="padding:6px 4px; font-size:0.65rem;">🏓 1v1 (2P)</button>
+                <button id="lan-type-2v2" class="btn-toggle" style="padding:6px 4px; font-size:0.65rem;">👥 2v2 (4P)</button>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <div style="font-size: 0.65rem; color: #ffea00; margin-bottom: 4px;">MODO DE JOGO:</div>
+              <div style="display: flex; gap: 8px;">
+                <button id="lan-mode-action" class="btn-toggle selected" style="padding:6px 4px; font-size:0.65rem;">⚡ ACTION</button>
+                <button id="lan-mode-classic" class="btn-toggle" style="padding:6px 4px; font-size:0.65rem;">CLASSIC</button>
               </div>
             </div>
 
@@ -646,10 +653,48 @@
         });
       });
 
+      // Configurações da Sala LAN
+      let lanSelectedPlayers = 2;
+      let lanSelectedMode = 'action';
+
+      const lanType1v1 = document.getElementById('lan-type-1v1');
+      const lanType2v2 = document.getElementById('lan-type-2v2');
+      if (lanType1v1 && lanType2v2) {
+        lanType1v1.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          lanType1v1.classList.add('selected');
+          lanType2v2.classList.remove('selected');
+          lanSelectedPlayers = 2;
+        });
+        lanType2v2.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          lanType2v2.classList.add('selected');
+          lanType1v1.classList.remove('selected');
+          lanSelectedPlayers = 4;
+        });
+      }
+
+      const lanModeAct = document.getElementById('lan-mode-action');
+      const lanModeCls = document.getElementById('lan-mode-classic');
+      if (lanModeAct && lanModeCls) {
+        lanModeAct.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          lanModeAct.classList.add('selected');
+          lanModeCls.classList.remove('selected');
+          lanSelectedMode = 'action';
+        });
+        lanModeCls.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          lanModeCls.classList.add('selected');
+          lanModeAct.classList.remove('selected');
+          lanSelectedMode = 'classic';
+        });
+      }
+
       // Criar Sala LAN
       document.getElementById('btn-create-room').addEventListener('click', () => {
         window.retroAudio.playClick();
-        window.networkManager.createRoom(selectedMode);
+        window.networkManager.createRoom(lanSelectedMode, 'random', lanSelectedPlayers);
         document.getElementById('room-controls-host').style.display = 'none';
         document.getElementById('lan-room-info').style.display = 'block';
       });
