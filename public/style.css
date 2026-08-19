@@ -886,29 +886,30 @@ html, body {
   display: flex;
 }
 
-/* Wrapper que mantém a proporção 4:3 perfeita sem esticar */
+/* Wrapper que mantém a proporção 4:3 perfeita sem esticar e sem vazar */
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  max-width: 1000px;
-  height: auto;
-  aspect-ratio: 4 / 3;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: auto 0;
+  margin: 0;
+  overflow: hidden;
 }
 
 #gameCanvas {
   display: block;
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 4 / 3;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   touch-action: none;
-  box-shadow: 0 0 35px rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
 }
 
 .game-hud {
@@ -1350,14 +1351,15 @@ html, body {
 }
 
 #raceCanvas {
-  width: 100%;
-  height: 100%;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 4 / 3;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   touch-action: none;
-  box-shadow: 0 0 35px rgba(255, 0, 127, 0.35);
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.25);
 }
 
 .racing-controls-hint {
