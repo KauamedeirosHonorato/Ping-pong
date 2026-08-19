@@ -36,7 +36,11 @@ app.get('/api/network-info', async (req, res) => {
   const ips = getLocalIpAddresses();
   const wifiIface = ips.find(i => /wi-?fi|wlan|wireless/i.test(i.name));
   const primaryIp = wifiIface ? wifiIface.address : (ips.length > 0 ? ips[0].address : 'localhost');
-  const lanUrl = `http://${primaryIp}:${PORT}`;
+  
+  const hostHeader = req.headers.host || '';
+  const isPublicDomain = hostHeader && !hostHeader.includes('localhost') && !hostHeader.includes('127.0.0.1');
+  const protocol = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+  const lanUrl = isPublicDomain ? `${protocol}://${hostHeader}` : `http://${primaryIp}:${PORT}`;
   
   let qrCodeDataUrl = '';
   try {
