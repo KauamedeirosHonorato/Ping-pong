@@ -300,6 +300,39 @@ class RetroAudio {
     osc.stop(now + 0.3);
   }
 
+  playShieldBreak() {
+    this.playTone(720, 'sawtooth', 0.15, 0.3, 0.01);
+    setTimeout(() => this.playTone(1100, 'square', 0.1, 0.25, 0.01), 40);
+  }
+
+  playBlackHole() {
+    if (this.muted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.linearRampToValueAtTime(320, now + 0.25);
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(now + 0.25);
+  }
+
+  playMagnetPulse() {
+    this.playTone(520, 'triangle', 0.08, 0.2, 0.01);
+  }
+
+  playTurretShot() {
+    this.playTone(950, 'sawtooth', 0.07, 0.22, 0.01);
+  }
+
+  playGhostPhase() {
+    this.playTone(680, 'sine', 0.12, 0.18, 0.01);
+  }
+
   playCountdown(isGo = false) {
     this.playTone(isGo ? 880 : 440, 'square', isGo ? 0.25 : 0.1, 0.25, 0.01);
   }

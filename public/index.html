@@ -31,8 +31,11 @@
             <button id="btn-player-2" class="btn-toggle" data-player="2p_local" title="2 Jogadores no Mesmo Teclado">
               <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
             </button>
-            <button id="btn-player-lan" class="btn-toggle" data-player="2p_lan" style="font-size:0.7rem;" title="Multiplayer no Wi-Fi Local">
-              📶 WI-FI LAN
+            <button id="btn-player-4" class="btn-toggle" data-player="4p_local" title="4 Jogadores (2v2 Duplas)">
+              👥 4P (2v2)
+            </button>
+            <button id="btn-player-lan" class="btn-toggle" data-player="2p_lan" style="font-size:0.7rem;" title="Multiplayer Online / Wi-Fi">
+              🌐 ONLINE / LAN
             </button>
           </div>
         </div>
@@ -149,25 +152,32 @@
       <div class="modal-content" style="text-align: left; max-height: 85vh;">
         <button id="btn-close-rules" class="btn-close-modal">✖</button>
         <div class="modal-header" style="text-align:center;">📖 COMO JOGAR</div>
-        <div style="font-size: 0.65rem; line-height: 1.8; color: #d0d0ff;">
-          <p><strong>🎯 OBJETIVO:</strong> Marque <strong>7 pontos</strong> para vencer!</p>
+        <div style="font-size: 0.65rem; line-height: 1.8; color: #d0d0ff; overflow-y: auto; max-height: 60vh; padding-right: 6px;">
+          <p><strong>🎯 OBJETIVO:</strong> Marque <strong>7 pontos</strong> para vencer a partida!</p>
           <br>
           <p><strong>🕹️ CONTROLES:</strong></p>
           <p>• <strong>1 Jogador (vs CPU):</strong> Use <strong>Setas ▲ / ▼</strong>, <strong>W / S</strong> ou <strong>Mova o Mouse</strong>!</p>
           <p>• <strong>2 Jogadores Local:</strong> P1 usa <strong>W / S</strong> | P2 usa <strong>Setas ▲ / ▼</strong></p>
+          <p>• <strong>4 Jogadores (2v2 Duplas):</strong> Time Azul: P1 (<strong>W / S</strong>) + P3 (<strong>F / V</strong>) | Time Rosa: P2 (<strong>▲ / ▼</strong>) + P4 (<strong>I / K</strong>)</p>
           <p>• <strong>Blaster (Modo Ação):</strong> <strong>Barra de Espaço</strong> para atirar laser!</p>
-          <p>• <strong>Celular / Touch:</strong> Arraste o dedo na tela ou use os botões direcionais.</p>
+          <p>• <strong>Celular / Touch:</strong> Arraste o dedo diretamente na quadra ou use o Gamepad Arcade tátil.</p>
           <br>
-          <p><strong>⚡ MODOS DE AÇÃO (Coolmath Games):</strong></p>
-          <p>• <strong>Parede Secreta:</strong> Parede invisível que rebate a bola de volta.</p>
-          <p>• <strong>Bola de Fogo:</strong> Anel de fogo central que acelera a bola progressivamente.</p>
-          <p>• <strong>Multibola:</strong> Múltiplas bolas que colidem entre si!</p>
-          <p>• <strong>Bola Grande, Raquetes Pequenas:</strong> Bola gigante e raquetes minúsculas.</p>
-          <p>• <strong>Zona de Neblina:</strong> Névoa densa no centro onde a bola fica invisível e sem som!</p>
-          <p>• <strong>Poço Gravitacional:</strong> Vórtices que curvam a trajetória da bola.</p>
-          <p>• <strong>Bumper Ball:</strong> 5 bumpers de pinball no centro.</p>
-          <p>• <strong>Não Acerte o Gatinho:</strong> Um gatinho no campo! 2 acertos nele perdem o ponto!</p>
-          <p>• <strong>Blaster:</strong> Atire lasers no oponente! 2 acertos marcam ponto!</p>
+          <p><strong>⚡ 20 MODOS DE AÇÃO RETRÔ DINÂMICOS:</strong></p>
+          <p>• <strong>Gerador de Escudos:</strong> 3 camadas de barreiras holográficas protegendo o gol!</p>
+          <p>• <strong>Buraco Negro:</strong> Horizonte de eventos cósmico no centro que suga a bola em hiperespaço!</p>
+          <p>• <strong>Campo Eletromagnético:</strong> Pólos Norte (Repelir) e Sul (Atrair) curvando a trajetória!</p>
+          <p>• <strong>Raquetes Mutantes:</strong> As raquetes se expandem e pulsam em cada rebatida!</p>
+          <p>• <strong>Torretas Cyber:</strong> Canhões automáticos disparam lasers energéticos pelo campo!</p>
+          <p>• <strong>Bola Fantasma:</strong> A bola oscila entre dimensões, ficando translúcida com clones falsos!</p>
+          <p>• <strong>Portais Quânticos:</strong> Teletransporte instantâneo entre portais Azul e Laranja!</p>
+          <p>• <strong>Campo Temporal (Bullet Time):</strong> Desaceleração extrema em câmera lenta no centro!</p>
+          <p>• <strong>Tempestade Elétrica 10.000V:</strong> Raios eletrificam as paredes com ziguezagues!</p>
+          <p>• <strong>Chuva de Asteroides:</strong> Meteoros flutuam no campo e se fragmentam quando atingidos!</p>
+          <p>• <strong>Bumper Pinball:</strong> 5 bumpers arcade disparam a bola com impulsos luminosos!</p>
+          <p>• <strong>Não Acerte o Gatinho:</strong> Um gatinho passeia no campo! 2 acertos nele perdem o ponto!</p>
+          <p>• <strong>Blaster:</strong> Atire lasers no oponente! 2 acertos nocautearão a raquete!</p>
+          <p>• <strong>Bola de Fogo:</strong> Anel solar que superaquece a bola progressivamente!</p>
+          <p>• <strong>Multibola Tripla:</strong> 3 bolas simultâneas colidindo entre si!</p>
         </div>
       </div>
     </div>

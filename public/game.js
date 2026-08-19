@@ -87,6 +87,42 @@ const ACTION_MODES = [
     name: 'SUPER SÔNICA TURBO 200%', 
     desc: 'Velocidade extrema e aceleração instantânea a cada rebatida!',
     color: '#ff0033'
+  },
+  { 
+    id: 'shield_generator', 
+    name: 'GERADOR DE ESCUDOS HOLOGRÁFICOS', 
+    desc: '3 camadas de escudos de energia protegem os gols de cada jogador!',
+    color: '#00e5ff'
+  },
+  { 
+    id: 'black_hole', 
+    name: 'BURACO NEGRO SUPERMASSIVO', 
+    desc: 'Um horizonte de eventos cósmico no centro suga a bola em hiperespaço!',
+    color: '#b026ff'
+  },
+  { 
+    id: 'magnet_field', 
+    name: 'CAMPO ELETROMAGNÉTICO', 
+    desc: 'Pólos Magnéticos Norte e Sul repelem e atraem a bola pelo campo!',
+    color: '#ff3366'
+  },
+  { 
+    id: 'paddle_morph', 
+    name: 'RAQUETES MUTANTES NANO-TECH', 
+    desc: 'As raquetes pulsam e mudam de tamanho dinamicamente em cada jogada!',
+    color: '#39ff14'
+  },
+  { 
+    id: 'laser_turrets', 
+    name: 'TORRETAS DE DEFESA CYBER', 
+    desc: 'Canhões automáticos disparam lasers energéticos pelo centro da mesa!',
+    color: '#ff0055'
+  },
+  { 
+    id: 'ghost_ball', 
+    name: 'BOLA FANTASMA DIMENSIONAL', 
+    desc: 'A bola oscila entre dimensões, tornando-se translúcida com clones falsos!',
+    color: '#e066ff'
   }
 ];
 
@@ -157,6 +193,42 @@ class RetroPingPong {
       name: 'PLAYER 2'
     };
 
+    this.p3 = {
+      x: 75,
+      y: 250,
+      prevY: 250,
+      vy: 0,
+      width: 14,
+      height: 75,
+      baseHeight: 75,
+      speed: 8.0,
+      powerMeter: 0,
+      hitsTaken: 0,
+      laserCooldown: 0,
+      scaleX: 1,
+      scaleY: 1,
+      muzzleFlash: 0,
+      name: 'PLAYER 3'
+    };
+
+    this.p4 = {
+      x: CANVAS_WIDTH - 75 - 14,
+      y: 250,
+      prevY: 250,
+      vy: 0,
+      width: 14,
+      height: 75,
+      baseHeight: 75,
+      speed: 8.0,
+      powerMeter: 0,
+      hitsTaken: 0,
+      laserCooldown: 0,
+      scaleX: 1,
+      scaleY: 1,
+      muzzleFlash: 0,
+      name: 'PLAYER 4'
+    };
+
     // Bolas
     this.balls = [];
     this.defaultBallRadius = 8;
@@ -175,6 +247,12 @@ class RetroPingPong {
     this.lightningBolts = [];
     this.fogParticles = [];
     this.ambientDust = [];
+    this.shields1 = [];
+    this.shields2 = [];
+    this.blackHole = null;
+    this.magnets = [];
+    this.turrets = [];
+    this.turretLasers = [];
 
     // Controles
     this.keys = {};
@@ -412,15 +490,39 @@ class RetroPingPong {
     net.onStateSync = (state) => {
       if (net.role === 'guest') {
         this.p1.y = state.p1Y;
-        this.balls = state.balls;
+        if (state.balls && Array.isArray(state.balls)) {
+          this.balls = state.balls.map((b, idx) => {
+            const existing = (this.balls && this.balls[idx]) ? this.balls[idx] : {};
+            const trail = existing.trail || [];
+            trail.push({ x: b.x, y: b.y, fire: b.fireLevel, isSmash: b.isSmash, hue: b.hue });
+            if (trail.length > 14) trail.shift();
+            return {
+              x: b.x,
+              y: b.y,
+              vx: b.vx || 0,
+              vy: b.vy || 0,
+              spin: b.spin || 0,
+              radius: b.radius || this.defaultBallRadius,
+              isSmash: !!b.isSmash,
+              fireLevel: b.fireLevel || 0,
+              hue: b.hue || 0,
+              trail,
+              rotation: (existing.rotation || 0) + 0.1
+            };
+          });
+        }
         this.score1 = state.score1;
         this.score2 = state.score2;
-        this.bumpers = state.bumpers || [];
-        this.kitty = state.kitty || null;
-        this.secretWall = state.secretWall || null;
-        this.gravityWells = state.gravityWells || this.gravityWells;
-        this.portals = state.portals || this.portals;
-        this.asteroids = state.asteroids || this.asteroids;
+        if (state.bumpers) this.bumpers = state.bumpers;
+        if (state.kitty !== undefined) this.kitty = state.kitty;
+        if (state.secretWall !== undefined) this.secretWall = state.secretWall;
+        if (state.gravityWells) this.gravityWells = state.gravityWells;
+        if (state.portals) this.portals = state.portals;
+        if (state.asteroids) this.asteroids = state.asteroids;
+        if (state.shields1) this.shields1 = state.shields1;
+        if (state.shields2) this.shields2 = state.shields2;
+        if (state.blackHole) this.blackHole = state.blackHole;
+        if (state.magnets) this.magnets = state.magnets;
         this.p1.hitsTaken = state.p1Hits || 0;
         this.p2.hitsTaken = state.p2Hits || 0;
         this.p1.powerMeter = state.p1Power || 0;
@@ -575,9 +677,49 @@ class RetroPingPong {
     this.p1.height = this.p1.baseHeight;
     this.p2.height = this.p2.baseHeight;
 
+    this.shields1 = [];
+    this.shields2 = [];
+    this.blackHole = null;
+    this.magnets = [];
+    this.turrets = [];
+    this.turretLasers = [];
+
     if (act === 'big_ball') {
       this.p1.height = this.p1.baseHeight * 0.5;
       this.p2.height = this.p2.baseHeight * 0.5;
+    } else if (act === 'shield_generator') {
+      this.shields1 = [
+        { x: 14, y: 80, w: 8, h: 120, active: true },
+        { x: 14, y: 240, w: 8, h: 120, active: true },
+        { x: 14, y: 400, w: 8, h: 120, active: true }
+      ];
+      this.shields2 = [
+        { x: CANVAS_WIDTH - 22, y: 80, w: 8, h: 120, active: true },
+        { x: CANVAS_WIDTH - 22, y: 240, w: 8, h: 120, active: true },
+        { x: CANVAS_WIDTH - 22, y: 400, w: 8, h: 120, active: true }
+      ];
+    } else if (act === 'black_hole') {
+      this.blackHole = {
+        x: CANVAS_WIDTH / 2,
+        y: CANVAS_HEIGHT / 2,
+        r: 32,
+        rot: 0,
+        cooldown: 0,
+        pulse: 0
+      };
+    } else if (act === 'magnet_field') {
+      this.magnets = [
+        { x: CANVAS_WIDTH / 2 - 130, y: CANVAS_HEIGHT / 2, type: 'repel', r: 32, rot: 0, color: '#00f0ff' },
+        { x: CANVAS_WIDTH / 2 + 130, y: CANVAS_HEIGHT / 2, type: 'attract', r: 32, rot: 0, color: '#ff0055' }
+      ];
+    } else if (act === 'paddle_morph') {
+      this.p1.height = 135;
+      this.p2.height = 135;
+    } else if (act === 'laser_turrets') {
+      this.turrets = [
+        { x: CANVAS_WIDTH / 2, y: 16, dirY: 1, timer: 40, rot: 0 },
+        { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT - 16, dirY: -1, timer: 100, rot: Math.PI }
+      ];
     } else if (act === 'bumper_ball') {
       const cx = CANVAS_WIDTH / 2;
       const cy = CANVAS_HEIGHT / 2;
@@ -716,8 +858,12 @@ class RetroPingPong {
   }
 
   loop() {
-    this.update();
-    this.render();
+    try {
+      this.update();
+      this.render();
+    } catch (err) {
+      console.warn('Loop safe catch:', err);
+    }
     requestAnimationFrame(this.loop);
   }
 
@@ -791,6 +937,10 @@ class RetroPingPong {
           gravityWells: this.gravityWells,
           portals: this.portals,
           asteroids: this.asteroids,
+          shields1: this.shields1,
+          shields2: this.shields2,
+          blackHole: this.blackHole,
+          magnets: this.magnets,
           p1Hits: this.p1.hitsTaken,
           p2Hits: this.p2.hitsTaken,
           p1Power: this.p1.powerMeter,
@@ -839,6 +989,27 @@ class RetroPingPong {
       if (p2Down) this.p2.y += this.p2.speed;
       this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
       this.p2.vy = this.p2.y - this.p2.prevY;
+    } else if (this.gameType === '4p_local') {
+      const p2Up = this.keys['ArrowUp'] || this.keys['Up'];
+      const p2Down = this.keys['ArrowDown'] || this.keys['Down'];
+      if (p2Up) this.p2.y -= this.p2.speed;
+      if (p2Down) this.p2.y += this.p2.speed;
+      this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
+      this.p2.vy = this.p2.y - this.p2.prevY;
+
+      const p3Up = this.keys['KeyF'] || this.keys['f'] || this.keys['F'];
+      const p3Down = this.keys['KeyV'] || this.keys['v'] || this.keys['V'];
+      if (p3Up) this.p3.y -= this.p3.speed;
+      if (p3Down) this.p3.y += this.p3.speed;
+      this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, this.p3.y));
+      this.p3.vy = this.p3.y - this.p3.prevY;
+
+      const p4Up = this.keys['KeyI'] || this.keys['i'] || this.keys['I'] || this.keys['Numpad8'];
+      const p4Down = this.keys['KeyK'] || this.keys['k'] || this.keys['K'] || this.keys['Numpad2'];
+      if (p4Up) this.p4.y -= this.p4.speed;
+      if (p4Down) this.p4.y += this.p4.speed;
+      this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, this.p4.y));
+      this.p4.vy = this.p4.y - this.p4.prevY;
     } else if (isGuest) {
       const guestUp = this.keys['ArrowUp'] || this.keys['Up'] || this.keys['KeyW'] || this.keys['w'] || this.keys['W'];
       const guestDown = this.keys['ArrowDown'] || this.keys['Down'] || this.keys['KeyS'] || this.keys['s'] || this.keys['S'];
@@ -1126,6 +1297,85 @@ class RetroPingPong {
         }
       }
 
+      // 🌌 BURACO NEGRO SUPERMASSIVO
+      if (act === 'black_hole' && this.blackHole) {
+        this.blackHole.rot += 0.08;
+        if (this.blackHole.cooldown > 0) this.blackHole.cooldown--;
+        const dx = this.blackHole.x - ball.x;
+        const dy = this.blackHole.y - ball.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 48 && this.blackHole.cooldown <= 0) {
+          this.blackHole.cooldown = 90;
+          const boostSpeed = Math.max(7.5, Math.hypot(ball.vx, ball.vy) * 1.15);
+          const angle = Math.atan2(ball.vy, ball.vx) + (Math.random() * 0.8 - 0.4);
+          ball.vx = boostSpeed * Math.cos(angle);
+          ball.vy = boostSpeed * Math.sin(angle);
+          this.screenShake = 7;
+          window.retroAudio.playBlackHole();
+          this.createHitParticles(ball.x, ball.y, '#b026ff', 24);
+          this.addShockwave(this.blackHole.x, this.blackHole.y, '#b026ff', 55);
+          this.addFloatText(ball.x, ball.y - 20, '🌌 EVENT HORIZON!', '#b026ff');
+        } else if (dist < 200 && this.blackHole.cooldown <= 0) {
+          const force = 0.25 * (1 - dist / 200);
+          ball.vx += (dx / dist) * force;
+          ball.vy += (dy / dist) * force;
+        }
+      }
+
+      // 🧲 CAMPO ELETROMAGNÉTICO
+      if (act === 'magnet_field' && this.magnets.length >= 2) {
+        this.magnets.forEach(m => {
+          m.rot += 0.04;
+          const dx = m.x - ball.x;
+          const dy = m.y - ball.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 150) {
+            const force = (m.type === 'attract' ? 0.30 : -0.30) * (1 - dist / 150);
+            ball.vx += (dx / dist) * force;
+            ball.vy += (dy / dist) * force;
+            if (Math.random() < 0.1) {
+              this.particles.push({
+                x: ball.x,
+                y: ball.y,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
+                life: 0.3,
+                color: m.color,
+                size: 2
+              });
+            }
+          }
+        });
+      }
+
+      // 🛡️ GERADOR DE ESCUDOS HOLOGRÁFICOS
+      if (act === 'shield_generator') {
+        this.shields1.forEach(s => {
+          if (s.active && ball.x - ball.radius <= s.x + s.w && ball.x + ball.radius >= s.x && ball.y >= s.y && ball.y <= s.y + s.h && ball.vx < 0) {
+            s.active = false;
+            ball.x = s.x + s.w + ball.radius;
+            ball.vx = Math.abs(ball.vx) * 1.05;
+            window.retroAudio.playShieldBreak();
+            this.screenShake = 5;
+            this.createHitParticles(ball.x, ball.y, '#00e5ff', 22);
+            this.addShockwave(s.x + s.w / 2, s.y + s.h / 2, '#00e5ff', 45);
+            this.addFloatText(ball.x, ball.y - 15, '🛡️ ESCUDO P1 QUEBRADO!', '#00e5ff');
+          }
+        });
+        this.shields2.forEach(s => {
+          if (s.active && ball.x + ball.radius >= s.x && ball.x - ball.radius <= s.x + s.w && ball.y >= s.y && ball.y <= s.y + s.h && ball.vx > 0) {
+            s.active = false;
+            ball.x = s.x - ball.radius;
+            ball.vx = -Math.abs(ball.vx) * 1.05;
+            window.retroAudio.playShieldBreak();
+            this.screenShake = 5;
+            this.createHitParticles(ball.x, ball.y, '#ff007f', 22);
+            this.addShockwave(s.x + s.w / 2, s.y + s.h / 2, '#ff007f', 45);
+            this.addFloatText(ball.x, ball.y - 15, '🛡️ ESCUDO P2 QUEBRADO!', '#ff007f');
+          }
+        });
+      }
+
       ball.x += ball.vx;
       ball.y += ball.vy;
 
@@ -1264,6 +1514,44 @@ class RetroPingPong {
         this.p2.powerMeter = Math.min(100, this.p2.powerMeter + 25);
         this.createHitParticles(ball.x, ball.y, '#ff007f', 14);
         this.addShockwave(ball.x, ball.y, '#ff007f', 30);
+      }
+
+      // Raquete 3 (Esquerda Avançada - P3 em 4P)
+      if (
+        (this.gameType === '4p_local' || this.gameType === '4p_lan') &&
+        ball.x - ball.radius <= this.p3.x + this.p3.width &&
+        ball.x + ball.radius >= this.p3.x &&
+        ball.y + ball.radius >= this.p3.y &&
+        ball.y - ball.radius <= this.p3.y + this.p3.height &&
+        ball.vx < 0
+      ) {
+        ball.x = this.p3.x + this.p3.width + ball.radius;
+        this.deflectBall(ball, this.p3, 1);
+        ball.lastHitter = 'p3';
+        this.p3.scaleX = 0.75;
+        this.p3.scaleY = 1.25;
+        this.p3.powerMeter = Math.min(100, this.p3.powerMeter + 25);
+        this.createHitParticles(ball.x, ball.y, '#00e5ff', 14);
+        this.addShockwave(ball.x, ball.y, '#00e5ff', 30);
+      }
+
+      // Raquete 4 (Direita Avançada - P4 em 4P)
+      if (
+        (this.gameType === '4p_local' || this.gameType === '4p_lan') &&
+        ball.x + ball.radius >= this.p4.x &&
+        ball.x - ball.radius <= this.p4.x + this.p4.width &&
+        ball.y + ball.radius >= this.p4.y &&
+        ball.y - ball.radius <= this.p4.y + this.p4.height &&
+        ball.vx > 0
+      ) {
+        ball.x = this.p4.x - ball.radius;
+        this.deflectBall(ball, this.p4, 2);
+        ball.lastHitter = 'p4';
+        this.p4.scaleX = 0.75;
+        this.p4.scaleY = 1.25;
+        this.p4.powerMeter = Math.min(100, this.p4.powerMeter + 25);
+        this.createHitParticles(ball.x, ball.y, '#ff00aa', 14);
+        this.addShockwave(ball.x, ball.y, '#ff00aa', 30);
       }
 
       // Multiball Colisão entre bolas
@@ -1456,8 +1744,22 @@ class RetroPingPong {
   }
 
   scorePoint(winnerNumber, customReason = null) {
-    if (winnerNumber === 1) this.score1++;
-    if (winnerNumber === 2) this.score2++;
+    if (winnerNumber === 1) {
+      this.score1++;
+      if (this.hudScore1) {
+        this.hudScore1.classList.add('score-pop');
+        setTimeout(() => this.hudScore1.classList.remove('score-pop'), 400);
+      }
+      this.addFloatText(CANVAS_WIDTH / 4, CANVAS_HEIGHT / 2 - 35, customReason || '🎯 P1 PONTO!', '#00f0ff');
+    }
+    if (winnerNumber === 2) {
+      this.score2++;
+      if (this.hudScore2) {
+        this.hudScore2.classList.add('score-pop');
+        setTimeout(() => this.hudScore2.classList.remove('score-pop'), 400);
+      }
+      this.addFloatText(CANVAS_WIDTH * 3 / 4, CANVAS_HEIGHT / 2 - 35, customReason || '🎯 P2 PONTO!', '#ff007f');
+    }
 
     this.updateHUD();
     window.retroAudio.playScore(winnerNumber === 1);
@@ -1467,7 +1769,10 @@ class RetroPingPong {
     }
 
     if (this.score1 >= this.maxScore || this.score2 >= this.maxScore) {
-      this.gameOver(this.score1 >= this.maxScore ? this.p1.name : this.p2.name);
+      const winnerName = this.score1 >= this.maxScore 
+        ? (this.gameType === '4p_local' ? 'TIME AZUL (P1+P3)' : this.p1.name)
+        : (this.gameType === '4p_local' ? 'TIME ROSA (P2+P4)' : this.p2.name);
+      this.gameOver(winnerName);
     } else {
       this.startRound();
     }
@@ -1608,9 +1913,17 @@ class RetroPingPong {
     if (act === 'lightning_storm') this.renderLightningRails();
     if (act === 'secret_wall') this.renderSecretWall();
     if (act === 'kitty') this.renderKitty();
+    if (act === 'shield_generator') this.renderShields();
+    if (act === 'black_hole') this.renderBlackHole();
+    if (act === 'magnet_field') this.renderMagnets();
 
     this.renderPaddle(this.p1, '#00f0ff', this.p1.hitsTaken, this.p1.powerMeter, true);
     this.renderPaddle(this.p2, '#ff007f', this.p2.hitsTaken, this.p2.powerMeter, false);
+
+    if (this.gameType === '4p_local' || this.gameType === '4p_lan') {
+      this.renderPaddle(this.p3, '#00e5ff', this.p3.hitsTaken, this.p3.powerMeter, true);
+      this.renderPaddle(this.p4, '#ff00aa', this.p4.hitsTaken, this.p4.powerMeter, false);
+    }
 
     this.renderLasers();
     this.renderShockwaves();
@@ -2123,13 +2436,83 @@ class RetroPingPong {
     this.ctx.globalAlpha = 1.0;
   }
 
-  renderConfetti() {
-    this.confetti.forEach(c => {
+  renderShields() {
+    (this.shields1 || []).forEach(s => {
+      if (!s.active) return;
       this.ctx.save();
-      this.ctx.translate(c.x, c.y);
-      this.ctx.rotate(c.rot * Math.PI / 180);
-      this.ctx.fillStyle = c.color;
-      this.ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 1.6);
+      this.ctx.shadowColor = '#00f0ff';
+      this.ctx.shadowBlur = 15;
+      this.ctx.fillStyle = 'rgba(0, 240, 255, 0.4)';
+      this.ctx.fillRect(s.x, s.y, s.w, s.h);
+      this.ctx.strokeStyle = '#00f0ff';
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(s.x, s.y, s.w, s.h);
+      this.ctx.restore();
+    });
+    (this.shields2 || []).forEach(s => {
+      if (!s.active) return;
+      this.ctx.save();
+      this.ctx.shadowColor = '#ff007f';
+      this.ctx.shadowBlur = 15;
+      this.ctx.fillStyle = 'rgba(255, 0, 127, 0.4)';
+      this.ctx.fillRect(s.x, s.y, s.w, s.h);
+      this.ctx.strokeStyle = '#ff007f';
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(s.x, s.y, s.w, s.h);
+      this.ctx.restore();
+    });
+  }
+
+  renderBlackHole() {
+    if (!this.blackHole) return;
+    const bh = this.blackHole;
+    this.ctx.save();
+    this.ctx.translate(bh.x, bh.y);
+    this.ctx.rotate(bh.rot);
+
+    const grad = this.ctx.createRadialGradient(0, 0, 8, 0, 0, 52);
+    grad.addColorStop(0, '#000000');
+    grad.addColorStop(0.5, '#b026ff');
+    grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+    this.ctx.fillStyle = grad;
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, 52, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = '#000000';
+    this.ctx.shadowColor = '#b026ff';
+    this.ctx.shadowBlur = 22;
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, bh.r, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.strokeStyle = '#e066ff';
+    this.ctx.lineWidth = 3;
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, bh.r + 2, 0, Math.PI * 2);
+    this.ctx.stroke();
+
+    this.ctx.restore();
+  }
+
+  renderMagnets() {
+    (this.magnets || []).forEach(m => {
+      this.ctx.save();
+      this.ctx.translate(m.x, m.y);
+      this.ctx.rotate(m.rot);
+      this.ctx.shadowColor = m.color;
+      this.ctx.shadowBlur = 18;
+
+      this.ctx.strokeStyle = m.color;
+      this.ctx.lineWidth = 3;
+      this.ctx.beginPath();
+      this.ctx.arc(0, 0, m.r, 0, Math.PI * 2);
+      this.ctx.stroke();
+
+      this.ctx.fillStyle = m.type === 'attract' ? '#ff0055' : '#00d4ff';
+      this.ctx.font = '14px "Press Start 2P"';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(m.type === 'attract' ? 'S' : 'N', 0, 5);
       this.ctx.restore();
     });
   }
