@@ -1102,46 +1102,71 @@ class RetroPingPong {
 
     this.updatePaddles();
 
-    const isHostOrLocal = this.gameType !== '2p_lan' || window.networkManager.role === 'host';
+    const isLan = this.gameType === '2p_lan' || this.gameType === '4p_lan';
+    const isHost = isLan && window.networkManager.role === 'host';
+    const isHostOrLocal = !isLan || isHost;
+
     if (isHostOrLocal) {
       this.updatePhysics();
 
-      if (this.gameType === '2p_lan') {
+      if (isLan) {
         const now = Date.now();
-        if (!this.lastSyncTime || now - this.lastSyncTime >= 32) {
+        if (!this.lastSyncTime || now - this.lastSyncTime >= 33) { // 30Hz (~33.3ms)
           this.lastSyncTime = now;
-          window.networkManager.sendGameState({
-            p1Y: Math.round(this.p1.y),
+          const isFullSync = !this._syncCounter || (this._syncCounter % 30 === 0);
+          this._syncCounter = (this._syncCounter || 0) + 1;
+
+          const payload = {
+            p1Y: Math.round(this.p1.y * 10) / 10,
+            p2Y: Math.round(this.p2.y * 10) / 10,
             balls: this.balls.map(b => ({
               x: Math.round(b.x * 10) / 10,
               y: Math.round(b.y * 10) / 10,
-              vx: Math.round(b.vx * 100) / 100,
-              vy: Math.round(b.vy * 100) / 100,
+              vx: Math.round((b.vx || 0) * 100) / 100,
+              vy: Math.round((b.vy || 0) * 100) / 100,
               spin: Math.round((b.spin || 0) * 100) / 100,
-              isSmash: !!b.isSmash,
+              isSmash: b.isSmash ? 1 : 0,
               radius: b.radius,
               fireLevel: b.fireLevel || 0,
               hue: b.hue || 0
             })),
             score1: this.score1,
-            score2: this.score2,
-            bumpers: this.bumpers,
-            kitty: this.kitty,
-            secretWall: this.secretWall,
-            gravityWells: this.gravityWells,
-            portals: this.portals,
-            asteroids: this.asteroids,
-            shields1: this.shields1,
-            shields2: this.shields2,
-            blackHole: this.blackHole,
-            magnets: this.magnets,
-            p1Hits: this.p1.hitsTaken,
-            p2Hits: this.p2.hitsTaken,
-            p1Power: this.p1.powerMeter,
-            p2Power: this.p2.powerMeter
-          });
+            score2: this.score2
+          };
+
+          if (this.gameType === '4p_lan') {
+            payload.p3Y = Math.round(this.p3.y * 10) / 10;
+            payload.p4Y = Math.round(this.p4.y * 10) / 10;
+          }
+
+          // Delta payload: envia elementos interativos em full sync ou se houverem
+          if (isFullSync) {
+            payload.bumpers = this.bumpers;
+            payload.kitty = this.kitty;
+            payload.secretWall = this.secretWall;
+            payload.gravityWells = this.gravityWells;
+            payload.portals = this.portals;
+            payload.asteroids = this.asteroids;
+            payload.shields1 = this.shields1;
+            payload.shields2 = this.shields2;
+            payload.blackHole = this.blackHole;
+            payload.magnets = this.magnets;
+            payload.p1Hits = this.p1.hitsTaken;
+            payload.p2Hits = this.p2.hitsTaken;
+            payload.p3Hits = this.p3.hitsTaken;
+            payload.p4Hits = this.p4.hitsTaken;
+            payload.p1Power = this.p1.powerMeter;
+            payload.p2Power = this.p2.powerMeter;
+            payload.p3Power = this.p3.powerMeter;
+            payload.p4Power = this.p4.powerMeter;
+          }
+
+          window.networkManager.sendGameState(payload, !isFullSync);
         }
       }
+    } else {
+      // Cliente Guest / P3 / P4 -> Interpolação suave a 60FPS com Buffer Guard de ~50ms
+      this.interpolateClientState();
     }
 
     this.updateLasers();
@@ -1149,82 +1174,215 @@ class RetroPingPong {
     this.updateShockwaves();
   }
 
+  interpolateClientState() {
+    if (!this.netStateBuffer || this.netStateBuffer.length === 0) return;
+
+    const renderTime = Date.now() - (this.netInterpDelay || 50);
+
+    // Remover snapshots antigos além da janela
+    while (this.netStateBuffer.length > 2 && this.netStateBuffer[1].t < renderTime) {
+      this.netStateBuffer.shift();
+    }
+
+    if (this.netStateBuffer.length === 1) {
+      const s = this.netStateBuffer[0].state;
+      this.applyInterpolatedSnapshot(s, s, 0);
+    } else if (this.netStateBuffer.length >= 2) {
+      const s0 = this.netStateBuffer[0];
+      const s1 = this.netStateBuffer[1];
+
+      let factor = 0;
+      if (s1.t > s0.t) {
+        factor = Math.max(0, Math.min(1, (renderTime - s0.t) / (s1.t - s0.t)));
+      }
+      this.applyInterpolatedSnapshot(s0.state, s1.state, factor);
+    }
+  }
+
+  applyInterpolatedSnapshot(state0, state1, factor) {
+    const role = window.networkManager ? window.networkManager.role : 'guest';
+
+    // Interpolação de raquetes dos outros jogadores
+    if (role !== 'host' && state0.p1Y !== undefined && state1.p1Y !== undefined) {
+      const targetY = state0.p1Y + (state1.p1Y - state0.p1Y) * factor;
+      this.p1.y += (targetY - this.p1.y) * 0.45;
+    }
+    if (role !== 'guest' && state0.p2Y !== undefined && state1.p2Y !== undefined) {
+      const targetY = state0.p2Y + (state1.p2Y - state0.p2Y) * factor;
+      this.p2.y += (targetY - this.p2.y) * 0.45;
+    }
+    if (role !== 'p3' && state0.p3Y !== undefined && state1.p3Y !== undefined) {
+      const targetY = state0.p3Y + (state1.p3Y - state0.p3Y) * factor;
+      this.p3.y += (targetY - this.p3.y) * 0.45;
+    }
+    if (role !== 'p4' && state0.p4Y !== undefined && state1.p4Y !== undefined) {
+      const targetY = state0.p4Y + (state1.p4Y - state0.p4Y) * factor;
+      this.p4.y += (targetY - this.p4.y) * 0.45;
+    }
+
+    // Interpolação da bola (lerp nas posições x, y)
+    if (state0.balls && state1.balls && Array.isArray(state0.balls) && Array.isArray(state1.balls)) {
+      this.balls = state1.balls.map((b1, idx) => {
+        const b0 = state0.balls[idx] || b1;
+        const interpX = b0.x + (b1.x - b0.x) * factor;
+        const interpY = b0.y + (b1.y - b0.y) * factor;
+
+        const existing = (this.balls && this.balls[idx]) ? this.balls[idx] : {};
+        const trail = existing.trail || [];
+        trail.push({ x: interpX, y: interpY, fire: b1.fireLevel, isSmash: b1.isSmash, hue: b1.hue });
+        if (trail.length > 14) trail.shift();
+
+        return {
+          x: interpX,
+          y: interpY,
+          vx: b1.vx || 0,
+          vy: b1.vy || 0,
+          spin: b1.spin || 0,
+          radius: b1.radius || this.defaultBallRadius,
+          isSmash: !!b1.isSmash,
+          fireLevel: b1.fireLevel || 0,
+          hue: b1.hue || 0,
+          trail,
+          rotation: (existing.rotation || 0) + 0.1
+        };
+      });
+    }
+  }
+
   updatePaddles() {
     this.p1.prevY = this.p1.y;
     this.p2.prevY = this.p2.y;
+    this.p3.prevY = this.p3.y;
+    this.p4.prevY = this.p4.y;
 
-    const isLan = this.gameType === '2p_lan';
-    const isHost = isLan && window.networkManager.role === 'host';
-    const isGuest = isLan && window.networkManager.role === 'guest';
+    const isLan = this.gameType === '2p_lan' || this.gameType === '4p_lan';
+    const role = isLan ? (window.networkManager ? window.networkManager.role : 'guest') : null;
 
-    if (!isGuest) {
-      const p1Up = this.keys['KeyW'] || this.keys['w'] || this.keys['W'] || (this.gameType === '1p' && (this.keys['ArrowUp'] || this.keys['Up']));
-      const p1Down = this.keys['KeyS'] || this.keys['s'] || this.keys['S'] || (this.gameType === '1p' && (this.keys['ArrowDown'] || this.keys['Down']));
+    if (!isLan) {
+      if (this.gameType === '1p') {
+        const p1Up = this.keys['KeyW'] || this.keys['w'] || this.keys['W'] || this.keys['ArrowUp'] || this.keys['Up'];
+        const p1Down = this.keys['KeyS'] || this.keys['s'] || this.keys['S'] || this.keys['ArrowDown'] || this.keys['Down'];
+        if (p1Up) this.p1.y -= this.p1.speed;
+        if (p1Down) this.p1.y += this.p1.speed;
 
-      if (p1Up) this.p1.y -= this.p1.speed;
-      if (p1Down) this.p1.y += this.p1.speed;
+        if (this.mouseControl && this.mouseTargetY !== null) {
+          const targetY = this.mouseTargetY - this.p1.height / 2;
+          this.p1.y += (targetY - this.p1.y) * 0.35;
+        }
+        this.p1.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p1.height - 10, this.p1.y));
+        this.p1.vy = this.p1.y - this.p1.prevY;
+        this.updateAI();
+      } else if (this.gameType === '2p_local') {
+        const p1Up = this.keys['KeyW'] || this.keys['w'] || this.keys['W'];
+        const p1Down = this.keys['KeyS'] || this.keys['s'] || this.keys['S'];
+        if (p1Up) this.p1.y -= this.p1.speed;
+        if (p1Down) this.p1.y += this.p1.speed;
+        this.p1.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p1.height - 10, this.p1.y));
+        this.p1.vy = this.p1.y - this.p1.prevY;
 
-      if (this.mouseControl && this.mouseTargetY !== null && (this.gameType === '1p' || isHost)) {
+        const p2Up = this.keys['ArrowUp'] || this.keys['Up'];
+        const p2Down = this.keys['ArrowDown'] || this.keys['Down'];
+        if (p2Up) this.p2.y -= this.p2.speed;
+        if (p2Down) this.p2.y += this.p2.speed;
+        this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
+        this.p2.vy = this.p2.y - this.p2.prevY;
+      } else if (this.gameType === '4p_local') {
+        const p1Up = this.keys['KeyW'] || this.keys['w'] || this.keys['W'];
+        const p1Down = this.keys['KeyS'] || this.keys['s'] || this.keys['S'];
+        if (p1Up) this.p1.y -= this.p1.speed;
+        if (p1Down) this.p1.y += this.p1.speed;
+        this.p1.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p1.height - 10, this.p1.y));
+        this.p1.vy = this.p1.y - this.p1.prevY;
+
+        const p2Up = this.keys['ArrowUp'] || this.keys['Up'];
+        const p2Down = this.keys['ArrowDown'] || this.keys['Down'];
+        if (p2Up) this.p2.y -= this.p2.speed;
+        if (p2Down) this.p2.y += this.p2.speed;
+        this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
+        this.p2.vy = this.p2.y - this.p2.prevY;
+
+        const p3Up = this.keys['KeyF'] || this.keys['f'] || this.keys['F'] || this.keys['KeyA'] || this.keys['a'];
+        const p3Down = this.keys['KeyV'] || this.keys['v'] || this.keys['V'] || this.keys['KeyZ'] || this.keys['z'];
+        if (p3Up) this.p3.y -= this.p3.speed;
+        if (p3Down) this.p3.y += this.p3.speed;
+        this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, this.p3.y));
+        this.p3.vy = this.p3.y - this.p3.prevY;
+
+        const p4Up = this.keys['KeyI'] || this.keys['i'] || this.keys['I'] || this.keys['Numpad8'] || this.keys['KeyO'] || this.keys['o'];
+        const p4Down = this.keys['KeyK'] || this.keys['k'] || this.keys['K'] || this.keys['Numpad2'] || this.keys['KeyL'] || this.keys['l'];
+        if (p4Up) this.p4.y -= this.p4.speed;
+        if (p4Down) this.p4.y += this.p4.speed;
+        this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, this.p4.y));
+        this.p4.vy = this.p4.y - this.p4.prevY;
+        this.update2v2AI();
+      }
+      return;
+    }
+
+    // Controle em modo LAN Online (1v1 ou 2v2) para o jogador local conforme seu Role
+    const now = Date.now();
+    const shouldSendMove = !this._lastPaddleSend || (now - this._lastPaddleSend >= 25);
+
+    if (role === 'host') {
+      const up = this.keys['KeyW'] || this.keys['w'] || this.keys['W'] || this.keys['ArrowUp'] || this.keys['Up'];
+      const down = this.keys['KeyS'] || this.keys['s'] || this.keys['S'] || this.keys['ArrowDown'] || this.keys['Down'];
+      if (up) this.p1.y -= this.p1.speed;
+      if (down) this.p1.y += this.p1.speed;
+      if (this.mouseControl && this.mouseTargetY !== null) {
         const targetY = this.mouseTargetY - this.p1.height / 2;
         this.p1.y += (targetY - this.p1.y) * 0.35;
       }
-
       this.p1.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p1.height - 10, this.p1.y));
       this.p1.vy = this.p1.y - this.p1.prevY;
-
-      if (isHost) {
+      if (shouldSendMove) {
+        this._lastPaddleSend = now;
         window.networkManager.sendPaddleMove(this.p1.y, this.p1.vy);
       }
-    }
-
-    if (this.gameType === '2p_local') {
-      const p2Up = this.keys['ArrowUp'] || this.keys['Up'];
-      const p2Down = this.keys['ArrowDown'] || this.keys['Down'];
-      if (p2Up) this.p2.y -= this.p2.speed;
-      if (p2Down) this.p2.y += this.p2.speed;
-      this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
-      this.p2.vy = this.p2.y - this.p2.prevY;
-    } else if (this.gameType === '4p_local') {
-      const p2Up = this.keys['ArrowUp'] || this.keys['Up'];
-      const p2Down = this.keys['ArrowDown'] || this.keys['Down'];
-      if (p2Up) this.p2.y -= this.p2.speed;
-      if (p2Down) this.p2.y += this.p2.speed;
-      this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
-      this.p2.vy = this.p2.y - this.p2.prevY;
-
-      const p3Up = this.keys['KeyF'] || this.keys['f'] || this.keys['F'] || this.keys['KeyA'] || this.keys['a'];
-      const p3Down = this.keys['KeyV'] || this.keys['v'] || this.keys['V'] || this.keys['KeyZ'] || this.keys['z'];
-      if (p3Up) this.p3.y -= this.p3.speed;
-      if (p3Down) this.p3.y += this.p3.speed;
-      this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, this.p3.y));
-      this.p3.vy = this.p3.y - this.p3.prevY;
-
-      const p4Up = this.keys['KeyI'] || this.keys['i'] || this.keys['I'] || this.keys['Numpad8'] || this.keys['KeyO'] || this.keys['o'];
-      const p4Down = this.keys['KeyK'] || this.keys['k'] || this.keys['K'] || this.keys['Numpad2'] || this.keys['KeyL'] || this.keys['l'];
-      if (p4Up) this.p4.y -= this.p4.speed;
-      if (p4Down) this.p4.y += this.p4.speed;
-      this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, this.p4.y));
-      this.p4.vy = this.p4.y - this.p4.prevY;
-    } else if (isGuest) {
-      const guestUp = this.keys['ArrowUp'] || this.keys['Up'] || this.keys['KeyW'] || this.keys['w'] || this.keys['W'];
-      const guestDown = this.keys['ArrowDown'] || this.keys['Down'] || this.keys['KeyS'] || this.keys['s'] || this.keys['S'];
-      
-      if (guestUp) this.p2.y -= this.p2.speed;
-      if (guestDown) this.p2.y += this.p2.speed;
-
+    } else if (role === 'guest') {
+      const up = this.keys['ArrowUp'] || this.keys['Up'] || this.keys['KeyW'] || this.keys['w'] || this.keys['W'];
+      const down = this.keys['ArrowDown'] || this.keys['Down'] || this.keys['KeyS'] || this.keys['s'] || this.keys['S'];
+      if (up) this.p2.y -= this.p2.speed;
+      if (down) this.p2.y += this.p2.speed;
       if (this.mouseControl && this.mouseTargetY !== null) {
         const targetY = this.mouseTargetY - this.p2.height / 2;
         this.p2.y += (targetY - this.p2.y) * 0.35;
       }
-
       this.p2.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p2.height - 10, this.p2.y));
       this.p2.vy = this.p2.y - this.p2.prevY;
-      window.networkManager.sendPaddleMove(this.p2.y, this.p2.vy);
-    } else if (this.gameType === '1p') {
-      this.updateAI();
-    } else if (this.gameType === '4p_local') {
-      // Caso 4P local tenha bots não controlados por humanos, mantém suporte para IA em duplas
-      this.update2v2AI();
+      if (shouldSendMove) {
+        this._lastPaddleSend = now;
+        window.networkManager.sendPaddleMove(this.p2.y, this.p2.vy);
+      }
+    } else if (role === 'p3') {
+      const up = this.keys['ArrowUp'] || this.keys['Up'] || this.keys['KeyW'] || this.keys['w'] || this.keys['KeyF'] || this.keys['f'];
+      const down = this.keys['ArrowDown'] || this.keys['Down'] || this.keys['KeyS'] || this.keys['s'] || this.keys['KeyV'] || this.keys['v'];
+      if (up) this.p3.y -= this.p3.speed;
+      if (down) this.p3.y += this.p3.speed;
+      if (this.mouseControl && this.mouseTargetY !== null) {
+        const targetY = this.mouseTargetY - this.p3.height / 2;
+        this.p3.y += (targetY - this.p3.y) * 0.35;
+      }
+      this.p3.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p3.height - 10, this.p3.y));
+      this.p3.vy = this.p3.y - this.p3.prevY;
+      if (shouldSendMove) {
+        this._lastPaddleSend = now;
+        window.networkManager.sendPaddleMove(this.p3.y, this.p3.vy);
+      }
+    } else if (role === 'p4') {
+      const up = this.keys['ArrowUp'] || this.keys['Up'] || this.keys['KeyW'] || this.keys['w'] || this.keys['KeyI'] || this.keys['i'];
+      const down = this.keys['ArrowDown'] || this.keys['Down'] || this.keys['KeyS'] || this.keys['s'] || this.keys['KeyK'] || this.keys['k'];
+      if (up) this.p4.y -= this.p4.speed;
+      if (down) this.p4.y += this.p4.speed;
+      if (this.mouseControl && this.mouseTargetY !== null) {
+        const targetY = this.mouseTargetY - this.p4.height / 2;
+        this.p4.y += (targetY - this.p4.y) * 0.35;
+      }
+      this.p4.y = Math.max(10, Math.min(CANVAS_HEIGHT - this.p4.height - 10, this.p4.y));
+      this.p4.vy = this.p4.y - this.p4.prevY;
+      if (shouldSendMove) {
+        this._lastPaddleSend = now;
+        window.networkManager.sendPaddleMove(this.p4.y, this.p4.vy);
+      }
     }
   }
 
@@ -2249,14 +2407,14 @@ class RetroPingPong {
     this.updateHUD();
     window.retroAudio.playScore(winnerNumber === 1);
 
-    if (this.gameType === '2p_lan' && window.networkManager.role === 'host') {
+    if ((this.gameType === '2p_lan' || this.gameType === '4p_lan') && window.networkManager.role === 'host') {
       window.networkManager.sendRoundEvent('point', this.score1, this.score2, this.currentAction ? this.currentAction.id : null);
     }
 
     if (this.score1 >= this.maxScore || this.score2 >= this.maxScore) {
       const winnerName = this.score1 >= this.maxScore 
-        ? (this.gameType === '4p_local' ? 'TIME AZUL (P1+P3)' : this.p1.name)
-        : (this.gameType === '4p_local' ? 'TIME ROSA (P2+P4)' : this.p2.name);
+        ? ((this.gameType === '4p_local' || this.gameType === '4p_lan') ? 'TIME AZUL (P1+P3)' : this.p1.name)
+        : ((this.gameType === '4p_local' || this.gameType === '4p_lan') ? 'TIME ROSA (P2+P4)' : this.p2.name);
       this.gameOver(winnerName);
     } else {
       this.startRound();
