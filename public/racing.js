@@ -518,23 +518,31 @@ class CatsEyeRacing {
       return;
     }
 
-    // Controls
+    // Controls (Intuitivos e Padronizados)
     let gas = false, brake = false, left = false, right = false, drift = false, useItem = false;
     if (k.isHuman) {
       if (k.playerNum === 1) {
-        gas     = this.keys['KeyW'] || this.keys['arrowup'];
-        brake   = this.keys['KeyS'] || this.keys['arrowdown'];
-        left    = this.keys['KeyA'] || this.keys['arrowleft'];
-        right   = this.keys['KeyD'] || this.keys['arrowright'];
-        drift   = this.keys['ShiftLeft'] || this.keys['Space'] || this.keys['KeyE'];
-        useItem = this.keys['KeyQ'] || this.keys['KeyF'] || this.keys['Enter'];
+        // P1: WASD ou Setas para pilotar
+        gas     = !!(this.keys['KeyW'] || this.keys['ArrowUp'] || this.keys['w']);
+        brake   = !!(this.keys['KeyS'] || this.keys['ArrowDown'] || this.keys['s']);
+        left    = !!(this.keys['KeyA'] || this.keys['ArrowLeft'] || this.keys['a']);
+        right   = !!(this.keys['KeyD'] || this.keys['ArrowRight'] || this.keys['d']);
+        
+        // P1 Ações: ESPAÇO ou ENTER = USAR PODER / ATIRAR (Muito mais intuitivo!)
+        useItem = !!(this.keys['Space'] || this.keys['Enter'] || this.keys['KeyE'] || this.keys['e'] || this.keys['KeyF'] || this.keys['f']);
+        
+        // P1 Drift: SHIFT, CTRL ou Q
+        drift   = !!(this.keys['ShiftLeft'] || this.keys['ShiftRight'] || this.keys['ControlLeft'] || this.keys['KeyQ'] || this.keys['q']);
       } else {
-        gas     = this.keys['KeyI'] || this.keys['Numpad8'];
-        brake   = this.keys['KeyK'] || this.keys['Numpad2'];
-        left    = this.keys['KeyJ'] || this.keys['Numpad4'];
-        right   = this.keys['KeyL'] || this.keys['Numpad6'];
-        drift   = this.keys['Numpad0'] || this.keys['KeyU'];
-        useItem = this.keys['NumpadEnter'] || this.keys['KeyO'];
+        // P2: IJKL ou Numpad 8,4,5,6
+        gas     = !!(this.keys['KeyI'] || this.keys['i'] || this.keys['Numpad8']);
+        brake   = !!(this.keys['KeyK'] || this.keys['k'] || this.keys['Numpad5'] || this.keys['Numpad2']);
+        left    = !!(this.keys['KeyJ'] || this.keys['j'] || this.keys['Numpad4']);
+        right   = !!(this.keys['KeyL'] || this.keys['l'] || this.keys['Numpad6']);
+        
+        // P2 Ações: NumpadEnter, O ou P
+        useItem = !!(this.keys['NumpadEnter'] || this.keys['KeyO'] || this.keys['o']);
+        drift   = !!(this.keys['Numpad0'] || this.keys['KeyU'] || this.keys['u'] || this.keys['KeyP'] || this.keys['p']);
       }
     } else {
       const ai = this._aiCmd(k);

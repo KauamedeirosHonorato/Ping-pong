@@ -1359,3 +1359,25 @@ html, body {
   touch-action: none;
   box-shadow: 0 0 35px rgba(255, 0, 127, 0.35);
 }
+
+.racing-controls-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(4, 4, 24, 0.88);
+  border: 1px solid rgba(0, 240, 255, 0.6);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.46rem;
+  color: #a5a5f5;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 25;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.racing-controls-hint strong {
+  color: #ffea00;
+}

@@ -354,6 +354,10 @@
           <div class="race-hud-badge">PODER: <span id="race-hud-item">NENHUM</span></div>
         </div>
 
+        <div class="racing-controls-hint">
+          🎮 PILOTAR: <strong>[W A S D] ou [SETAS]</strong> | 🚀 ATIRAR/PODER: <strong>[ESPAÇO]</strong> | ⚡ DRIFT: <strong>[SHIFT]</strong>
+        </div>
+
         <canvas id="raceCanvas" width="800" height="600"></canvas>
       </div>
     </div>
@@ -375,7 +379,7 @@
         <div class="control-panel-surface">
           <!-- P1 CONTROLS -->
           <div class="player-station p1-station">
-            <div class="station-label">1 PLAYER</div>
+            <div class="station-label">1 PLAYER [WASD / SETAS]</div>
             <div class="joystick-unit">
               <div class="joystick-base"></div>
               <div id="p1-joystick-shaft" class="joystick-shaft">
@@ -383,9 +387,9 @@
               </div>
             </div>
             <div class="arcade-button-cluster">
-              <button id="p1-btn-1" class="arcade-physical-btn btn-red" title="Ação 1 (Espaço / Tiro)"></button>
-              <button id="p1-btn-2" class="arcade-physical-btn btn-blue" title="Ação 2 (Drift / Poder)"></button>
-              <button id="p1-btn-3" class="arcade-physical-btn btn-yellow" title="Ação 3 (Turbo)"></button>
+              <button id="p1-btn-1" class="arcade-physical-btn btn-red" title="[ESPAÇO / ENTER] Atirar / Usar Poder"></button>
+              <button id="p1-btn-2" class="arcade-physical-btn btn-blue" title="[SHIFT / Q] Fazer Drift"></button>
+              <button id="p1-btn-3" class="arcade-physical-btn btn-yellow" title="[E / F] Ação Secundária"></button>
             </div>
           </div>
 
@@ -409,7 +413,7 @@
 
           <!-- P2 CONTROLS -->
           <div class="player-station p2-station">
-            <div class="station-label">2 PLAYERS</div>
+            <div class="station-label">2 PLAYERS [IJKL / NUMPAD]</div>
             <div class="joystick-unit">
               <div class="joystick-base"></div>
               <div id="p2-joystick-shaft" class="joystick-shaft">
@@ -417,9 +421,9 @@
               </div>
             </div>
             <div class="arcade-button-cluster">
-              <button id="p2-btn-1" class="arcade-physical-btn btn-red" title="Ação 1 (P2 Tiro)"></button>
-              <button id="p2-btn-2" class="arcade-physical-btn btn-blue" title="Ação 2 (P2 Drift)"></button>
-              <button id="p2-btn-3" class="arcade-physical-btn btn-green" title="Ação 3 (P2 Turbo)"></button>
+              <button id="p2-btn-1" class="arcade-physical-btn btn-red" title="[NUMPAD ENTER / O] P2 Atirar / Poder"></button>
+              <button id="p2-btn-2" class="arcade-physical-btn btn-blue" title="[NUMPAD 0 / U] P2 Drift"></button>
+              <button id="p2-btn-3" class="arcade-physical-btn btn-green" title="[P] P2 Ação Secundária"></button>
             </div>
           </div>
         </div>
@@ -789,17 +793,20 @@
           else if (p1Right) p1Joy.classList.add('tilt-right');
         }
 
-        // Player 1 Buttons (Espaço, Shift, E, Q, F, Enter)
+        // Player 1 Buttons
+        // Botão 1 (Vermelho): ESPAÇO / ENTER / E / F (Atirar / Usar Poder)
         if (p1Btn1) {
-          if (activeKeys['Space'] || activeKeys['Enter']) p1Btn1.classList.add('pressed');
+          if (activeKeys['Space'] || activeKeys['Enter'] || activeKeys['KeyE'] || activeKeys['KeyF']) p1Btn1.classList.add('pressed');
           else p1Btn1.classList.remove('pressed');
         }
+        // Botão 2 (Azul): SHIFT / CONTROL / Q (Drift)
         if (p1Btn2) {
-          if (activeKeys['ShiftLeft'] || activeKeys['KeyE'] || activeKeys['e']) p1Btn2.classList.add('pressed');
+          if (activeKeys['ShiftLeft'] || activeKeys['ShiftRight'] || activeKeys['ControlLeft'] || activeKeys['KeyQ']) p1Btn2.classList.add('pressed');
           else p1Btn2.classList.remove('pressed');
         }
+        // Botão 3 (Amarelo): Outras teclas de ação
         if (p1Btn3) {
-          if (activeKeys['KeyQ'] || activeKeys['q'] || activeKeys['KeyF'] || activeKeys['f']) p1Btn3.classList.add('pressed');
+          if (activeKeys['KeyE'] || activeKeys['KeyQ'] || activeKeys['KeyF']) p1Btn3.classList.add('pressed');
           else p1Btn3.classList.remove('pressed');
         }
 
