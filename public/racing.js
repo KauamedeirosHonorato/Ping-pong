@@ -517,12 +517,50 @@ class SuperCatKartEngine {
     const seg = this.segments[segIdx];
     const curve = seg ? seg.curve : 0;
 
-    const left = curve < -0.4;
-    const right = curve > 0.4;
-    const accel = Math.abs(k.lateralX) < 0.9;
-    const brake = Math.abs(curve) > 2.0 && k.speed > 11.0;
-    const drift = Math.abs(curve) > 1.8 && k.speed > 7.0 && Math.random() < 0.35;
-    const useItem = !!k.item && Math.random() < 0.03;
+    // IA Olha 5 segmentos à frente para antecipar curvas
+    const futureSegIdx = (segIdx + 5) % this.segments.length;
+    const futureSeg = this.segments[futureSegIdx];
+    const futureCurve = futureSeg ? futureSeg.curve : 0;
+
+    // Evitar armadilhas e cascas de banana à frente
+    let dodgeX = 0;
+    for (let t of this.traps) {
+      let relZ = t.trackPos - k.trackPos;
+      if (relZ < 0) relZ += this.trackLength;
+      if (relZ > 0 && relZ < 600 && Math.abs(t.lateralX - k.lateralX) < 0.4) {
+        dodgeX = t.lateralX > 0 ? -0.45 : 0.45;
+        break;
+      }
+    }
+
+    // Alinhar para pegar caixas de itens se estiverem por perto
+    let seekItemX = 0;
+    if (!k.item && seg && seg.items) {
+      for (let it of seg.items) {
+        if (!it.collected) {
+          seekItemX = it.x;
+          break;
+        }
+      }
+    }
+
+    const idealX = dodgeX !== 0 ? dodgeX : (seekItemX !== 0 ? seekItemX : 0);
+    const left = (futureCurve < -0.3) || (k.lateralX > idealX + 0.15);
+    const right = (futureCurve > 0.3) || (k.lateralX < idealX - 0.15);
+
+    // Rubber banding sutil: IA acelera ligeiramente se estiver muito atrás
+    const player = this.karts.find(p => p.id === 'p1');
+    let targetSpeed = k.profile.topSpeed;
+    if (player && !k.isHuman) {
+      const distToPlayer = k.trackPos - player.trackPos;
+      if (distToPlayer < -2000) targetSpeed *= 1.15; // Catch-up
+      else if (distToPlayer > 2500) targetSpeed *= 0.92; // Don't run away too far
+    }
+
+    const accel = k.speed < targetSpeed;
+    const brake = Math.abs(futureCurve) > 2.5 && k.speed > 12.0;
+    const drift = Math.abs(curve) > 1.5 && k.speed > 7.5;
+    const useItem = !!k.item && (Math.random() < 0.08 || (player && Math.abs(k.trackPos - player.trackPos) < 800));
 
     return { accel, brake, left, right, drift, useItem };
   }
@@ -532,7 +570,7 @@ class SuperCatKartEngine {
     k.item = null;
 
     if (item === 'nitro') {
-      k.boostTimer = 110;
+      k.boostTimer = 120;
       if (window.retroAudio) window.retroAudio.playPaddleHit(true);
       this.addFloatText(VIEW_W / 2, VIEW_H / 2 - 40, '⚡ NITRO MÁXIMO!', '#ffea00');
     } else if (item === 'shield') {
@@ -562,7 +600,9 @@ class SuperCatKartEngine {
 
       this.karts.forEach(k => {
         if (k.id === p.owner || k.eliminated || k.shieldTimer > 0) return;
-        if (Math.abs(k.trackPos - p.trackPos) < 250 && Math.abs(k.lateralX - p.lateralX) < 0.45) {
+        let relZ = Math.abs(k.trackPos - p.trackPos);
+        if (relZ > this.trackLength / 2) relZ = this.trackLength - relZ;
+        if (relZ < 250 && Math.abs(k.lateralX - p.lateralX) < 0.45) {
           this.applyDamage(k, 35, p.owner);
           p.life = 0;
           this.screenShake = 10;
@@ -580,7 +620,9 @@ class SuperCatKartEngine {
 
       this.karts.forEach(k => {
         if (k.eliminated || k.shieldTimer > 0) return;
-        if (Math.abs(k.trackPos - t.trackPos) < 180 && Math.abs(k.lateralX - t.lateralX) < 0.35) {
+        let relZ = Math.abs(k.trackPos - t.trackPos);
+        if (relZ > this.trackLength / 2) relZ = this.trackLength - relZ;
+        if (relZ < 180 && Math.abs(k.lateralX - t.lateralX) < 0.35) {
           k.spinTimer = 45;
           k.speed *= 0.3;
           if (window.retroAudio) window.retroAudio.playWallBounce();
@@ -767,7 +809,42 @@ class SuperCatKartEngine {
       if (relZ > this.trackLength / 2) relZ -= this.trackLength;
 
       if (relZ > 0 && relZ < this.drawDistance * this.trackConfig.segmentLength) {
-        renderList.push({ type: 'kart', obj: k, relZ });
+        renderList.push({ type: 'kart', obj: k, relZ, lateralX: k.lateralX });
+      }
+    });
+
+    // Coleta caixas de itens 3D visíveis
+    for (let n = 0; n < this.drawDistance; n++) {
+      const seg = this.segments[(baseSegment.index + n) % this.segments.length];
+      if (seg && seg.items) {
+        seg.items.forEach(it => {
+          if (!it.collected) {
+            let relZ = (n * this.trackConfig.segmentLength);
+            if (relZ > 0 && relZ < this.drawDistance * this.trackConfig.segmentLength) {
+              renderList.push({ type: 'itemBox', obj: it, relZ, lateralX: it.x });
+            }
+          }
+        });
+      }
+    }
+
+    // Coleta cascas de banana (traps)
+    this.traps.forEach(t => {
+      let relZ = t.trackPos - player.trackPos;
+      if (relZ < -this.trackLength / 2) relZ += this.trackLength;
+      if (relZ > this.trackLength / 2) relZ -= this.trackLength;
+      if (relZ > 0 && relZ < this.drawDistance * this.trackConfig.segmentLength) {
+        renderList.push({ type: 'trap', obj: t, relZ, lateralX: t.lateralX });
+      }
+    });
+
+    // Coleta projéteis (mísseis e bombas)
+    this.projectiles.forEach(p => {
+      let relZ = p.trackPos - player.trackPos;
+      if (relZ < -this.trackLength / 2) relZ += this.trackLength;
+      if (relZ > this.trackLength / 2) relZ -= this.trackLength;
+      if (relZ > 0 && relZ < this.drawDistance * this.trackConfig.segmentLength) {
+        renderList.push({ type: p.type, obj: p, relZ, lateralX: p.lateralX });
       }
     });
 
@@ -776,12 +853,32 @@ class SuperCatKartEngine {
 
     renderList.forEach(item => {
       const scale = this.cameraDepth / item.relZ;
-      const screenX = (cw / 2) + (scale * (item.obj.lateralX - player.lateralX) * this.trackConfig.roadWidth * cw / 2);
+      const screenX = (cw / 2) + (scale * (item.lateralX - player.lateralX) * this.trackConfig.roadWidth * cw / 2);
       const screenY = (ch / 2) + (scale * this.cameraHeight * ch / 2);
       const size = Math.min(140, Math.max(12, scale * 3200));
 
       if (item.type === 'kart') {
         this.drawKartSprite(screenX, screenY, size, item.obj);
+      } else if (item.type === 'itemBox') {
+        if (this.sprites.itemBox) {
+          const isz = Math.min(48, Math.max(12, size * 0.5));
+          this.ctx.drawImage(this.sprites.itemBox, screenX - isz / 2, screenY - isz, isz, isz);
+        }
+      } else if (item.type === 'trap') {
+        if (this.sprites.banana) {
+          const bsz = Math.min(36, Math.max(10, size * 0.4));
+          this.ctx.drawImage(this.sprites.banana, screenX - bsz / 2, screenY - bsz / 2, bsz, bsz);
+        }
+      } else if (item.type === 'missile') {
+        if (this.sprites.missile) {
+          const msz = Math.min(38, Math.max(12, size * 0.45));
+          this.ctx.drawImage(this.sprites.missile, screenX - msz / 2, screenY - msz, msz, msz);
+        }
+      } else if (item.type === 'bomb') {
+        if (this.sprites.bomb) {
+          const bmsz = Math.min(42, Math.max(14, size * 0.5));
+          this.ctx.drawImage(this.sprites.bomb, screenX - bmsz / 2, screenY - bmsz, bmsz, bmsz);
+        }
       }
     });
   }
