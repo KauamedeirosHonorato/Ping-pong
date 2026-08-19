@@ -49,12 +49,13 @@
 
             <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
             <div id="main-menu" class="screen active">
-      <!-- SELETOR DE JOGOS DO HUB -->
+      <!-- SELETOR DE JOGOS DO HUB NATIVO -->
       <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:8px;">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
-        <button id="tab-game-mk2" class="hub-tab" style="border-color:#ff0033; color:#ffea00;">🐉 MK II</button>
-        <button id="tab-game-umk3" class="hub-tab" style="border-color:#00f0ff; color:#ff0055; font-weight:bold;">⚡ UMK 3 (2v2)</button>
-        <button id="tab-game-mario" class="hub-tab" style="border-color:#39ff14; color:#ffea00;">🍄 SUPER MARIO</button>
+        <button id="tab-game-invaders" class="hub-tab" style="border-color:#39ff14; color:#39ff14;">👾 SPACE INVADERS</button>
+        <button id="tab-game-asteroids" class="hub-tab" style="border-color:#00f0ff; color:#00f0ff;">🚀 ASTEROIDS</button>
+        <button id="tab-game-pacmaze" class="hub-tab" style="border-color:#ffea00; color:#ffea00;">🟡 PAC-MANIA</button>
+        <button id="tab-game-breakout" class="hub-tab" style="border-color:#ff0055; color:#ff0055;">🧱 BRICK BREAKER</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -112,72 +113,72 @@
         </div>
       </div>
 
-      <!-- PAINEL MORTAL KOMBAT II ARCADE -->
-      <div id="mk2-menu-panel" style="display: none;">
+      <!-- PAINEL SPACE INVADERS (1978 NATIVO) -->
+      <div id="invaders-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#ffea00;">🐉 MIDWAY 1994 ORIGINAL</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ff0033;">MORTAL KOMBAT II</div>
+            <div class="retro-sub" style="color:#39ff14;">👾 TAITO 1978 NATIVO</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#39ff14;">SPACE INVADERS</div>
           </div>
         </div>
-
-        <div style="background:rgba(20,0,0,0.85); border:2px solid #ff0033; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.6rem; color:#ffcccc; line-height:1.6;">
-          <div style="font-size:0.75rem; color:#ffea00; font-weight:bold; margin-bottom:6px;">🔥 ARCADE / DOS ORIGINAL (48 MB)</div>
-          <p>• <strong>FATALITIES, BABALITIES & FRIENDSHIPS</strong></p>
-          <p>• <strong>PERSONAGENS:</strong> Liu Kang, Kung Lao, Sub-Zero, Scorpion, Raiden, Reptile, Kitana, Mileena, Jax, Baraka, Shang Tsung!</p>
-          <p>• <strong>CONTROLES:</strong> WASD / Setas + Teclas [A, S, D, Z, X, C] ou Joysticks Físicos do Arcade!</p>
-          <p>• <strong>MULTIPLAYER LOCAL / NETPLAY:</strong> Modo 2 Jogadores no mesmo teclado ou compartilhe a tela via Wi-Fi!</p>
+        <div style="background:rgba(0,25,10,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ccffcc; line-height:1.6;">
+          <p>• <strong>100% NATIVO NO CANVAS:</strong> Defenda a Terra das ondas de invasores alienígenas espaciais!</p>
+          <p>• <strong>CONTROLES:</strong> Setas / [A, D] = Mover Canhão | [ESPAÇO / J] = Disparar Laser Laser-Beam!</p>
+          <p>• <strong>ARCADE CABINET:</strong> Totalmente integrado com os botões físicos e iluminação CRT!</p>
         </div>
-
-        <!-- MK2 PLAY BUTTON -->
-        <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
-          <button id="btn-play-mk2" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #000); border:2px solid #ffea00; color:#ffea00; font-size:0.9rem; padding:14px 24px;">JOGAR MORTAL KOMBAT II 🐉</button>
-          <button id="btn-mk2-online-invite" class="btn-secondary" style="border-color:#25D366; color:#25D366; font-size:0.8rem; padding:14px 20px;">📱 CONVIDAR AMIGO</button>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-invaders" class="btn-play" style="background:linear-gradient(135deg, #00ff66, #003300); color:#fff; border:2px solid #39ff14;">DEFENDER A TERRA 👾🚀</button>
         </div>
       </div>
 
-      <!-- PAINEL SUPER MARIO LAND GAME BOY -->
-      <div id="mario-menu-panel" style="display: none;">
+      <!-- PAINEL ASTEROIDS (1979 NATIVO) -->
+      <div id="asteroids-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#39ff14;">🍄 NINTENDO 1989 CLÁSSICO</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">SUPER MARIO LAND</div>
+            <div class="retro-sub" style="color:#00f0ff;">🚀 ATARI 1979 VETORIAL</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#00f0ff;">ASTEROIDS VECTOR</div>
           </div>
         </div>
-
-        <div style="background:rgba(0,30,10,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.6rem; color:#ccffcc; line-height:1.6;">
-          <div style="font-size:0.75rem; color:#ffea00; font-weight:bold; margin-bottom:6px;">⭐ ROM OFICIAL GAME BOY (.GB)</div>
-          <p>• <strong>MUNDOS:</strong> Birabuto, Muda, Easton e Chai Kingdom!</p>
-          <p>• <strong>ITENS:</strong> Super Cogumelo 🍄, Flor de Fogo 🔥, Estrela de Invencibilidade ⭐ e Submarino Marine Pop!</p>
-          <p>• <strong>CONTROLES:</strong> Setas / WASD = Mover | [Z / J / Espaço] = Pular | [X / K] = Correr / Bola de Fogo!</p>
+        <div style="background:rgba(0,15,30,0.85); border:2px solid #00f0ff; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#cceeff; line-height:1.6;">
+          <p>• <strong>FÍSICA ESPACIAL 2D:</strong> Navegação inercial em 360°, aceleração com propulsor e destruição de meteoros!</p>
+          <p>• <strong>CONTROLES:</strong> [A, D] / Setas = Girar Nave | [W / Seta Cima] = Acelerar Propulsor | [ESPAÇO] = Tiro!</p>
         </div>
-
-        <!-- MARIO PLAY BUTTON -->
-        <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
-          <button id="btn-play-mario" class="btn-play" style="background:linear-gradient(135deg, #ff0000, #ffea00); color:#000; font-size:0.95rem; padding:14px 26px;">JOGAR SUPER MARIO LAND 🍄⭐</button>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-asteroids" class="btn-play" style="background:linear-gradient(135deg, #00f0ff, #002244); color:#fff; border:2px solid #00f0ff;">INICIAR ASTEROIDS 🚀💫</button>
         </div>
       </div>
 
-      <!-- PAINEL ULTIMATE MORTAL KOMBAT 3 (CO-OP 2v2 & VERSUS) -->
-      <div id="umk3-menu-panel" style="display: none;">
+      <!-- PAINEL PAC-MANIA (1980 NATIVO) -->
+      <div id="pacmaze-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#00f0ff;">⚡ MIDWAY 1995 • 2v2 4-PLAYERS & 1v1</div>
-            <div class="retro-main" style="font-size:1.3rem; color:#ff0055;">ULTIMATE MORTAL KOMBAT 3</div>
+            <div class="retro-sub" style="color:#ffea00;">🟡 NAMCO 1980 CLÁSSICO</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">PAC-MANIA MAZE</div>
           </div>
         </div>
-
-        <div style="background:rgba(10,0,25,0.88); border:2px solid #00f0ff; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.6rem; color:#e0d0ff; line-height:1.6;">
-          <div style="font-size:0.75rem; color:#00f0ff; font-weight:bold; margin-bottom:6px;">🔥 MODOS 2v2 CO-OP / TAG-TEAM & VERSUS</div>
-          <p>• <strong>👥 2v2 4-PLAYERS CO-OP (TAG TEAM):</strong> Jogue em duplas (Você + Amigo vs 2 Oponentes no mesmo time)!</p>
-          <p>• <strong>⚔️ 1v1 TOURNAMENT VERSUS:</strong> Luta direta com corrida (RUN), combos aéreos e Fatalities!</p>
-          <p>• <strong>ROSTER COMPLETO:</strong> Ermac, Rain, Scorpion, Noob Saibot, Sub-Zero, Reptile, Cyrax, Sektor, Smoke, Sonya, Kano, Jax e mais!</p>
+        <div style="background:rgba(25,25,0,0.85); border:2px solid #ffea00; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffffcc; line-height:1.6;">
+          <p>• <strong>LABIRINTO NATIVO:</strong> Coma todas as pastilhas luminosas e fuja dos fantasmas Blinky, Pinky e Inky!</p>
+          <p>• <strong>CONTROLES:</strong> Setas [▲ ▼ ◄ ►] ou [W A S D] = Mudar Direção do Pac!</p>
         </div>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-pacmaze" class="btn-play" style="background:linear-gradient(135deg, #ffea00, #443300); color:#000; border:2px solid #ffea00; font-weight:bold;">JOGAR PAC-MANIA 🟡🍒</button>
+        </div>
+      </div>
 
-        <!-- UMK3 PLAY BUTTON -->
-        <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
-          <button id="btn-play-umk3" class="btn-play" style="background:linear-gradient(135deg, #ff0055, #00f0ff); border:2px solid #ffea00; color:#000; font-weight:bold; font-size:0.95rem; padding:14px 26px;">JOGAR UMK3 (1v1 & 2v2 CO-OP) ⚡💀</button>
-          <button id="btn-umk3-online-invite" class="btn-secondary" style="border-color:#25D366; color:#25D366; font-size:0.8rem; padding:14px 20px;">📱 CONVIDAR 2v2</button>
+      <!-- PAINEL BRICK BREAKER (1976 NATIVO) -->
+      <div id="breakout-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#ff0055;">🧱 ATARI 1976 BREAKOUT</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ff0055;">BRICK BREAKER</div>
+          </div>
+        </div>
+        <div style="background:rgba(30,0,15,0.85); border:2px solid #ff0055; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffcce0; line-height:1.6;">
+          <p>• <strong>DESTRUIÇÃO DE BLOCOS:</strong> Controle a raquete inferior com rebatidas angulares para quebrar as paredes de tijolos neon!</p>
+          <p>• <strong>CONTROLES:</strong> Setas [◄ ►] ou [A, D] / Mouse = Mover Raquete!</p>
+        </div>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-breakout" class="btn-play" style="background:linear-gradient(135deg, #ff0055, #440011); color:#fff; border:2px solid #ff0055;">QUEBRAR TIJOLOS 🧱⚡</button>
         </div>
       </div>
 
@@ -376,33 +377,13 @@
       </div>
     </div>
 
-    <!-- TELA DO JOGO MORTAL KOMBAT II EMULADOR ARCADE / DOS -->
-    <div id="mk2-screen" class="screen">
+    <!-- TELA DOS JOGOS CLÁSSICOS NATIVOS DE FLIPERAMA -->
+    <div id="arcade-games-screen" class="screen">
       <div class="canvas-wrapper" style="position:relative;">
         <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
-          <button id="btn-mk2-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#ff0033; color:#fff;">◀ MENU DO FLIPERAMA</button>
+          <button id="btn-arcade-games-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 12px; background:#ff0055; color:#fff; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
         </div>
-        <iframe id="mk2-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; fullscreen; cross-origin-isolated"></iframe>
-      </div>
-    </div>
-
-    <!-- TELA DO JOGO SUPER MARIO LAND GAME BOY -->
-    <div id="mario-screen" class="screen">
-      <div class="canvas-wrapper" style="position:relative;">
-        <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
-          <button id="btn-mario-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#39ff14; color:#000; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
-        </div>
-        <iframe id="mario-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; fullscreen; cross-origin-isolated"></iframe>
-      </div>
-    </div>
-
-    <!-- TELA DO JOGO ULTIMATE MORTAL KOMBAT 3 -->
-    <div id="umk3-screen" class="screen">
-      <div class="canvas-wrapper" style="position:relative;">
-        <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
-          <button id="btn-umk3-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#ff0055; color:#fff; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
-        </div>
-        <iframe id="umk3-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; fullscreen; cross-origin-isolated"></iframe>
+        <canvas id="arcadeHubCanvas" width="800" height="600" style="width:100%; height:100%; border-radius:4px; aspect-ratio:4/3; background:#000;"></canvas>
       </div>
     </div>
 
@@ -480,36 +461,38 @@
   <script src="audio.js"></script>
   <script src="network.js"></script>
   <script src="game.js"></script>
+  <script src="arcade-games.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       let selectedPlayer = '1p';
       let selectedMode = 'action';
       let selectedSkill = 'rookie';
 
-      let selectedFightMode = '1p';
-      let selectedChar1 = 0;
-      let selectedChar2 = 1;
-      let selectedStage = 0;
-
-      // Abas do Hub Arcade (Alternar entre Ping Pong, MK II, UMK 3 e Super Mario Land)
+      // Abas do Hub Arcade Nativo (Ping Pong, Space Invaders, Asteroids, Pac-Mania, Brick Breaker)
       const tabPingpong = document.getElementById('tab-game-pingpong');
-      const tabMk2 = document.getElementById('tab-game-mk2');
-      const tabUmk3 = document.getElementById('tab-game-umk3');
-      const tabMario = document.getElementById('tab-game-mario');
+      const tabInvaders = document.getElementById('tab-game-invaders');
+      const tabAsteroids = document.getElementById('tab-game-asteroids');
+      const tabPacmaze = document.getElementById('tab-game-pacmaze');
+      const tabBreakout = document.getElementById('tab-game-breakout');
+
       const panelPingpong = document.getElementById('pingpong-menu-panel');
-      const panelMk2 = document.getElementById('mk2-menu-panel');
-      const panelUmk3 = document.getElementById('umk3-menu-panel');
-      const panelMario = document.getElementById('mario-menu-panel');
+      const panelInvaders = document.getElementById('invaders-menu-panel');
+      const panelAsteroids = document.getElementById('asteroids-menu-panel');
+      const panelPacmaze = document.getElementById('pacmaze-menu-panel');
+      const panelBreakout = document.getElementById('breakout-menu-panel');
 
       function hideAllPanels() {
         tabPingpong.classList.remove('selected');
-        if (tabMk2) tabMk2.classList.remove('selected');
-        if (tabUmk3) tabUmk3.classList.remove('selected');
-        if (tabMario) tabMario.classList.remove('selected');
+        if (tabInvaders) tabInvaders.classList.remove('selected');
+        if (tabAsteroids) tabAsteroids.classList.remove('selected');
+        if (tabPacmaze) tabPacmaze.classList.remove('selected');
+        if (tabBreakout) tabBreakout.classList.remove('selected');
+
         panelPingpong.style.display = 'none';
-        if (panelMk2) panelMk2.style.display = 'none';
-        if (panelUmk3) panelUmk3.style.display = 'none';
-        if (panelMario) panelMario.style.display = 'none';
+        if (panelInvaders) panelInvaders.style.display = 'none';
+        if (panelAsteroids) panelAsteroids.style.display = 'none';
+        if (panelPacmaze) panelPacmaze.style.display = 'none';
+        if (panelBreakout) panelBreakout.style.display = 'none';
       }
 
       tabPingpong.addEventListener('click', () => {
@@ -519,139 +502,80 @@
         panelPingpong.style.display = 'block';
       });
 
-      if (tabMk2) {
-        tabMk2.addEventListener('click', () => {
+      if (tabInvaders) {
+        tabInvaders.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabMk2.classList.add('selected');
-          panelMk2.style.display = 'block';
+          tabInvaders.classList.add('selected');
+          panelInvaders.style.display = 'block';
         });
       }
 
-      if (tabUmk3) {
-        tabUmk3.addEventListener('click', () => {
+      if (tabAsteroids) {
+        tabAsteroids.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabUmk3.classList.add('selected');
-          panelUmk3.style.display = 'block';
+          tabAsteroids.classList.add('selected');
+          panelAsteroids.style.display = 'block';
         });
       }
 
-      if (tabMario) {
-        tabMario.addEventListener('click', () => {
+      if (tabPacmaze) {
+        tabPacmaze.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabMario.classList.add('selected');
-          panelMario.style.display = 'block';
+          tabPacmaze.classList.add('selected');
+          panelPacmaze.style.display = 'block';
         });
       }
 
-      // Iniciar Ultimate Mortal Kombat 3 Emulador (2v2 Co-op & 1v1)
-      const btnPlayUmk3 = document.getElementById('btn-play-umk3');
-      if (btnPlayUmk3) {
-        btnPlayUmk3.addEventListener('click', () => {
+      if (tabBreakout) {
+        tabBreakout.addEventListener('click', () => {
           window.retroAudio.playClick();
-          const menu = document.getElementById('main-menu');
-          const umk3Screen = document.getElementById('umk3-screen');
-          const iframe = document.getElementById('umk3-emulator-frame');
-          if (menu) menu.classList.remove('active');
-          if (umk3Screen) umk3Screen.classList.add('active');
-          if (iframe) {
-            // Emulador Oficial Ultimate Mortal Kombat 3 (Versus & 2v2 Tag Team)
-            iframe.src = "https://www.retrogames.cc/embed/41728-ultimate-mortal-kombat-3-usa.html";
-          }
+          hideAllPanels();
+          tabBreakout.classList.add('selected');
+          panelBreakout.style.display = 'block';
         });
       }
 
-      const btnUmk3Invite = document.getElementById('btn-umk3-online-invite');
-      if (btnUmk3Invite) {
-        btnUmk3Invite.addEventListener('click', () => {
+      // Iniciar Jogos Nativos de Arcade
+      const btnPlayInvaders = document.getElementById('btn-play-invaders');
+      if (btnPlayInvaders) {
+        btnPlayInvaders.addEventListener('click', () => {
           window.retroAudio.playClick();
-          const baseUrl = window.location.href.split('?')[0];
-          const msg = `⚡ Bora jogar Ultimate Mortal Kombat 3 (2v2 Co-op em Duplas / 1v1) no Arcade comigo? Acesse agora: ${baseUrl}`;
-          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+          window.arcadeRetroHub.launchGame('invaders');
         });
       }
 
-      const btnUmk3Menu = document.getElementById('btn-umk3-menu');
-      if (btnUmk3Menu) {
-        btnUmk3Menu.addEventListener('click', () => {
+      const btnPlayAsteroids = document.getElementById('btn-play-asteroids');
+      if (btnPlayAsteroids) {
+        btnPlayAsteroids.addEventListener('click', () => {
           window.retroAudio.playClick();
-          const menu = document.getElementById('main-menu');
-          const umk3Screen = document.getElementById('umk3-screen');
-          const iframe = document.getElementById('umk3-emulator-frame');
-          if (umk3Screen) umk3Screen.classList.remove('active');
-          if (iframe) iframe.src = "";
-          if (menu) menu.classList.add('active');
+          window.arcadeRetroHub.launchGame('asteroids');
         });
       }
 
-      // Iniciar Mortal Kombat II Emulador
-      const btnPlayMk2 = document.getElementById('btn-play-mk2');
-      if (btnPlayMk2) {
-        btnPlayMk2.addEventListener('click', () => {
+      const btnPlayPacmaze = document.getElementById('btn-play-pacmaze');
+      if (btnPlayPacmaze) {
+        btnPlayPacmaze.addEventListener('click', () => {
           window.retroAudio.playClick();
-          const menu = document.getElementById('main-menu');
-          const mk2Screen = document.getElementById('mk2-screen');
-          const iframe = document.getElementById('mk2-emulator-frame');
-          if (menu) menu.classList.remove('active');
-          if (mk2Screen) mk2Screen.classList.add('active');
-          if (iframe) {
-            iframe.src = "https://www.retrogames.cc/embed/41724-mortal-kombat-ii-world.html";
-          }
+          window.arcadeRetroHub.launchGame('pacmaze');
         });
       }
 
-      const btnMk2Invite = document.getElementById('btn-mk2-online-invite');
-      if (btnMk2Invite) {
-        btnMk2Invite.addEventListener('click', () => {
+      const btnPlayBreakout = document.getElementById('btn-play-breakout');
+      if (btnPlayBreakout) {
+        btnPlayBreakout.addEventListener('click', () => {
           window.retroAudio.playClick();
-          const baseUrl = window.location.href.split('?')[0];
-          const msg = `🐉 Bora jogar Mortal Kombat II (1994) / Street Fighter no Arcade comigo? Acesse agora: ${baseUrl}`;
-          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+          window.arcadeRetroHub.launchGame('breakout');
         });
       }
 
-      const btnMk2Menu = document.getElementById('btn-mk2-menu');
-      if (btnMk2Menu) {
-        btnMk2Menu.addEventListener('click', () => {
+      const btnArcadeMenu = document.getElementById('btn-arcade-games-menu');
+      if (btnArcadeMenu) {
+        btnArcadeMenu.addEventListener('click', () => {
           window.retroAudio.playClick();
-          const menu = document.getElementById('main-menu');
-          const mk2Screen = document.getElementById('mk2-screen');
-          const iframe = document.getElementById('mk2-emulator-frame');
-          if (mk2Screen) mk2Screen.classList.remove('active');
-          if (iframe) iframe.src = "";
-          if (menu) menu.classList.add('active');
-        });
-      }
-
-      // Iniciar Super Mario Land Emulador
-      const btnPlayMario = document.getElementById('btn-play-mario');
-      if (btnPlayMario) {
-        btnPlayMario.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          const menu = document.getElementById('main-menu');
-          const marioScreen = document.getElementById('mario-screen');
-          const iframe = document.getElementById('mario-emulator-frame');
-          if (menu) menu.classList.remove('active');
-          if (marioScreen) marioScreen.classList.add('active');
-          if (iframe) {
-            // Emulador Oficial Game Boy Super Mario Land
-            iframe.src = "https://www.retrogames.cc/embed/41818-super-mario-land-world.html";
-          }
-        });
-      }
-
-      const btnMarioMenu = document.getElementById('btn-mario-menu');
-      if (btnMarioMenu) {
-        btnMarioMenu.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          const menu = document.getElementById('main-menu');
-          const marioScreen = document.getElementById('mario-screen');
-          const iframe = document.getElementById('mario-emulator-frame');
-          if (marioScreen) marioScreen.classList.remove('active');
-          if (iframe) iframe.src = "";
-          if (menu) menu.classList.add('active');
+          window.arcadeRetroHub.quitToMenu();
         });
       }
 
