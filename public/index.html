@@ -363,8 +363,10 @@
         <button id="btn-race-rematch" class="btn-play" style="padding:14px 30px; font-size:1rem; background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">CORRER NOVAMENTE</button>
         <button id="btn-race-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
       </div>
-        </div><!-- Fim app-container -->
-      </div><!-- Fim arcade-crt-bezel -->
+    </div><!-- Fim race-game-over-screen -->
+
+          </div><!-- Fim app-container -->
+        </div><!-- Fim arcade-crt-bezel -->
 
       <!-- MESA DE CONTROLES DO FLIPERAMA (JOYSTICKS + BOTÕES RETRÔ 3D) -->
       <div class="arcade-control-panel">
@@ -387,17 +389,20 @@
 
           <!-- COIN SLOTS & ATARI LOGO -->
           <div class="coin-door-section">
-            <div class="insert-coin-led blink">INSERT COIN [1 CREDIT]</div>
+            <div id="coin-led-text" class="insert-coin-led blink">INSERT COIN [0 CRÉDITOS]</div>
             <div class="coin-slots-pair">
-              <div class="coin-reject-slot" title="Inserir Ficha 25¢">
+              <div id="coin-slot-1" class="coin-reject-slot" title="Clique ou pressione C para inserir ficha">
                 <span class="coin-val">25¢</span>
                 <div class="coin-intake"></div>
+                <div class="coin-drop-anim" id="coin-anim-1"></div>
               </div>
-              <div class="coin-reject-slot" title="Inserir Ficha 25¢">
+              <div id="coin-slot-2" class="coin-reject-slot" title="Clique ou pressione 5 para inserir ficha">
                 <span class="coin-val">25¢</span>
                 <div class="coin-intake"></div>
+                <div class="coin-drop-anim" id="coin-anim-2"></div>
               </div>
             </div>
+            <div id="credit-counter" class="credit-counter">CRÉDITOS: <span id="credit-count">0</span></div>
           </div>
 
           <!-- P2 CONTROLS -->
@@ -696,21 +701,52 @@
         window.retroPingPong.returnToMenu();
       });
 
-      // Efeitos Interativos do Gabinete Físico de Fliperama
-      const coinSlots = document.querySelectorAll('.coin-reject-slot');
-      coinSlots.forEach(slot => {
-        slot.addEventListener('click', () => {
-          window.retroAudio.playScore(true);
-          const led = document.querySelector('.insert-coin-led');
-          if (led) {
-            led.innerText = '🪙 COIN INSERTED! [2 CREDITS]';
-            led.style.color = '#39ff14';
-            setTimeout(() => {
-              led.innerText = 'INSERT COIN [1 CREDIT]';
-              led.style.color = '#ff3344';
-            }, 2500);
-          }
-        });
+      // ── SISTEMA DE CRÉDITOS (COINS) ─────────────────────────────────────────
+      let arcadeCredits = 0;
+
+      function insertCoin(slotNum) {
+        if (arcadeCredits >= 9) return; // máximo 9 créditos
+        arcadeCredits++;
+
+        // Animação da ficha caindo
+        const animEl = document.getElementById(`coin-anim-${slotNum}`);
+        const slotEl = document.getElementById(`coin-slot-${slotNum}`);
+        if (animEl) {
+          animEl.classList.remove('dropping');
+          void animEl.offsetWidth; // reflow para reiniciar animation
+          animEl.classList.add('dropping');
+          setTimeout(() => animEl.classList.remove('dropping'), 400);
+        }
+        if (slotEl) {
+          slotEl.classList.add('coin-inserting');
+          setTimeout(() => slotEl.classList.remove('coin-inserting'), 300);
+        }
+
+        // Atualiza LED e contador
+        const led = document.getElementById('coin-led-text');
+        const countEl = document.getElementById('credit-count');
+        if (countEl) countEl.textContent = arcadeCredits;
+        if (led) {
+          led.textContent = `🪙 +1 CRÉDITO! [${arcadeCredits} TOTAL]`;
+          led.classList.remove('blink');
+          led.classList.add('has-credits');
+          setTimeout(() => {
+            if (led) {
+              led.textContent = `✅ ${arcadeCredits} CRÉDITO${arcadeCredits > 1 ? 'S' : ''} — PRONTO!`;
+            }
+          }, 1200);
+        }
+        window.retroAudio.playScore(true);
+      }
+
+      // Clique nos slots físicos
+      document.getElementById('coin-slot-1').addEventListener('click', () => insertCoin(1));
+      document.getElementById('coin-slot-2').addEventListener('click', () => insertCoin(2));
+
+      // Teclas C e 5 inserem fichas (como arcade clássico)
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'KeyC' && !e.ctrlKey) insertCoin(1);
+        if (e.code === 'Digit5')             insertCoin(2);
       });
 
       const physicalBtns = document.querySelectorAll('.arcade-physical-btn');

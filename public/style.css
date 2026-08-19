@@ -359,22 +359,30 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
 }
 
 .insert-coin-led {
-  font-size: 0.48rem;
+  font-size: 0.42rem;
   color: #ff3344;
   letter-spacing: 1px;
+  text-shadow: 0 0 6px #ff3344;
+  white-space: nowrap;
 }
 
 .insert-coin-led.blink {
   animation: blinkCoin 1.2s infinite;
 }
 
+.insert-coin-led.has-credits {
+  color: #39ff14;
+  text-shadow: 0 0 8px #39ff14;
+  animation: none;
+}
+
 .coin-slots-pair {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .coin-reject-slot {
@@ -388,18 +396,66 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.coin-reject-slot:hover {
+  border-color: #ffaa00;
+  box-shadow: 0 0 8px rgba(255,170,0,0.6);
+}
+
+.coin-reject-slot:active,
+.coin-reject-slot.coin-inserting {
+  border-color: #ffea00;
+  box-shadow: 0 0 14px rgba(255,234,0,0.9);
+  background: #1a1400;
 }
 
 .coin-val {
-  font-size: 0.38rem;
+  font-size: 0.36rem;
   color: #ff9933;
 }
 
 .coin-intake {
-  width: 3px;
-  height: 12px;
-  background: #ff7700;
+  width: 14px;
+  height: 3px;
+  background: linear-gradient(90deg, #331100, #ff7700, #331100);
   border-radius: 1px;
+  margin-top: 2px;
+}
+
+/* Coin drop animation */
+.coin-drop-anim {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffea00 30%, #cc9900 100%);
+  border: 1px solid #aa6600;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.coin-drop-anim.dropping {
+  animation: coinDrop 0.35s ease-in forwards;
+}
+
+@keyframes coinDrop {
+  0%   { top: -12px; opacity: 1; transform: translateX(-50%) scale(1); }
+  60%  { top: 14px;  opacity: 1; transform: translateX(-50%) scale(0.85); }
+  100% { top: 28px;  opacity: 0; transform: translateX(-50%) scale(0.5); }
+}
+
+.credit-counter {
+  font-size: 0.38rem;
+  color: #ffaa33;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(255,170,0,0.5);
 }
 
 /* CRT Scanline Effect */
