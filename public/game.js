@@ -961,10 +961,10 @@ class RetroPingPong {
     const isBig = this.currentAction && this.currentAction.id === 'big_ball';
     const isSpeed = this.currentAction && this.currentAction.id === 'speed_frenzy';
     const radius = isBig ? 26 : this.defaultBallRadius;
-    const baseSpeed = isSpeed ? 5.5 : 3.8; // Começa suave e agradável
+    const baseSpeed = isSpeed ? 7.8 : 5.8; // Velocidade inicial ágil, dinâmica e com ritmo de fliperama
 
     const createBall = (dirX = 1, offsetY = 0, hue = 0) => {
-      const angle = (Math.random() * 0.5 - 0.25);
+      const angle = (Math.random() * 0.45 - 0.225);
       return {
         x: CANVAS_WIDTH / 2,
         y: CANVAS_HEIGHT / 2 + offsetY,
@@ -2302,8 +2302,8 @@ class RetroPingPong {
   }
 
   createSpawnBall(dirX = 1) {
-    const angle = (Math.random() * 0.5 - 0.25);
-    const speed = 3.8;
+    const angle = (Math.random() * 0.45 - 0.225);
+    const speed = 5.8;
     return {
       x: CANVAS_WIDTH / 2,
       y: CANVAS_HEIGHT / 2,
