@@ -1,0 +1,15 @@
+{
+  "name": "retro-ping-pong",
+  "version": "1.0.0",
+  "description": "Coolmath-inspired Retro Ping Pong with Local Wi-Fi Multiplayer & Action Modes",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ws": "^8.18.0",
+    "qrcode": "^1.5.4"
+  }
+}
