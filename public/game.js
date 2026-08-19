@@ -1902,7 +1902,9 @@ class RetroPingPong {
         if (Math.random() < 0.05) {
           window.retroAudio.playLightningZap();
           ball.vy += (Math.random() - 0.5) * 3;
-          this.createHitParticles(ball.x, ball.y, '#ffff00', 8);
+          this.createHitParticles(ball.x, ball.y, '#ffff00', 14);
+          this.addCourtLight(ball.x, ball.y, '#ffff00', 160, 0.45, 0.04);
+          this.triggerCourtFlash('#ffff00', 0.12);
         }
       }
 
@@ -1920,8 +1922,9 @@ class RetroPingPong {
             ball.vy = (ball.vy - 2 * dot * ny) * 1.05;
             ast.hp--;
             window.retroAudio.playWallBounce();
-            this.createHitParticles(ast.x, ast.y, '#d488ff', 12);
-            this.addShockwave(ast.x, ast.y, '#d488ff', 35);
+            this.createHitParticles(ast.x, ast.y, '#d488ff', 16);
+            this.addShockwave(ast.x, ast.y, '#d488ff', 40);
+            this.addCourtLight(ast.x, ast.y, '#d488ff', 150, 0.4, 0.04);
           }
         });
       }
@@ -1936,7 +1939,11 @@ class RetroPingPong {
           ball.vx *= 1.02;
           ball.vy *= 1.02;
           this.createFlameParticles(ball.x, ball.y);
-          if (Math.random() < 0.2) window.retroAudio.playFireball();
+          this.addCourtLight(ball.x, ball.y, '#ff5500', 170, 0.5, 0.04);
+          if (Math.random() < 0.2) {
+            window.retroAudio.playFireball();
+            this.triggerCourtFlash('#ff5500', 0.1);
+          }
         }
       }
 
@@ -1957,6 +1964,8 @@ class RetroPingPong {
           window.retroAudio.playBlackHole();
           this.createHitParticles(ball.x, ball.y, '#b026ff', 24);
           this.addShockwave(this.blackHole.x, this.blackHole.y, '#b026ff', 55);
+          this.addCourtLight(this.blackHole.x, this.blackHole.y, '#b026ff', 220, 0.6, 0.03);
+          this.triggerCourtFlash('#b026ff', 0.15);
           this.addFloatText(ball.x, ball.y - 20, '🌌 EVENT HORIZON!', '#b026ff');
         } else if (dist < 200 && this.blackHole.cooldown <= 0) {
           const force = 0.25 * (1 - dist / 200);
@@ -2000,8 +2009,9 @@ class RetroPingPong {
             ball.vx = Math.abs(ball.vx) * 1.05;
             window.retroAudio.playShieldBreak();
             this.screenShake = 5;
-            this.createHitParticles(ball.x, ball.y, '#00e5ff', 22);
+            this.createHitParticles(ball.x, ball.y, '#00e5ff', 24);
             this.addShockwave(s.x + s.w / 2, s.y + s.h / 2, '#00e5ff', 45);
+            this.addCourtLight(s.x + s.w / 2, s.y + s.h / 2, '#00e5ff', 160, 0.45, 0.04);
             this.addFloatText(ball.x, ball.y - 15, '🛡️ ESCUDO P1 QUEBRADO!', '#00e5ff');
           }
         });
@@ -2012,8 +2022,9 @@ class RetroPingPong {
             ball.vx = -Math.abs(ball.vx) * 1.05;
             window.retroAudio.playShieldBreak();
             this.screenShake = 5;
-            this.createHitParticles(ball.x, ball.y, '#ff007f', 22);
+            this.createHitParticles(ball.x, ball.y, '#ff007f', 24);
             this.addShockwave(s.x + s.w / 2, s.y + s.h / 2, '#ff007f', 45);
+            this.addCourtLight(s.x + s.w / 2, s.y + s.h / 2, '#ff007f', 160, 0.45, 0.04);
             this.addFloatText(ball.x, ball.y - 15, '🛡️ ESCUDO P2 QUEBRADO!', '#ff007f');
           }
         });
@@ -2036,15 +2047,17 @@ class RetroPingPong {
         ball.vy = Math.abs(ball.vy);
         if (ball.spin) ball.spin *= 0.6;
         if (!inFog) window.retroAudio.playWallBounce();
-        this.createHitParticles(ball.x, ball.y, '#ffffff', 8);
+        this.createHitParticles(ball.x, ball.y, '#00e5ff', 12);
         this.addShockwave(ball.x, ball.y, '#00e5ff', 25);
+        this.addCourtLight(ball.x, ball.y, '#00e5ff', 100, 0.3, 0.05);
       } else if (ball.y + ball.radius >= bottomBound) {
         ball.y = bottomBound - ball.radius;
         ball.vy = -Math.abs(ball.vy);
         if (ball.spin) ball.spin *= 0.6;
         if (!inFog) window.retroAudio.playWallBounce();
-        this.createHitParticles(ball.x, ball.y, '#ffffff', 8);
+        this.createHitParticles(ball.x, ball.y, '#00e5ff', 12);
         this.addShockwave(ball.x, ball.y, '#00e5ff', 25);
+        this.addCourtLight(ball.x, ball.y, '#00e5ff', 100, 0.3, 0.05);
       }
 
       // Parede Secreta
@@ -2068,6 +2081,7 @@ class RetroPingPong {
           window.retroAudio.playPaddleHit();
           this.createHitParticles(ball.x, ball.y, '#ff007f', 16);
           this.addShockwave(ball.x, ball.y, '#ff007f', 35);
+          this.addCourtLight(ball.x, ball.y, '#ff007f', 140, 0.4, 0.04);
         }
       }
 
@@ -2091,8 +2105,9 @@ class RetroPingPong {
             b.pulse = 1.0;
             this.screenShake = 4;
             window.retroAudio.playBumperHit();
-            this.createHitParticles(ball.x, ball.y, '#00ffaa', 14);
+            this.createHitParticles(ball.x, ball.y, '#00ffaa', 16);
             this.addShockwave(b.x, b.y, '#00ffaa', 40);
+            this.addCourtLight(b.x, b.y, '#00ffaa', 150, 0.45, 0.04);
             this.addFloatText(b.x, b.y - 20, '⚡ PINBALL!', '#00ffaa');
           }
         });
@@ -2111,8 +2126,9 @@ class RetroPingPong {
           k.surprised = 1.0;
           this.screenShake = 5;
           window.retroAudio.playKittyMeow();
-          this.createHitParticles(k.x, k.y, '#ff9900', 16);
+          this.createHitParticles(k.x, k.y, '#ff9900', 18);
           this.addShockwave(k.x, k.y, '#ff3377', 45);
+          this.addCourtLight(k.x, k.y, '#ff9900', 160, 0.45, 0.04);
           
           if (ball.lastHitter === 'p1') {
             k.p1Hits++;
@@ -2148,7 +2164,7 @@ class RetroPingPong {
         this.p1.scaleX = 0.75;
         this.p1.scaleY = 1.25;
         this.p1.powerMeter = Math.min(100, this.p1.powerMeter + 25);
-        this.createHitParticles(ball.x, ball.y, '#00f0ff', 14);
+        this.createHitParticles(ball.x, ball.y, '#00f0ff', 16);
         this.addShockwave(ball.x, ball.y, '#00f0ff', 30);
       }
 
@@ -2166,7 +2182,7 @@ class RetroPingPong {
         this.p2.scaleX = 0.75;
         this.p2.scaleY = 1.25;
         this.p2.powerMeter = Math.min(100, this.p2.powerMeter + 25);
-        this.createHitParticles(ball.x, ball.y, '#ff007f', 14);
+        this.createHitParticles(ball.x, ball.y, '#ff007f', 16);
         this.addShockwave(ball.x, ball.y, '#ff007f', 30);
       }
 
@@ -2185,7 +2201,7 @@ class RetroPingPong {
         this.p3.scaleX = 0.75;
         this.p3.scaleY = 1.25;
         this.p3.powerMeter = Math.min(100, this.p3.powerMeter + 25);
-        this.createHitParticles(ball.x, ball.y, '#00e5ff', 14);
+        this.createHitParticles(ball.x, ball.y, '#00e5ff', 16);
         this.addShockwave(ball.x, ball.y, '#00e5ff', 30);
       }
 
@@ -2204,7 +2220,7 @@ class RetroPingPong {
         this.p4.scaleX = 0.75;
         this.p4.scaleY = 1.25;
         this.p4.powerMeter = Math.min(100, this.p4.powerMeter + 25);
-        this.createHitParticles(ball.x, ball.y, '#ff00aa', 14);
+        this.createHitParticles(ball.x, ball.y, '#ff00aa', 16);
         this.addShockwave(ball.x, ball.y, '#ff00aa', 30);
       }
 
