@@ -50,10 +50,10 @@
             <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
             <div id="main-menu" class="screen active">
       <!-- SELETOR DE JOGOS DO HUB -->
-      <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:6px;">
+      <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:8px;">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
-        <button id="tab-game-fighting" class="hub-tab">🥊 STREET FIGHTER</button>
         <button id="tab-game-mk2" class="hub-tab" style="border-color:#ff0033; color:#ffea00;">🐉 MK II</button>
+        <button id="tab-game-umk3" class="hub-tab" style="border-color:#00f0ff; color:#ff0055; font-weight:bold;">⚡ UMK 3 (2v2)</button>
         <button id="tab-game-mario" class="hub-tab" style="border-color:#39ff14; color:#ffea00;">🍄 SUPER MARIO</button>
       </div>
 
@@ -112,65 +112,6 @@
         </div>
       </div>
 
-      <!-- PAINEL RETRO STREET FIGHTER -->
-      <div id="fighting-menu-panel" style="display: none;">
-        <div class="logo-container">
-          <div class="retro-title">
-            <div class="retro-sub" style="color:#ffea00;">🥋 SUPER 2D ARCADE</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ff0033;">RETRO STREET FIGHTER</div>
-          </div>
-        </div>
-
-        <div class="menu-options">
-          <!-- FIGHT PLAYERS ROW -->
-          <div class="option-row">
-            <div class="option-label">MODO ▶</div>
-            <div class="option-buttons">
-              <button id="btn-fight-1p" class="btn-toggle selected" data-fight-mode="1p">🥊 1P VS IA</button>
-              <button id="btn-fight-2p" class="btn-toggle" data-fight-mode="2p_local">👥 2P LOCAL</button>
-              <button id="btn-fight-online" class="btn-toggle" data-fight-mode="online" style="border-color:#00e5ff; color:#00e5ff;">🌐 1v1 ONLINE</button>
-            </div>
-          </div>
-
-          <!-- FIGHTER 1 ROW -->
-          <div class="option-row">
-            <div class="option-label">PLAYER 1 ▶</div>
-            <div class="option-buttons">
-              <button class="btn-toggle selected" data-char1="0">🥋 RYU</button>
-              <button class="btn-toggle" data-char1="1">🥊 KEN</button>
-              <button class="btn-toggle" data-char1="2">🎖️ GUILE</button>
-              <button class="btn-toggle" data-char1="3">👹 AKUMA</button>
-            </div>
-          </div>
-
-          <!-- FIGHTER 2 / CPU ROW -->
-          <div class="option-row">
-            <div class="option-label">OPONENTE ▶</div>
-            <div class="option-buttons">
-              <button class="btn-toggle" data-char2="0">🥋 RYU</button>
-              <button class="btn-toggle selected" data-char2="1">🥊 KEN</button>
-              <button class="btn-toggle" data-char2="2">🎖️ GUILE</button>
-              <button class="btn-toggle" data-char2="3">👹 AKUMA</button>
-            </div>
-          </div>
-
-          <!-- STAGE ROW -->
-          <div class="option-row">
-            <div class="option-label">CENÁRIO ▶</div>
-            <div class="option-buttons">
-              <button class="btn-toggle selected" data-stage="0">🏮 DOJO</button>
-              <button class="btn-toggle" data-stage="1">⚡ TEMPLO NEON</button>
-              <button class="btn-toggle" data-stage="2">✈️ BASE AÉREA</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- FIGHT PLAY BUTTON -->
-        <div class="play-btn-wrapper">
-          <button id="btn-play-fight" class="btn-play" style="background:linear-gradient(135deg, #ff0033, #ffea00); color:#000;">ROUND 1... FIGHT! 🥊🔥</button>
-        </div>
-      </div>
-
       <!-- PAINEL MORTAL KOMBAT II ARCADE -->
       <div id="mk2-menu-panel" style="display: none;">
         <div class="logo-container">
@@ -214,6 +155,29 @@
         <!-- MARIO PLAY BUTTON -->
         <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
           <button id="btn-play-mario" class="btn-play" style="background:linear-gradient(135deg, #ff0000, #ffea00); color:#000; font-size:0.95rem; padding:14px 26px;">JOGAR SUPER MARIO LAND 🍄⭐</button>
+        </div>
+      </div>
+
+      <!-- PAINEL ULTIMATE MORTAL KOMBAT 3 (CO-OP 2v2 & VERSUS) -->
+      <div id="umk3-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#00f0ff;">⚡ MIDWAY 1995 • 2v2 4-PLAYERS & 1v1</div>
+            <div class="retro-main" style="font-size:1.3rem; color:#ff0055;">ULTIMATE MORTAL KOMBAT 3</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(10,0,25,0.88); border:2px solid #00f0ff; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.6rem; color:#e0d0ff; line-height:1.6;">
+          <div style="font-size:0.75rem; color:#00f0ff; font-weight:bold; margin-bottom:6px;">🔥 MODOS 2v2 CO-OP / TAG-TEAM & VERSUS</div>
+          <p>• <strong>👥 2v2 4-PLAYERS CO-OP (TAG TEAM):</strong> Jogue em duplas (Você + Amigo vs 2 Oponentes no mesmo time)!</p>
+          <p>• <strong>⚔️ 1v1 TOURNAMENT VERSUS:</strong> Luta direta com corrida (RUN), combos aéreos e Fatalities!</p>
+          <p>• <strong>ROSTER COMPLETO:</strong> Ermac, Rain, Scorpion, Noob Saibot, Sub-Zero, Reptile, Cyrax, Sektor, Smoke, Sonya, Kano, Jax e mais!</p>
+        </div>
+
+        <!-- UMK3 PLAY BUTTON -->
+        <div class="play-btn-wrapper" style="display:flex; gap:10px; justify-content:center;">
+          <button id="btn-play-umk3" class="btn-play" style="background:linear-gradient(135deg, #ff0055, #00f0ff); border:2px solid #ffea00; color:#000; font-weight:bold; font-size:0.95rem; padding:14px 26px;">JOGAR UMK3 (1v1 & 2v2 CO-OP) ⚡💀</button>
+          <button id="btn-umk3-online-invite" class="btn-secondary" style="border-color:#25D366; color:#25D366; font-size:0.8rem; padding:14px 20px;">📱 CONVIDAR 2v2</button>
         </div>
       </div>
 
@@ -412,53 +376,6 @@
       </div>
     </div>
 
-    <!-- TELA DO JOGO RETRO STREET FIGHTER -->
-    <div id="fighting-screen" class="screen">
-      <div class="canvas-wrapper">
-        <div class="fight-hud">
-          <div class="fight-player-side">
-            <div class="fight-name-badge">PLAYER 1 (RYU)</div>
-            <div class="fight-hp-track">
-              <div id="fight-p1-hp" class="fight-hp-bar"></div>
-            </div>
-            <div class="fight-super-track">
-              <div id="fight-p1-super" class="fight-super-bar"></div>
-            </div>
-          </div>
-
-          <div class="fight-center-timer">
-            <button id="btn-fight-menu" class="btn-icon-retro" style="pointer-events:auto; font-size:0.50rem; padding:4px 6px; margin-bottom:4px;">◀ MENU</button>
-            <div id="fight-timer" class="fight-timer-box">99</div>
-          </div>
-
-          <div class="fight-player-side" style="align-items: flex-end;">
-            <div class="fight-name-badge">PLAYER 2 (KEN)</div>
-            <div class="fight-hp-track">
-              <div id="fight-p2-hp" class="fight-hp-bar"></div>
-            </div>
-            <div class="fight-super-track">
-              <div id="fight-p2-super" class="fight-super-bar"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="fight-controls-hint">
-          🥊 MOVER/PULAR: <strong>[W A S D] / [SETAS]</strong> | 💥 SOCO: <strong>[J / ESPAÇO]</strong> | ⚡ CHUTE: <strong>[K / E]</strong> | 🌀 ESPECIAL: <strong>[L / Q]</strong> | 🔥 SUPER: <strong>[SHIFT / F]</strong>
-        </div>
-
-        <canvas id="fightCanvas" width="800" height="600"></canvas>
-      </div>
-    </div>
-
-    <!-- TELA DE FIM DE JOGO (VITÓRIA LUTA) -->
-    <div id="fight-game-over-screen" class="screen">
-      <div id="fight-winner-msg" class="winner-text">👑 PLAYER 1 VENCEU!</div>
-      <div class="game-over-buttons">
-        <button id="btn-fight-rematch" class="btn-play" style="padding:14px 30px; font-size:1rem; background:linear-gradient(135deg, #ff0033, #ffea00); color:#000;">LUTAR NOVAMENTE</button>
-        <button id="btn-fight-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
-      </div>
-    </div><!-- Fim fight-game-over-screen -->
-
     <!-- TELA DO JOGO MORTAL KOMBAT II EMULADOR ARCADE / DOS -->
     <div id="mk2-screen" class="screen">
       <div class="canvas-wrapper" style="position:relative;">
@@ -476,6 +393,16 @@
           <button id="btn-mario-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#39ff14; color:#000; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
         </div>
         <iframe id="mario-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
+      </div>
+    </div>
+
+    <!-- TELA DO JOGO ULTIMATE MORTAL KOMBAT 3 -->
+    <div id="umk3-screen" class="screen">
+      <div class="canvas-wrapper" style="position:relative;">
+        <div style="position:absolute; top:8px; left:12px; z-index:30; pointer-events:auto;">
+          <button id="btn-umk3-menu" class="btn-icon-retro" style="font-size:0.6rem; padding:6px 10px; background:#ff0055; color:#fff; font-weight:bold;">◀ MENU DO FLIPERAMA</button>
+        </div>
+        <iframe id="umk3-emulator-frame" src="" style="width:100%; height:100%; border:none; border-radius:4px; aspect-ratio:4/3; object-fit:contain;" allow="autoplay; gamepad; keyboard"></iframe>
       </div>
     </div>
 
@@ -565,24 +492,24 @@
       let selectedChar2 = 1;
       let selectedStage = 0;
 
-      // Abas do Hub Arcade (Alternar entre Ping Pong, Street Fighter, Mortal Kombat II e Super Mario Land)
+      // Abas do Hub Arcade (Alternar entre Ping Pong, MK II, UMK 3 e Super Mario Land)
       const tabPingpong = document.getElementById('tab-game-pingpong');
-      const tabFighting = document.getElementById('tab-game-fighting');
       const tabMk2 = document.getElementById('tab-game-mk2');
+      const tabUmk3 = document.getElementById('tab-game-umk3');
       const tabMario = document.getElementById('tab-game-mario');
       const panelPingpong = document.getElementById('pingpong-menu-panel');
-      const panelFighting = document.getElementById('fighting-menu-panel');
       const panelMk2 = document.getElementById('mk2-menu-panel');
+      const panelUmk3 = document.getElementById('umk3-menu-panel');
       const panelMario = document.getElementById('mario-menu-panel');
 
       function hideAllPanels() {
         tabPingpong.classList.remove('selected');
-        tabFighting.classList.remove('selected');
         if (tabMk2) tabMk2.classList.remove('selected');
+        if (tabUmk3) tabUmk3.classList.remove('selected');
         if (tabMario) tabMario.classList.remove('selected');
         panelPingpong.style.display = 'none';
-        panelFighting.style.display = 'none';
         if (panelMk2) panelMk2.style.display = 'none';
+        if (panelUmk3) panelUmk3.style.display = 'none';
         if (panelMario) panelMario.style.display = 'none';
       }
 
@@ -591,13 +518,6 @@
         hideAllPanels();
         tabPingpong.classList.add('selected');
         panelPingpong.style.display = 'block';
-      });
-
-      tabFighting.addEventListener('click', () => {
-        window.retroAudio.playClick();
-        hideAllPanels();
-        tabFighting.classList.add('selected');
-        panelFighting.style.display = 'block';
       });
 
       if (tabMk2) {
@@ -609,12 +529,61 @@
         });
       }
 
+      if (tabUmk3) {
+        tabUmk3.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          hideAllPanels();
+          tabUmk3.classList.add('selected');
+          panelUmk3.style.display = 'block';
+        });
+      }
+
       if (tabMario) {
         tabMario.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
           tabMario.classList.add('selected');
           panelMario.style.display = 'block';
+        });
+      }
+
+      // Iniciar Ultimate Mortal Kombat 3 Emulador (2v2 Co-op & 1v1)
+      const btnPlayUmk3 = document.getElementById('btn-play-umk3');
+      if (btnPlayUmk3) {
+        btnPlayUmk3.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const umk3Screen = document.getElementById('umk3-screen');
+          const iframe = document.getElementById('umk3-emulator-frame');
+          if (menu) menu.classList.remove('active');
+          if (umk3Screen) umk3Screen.classList.add('active');
+          if (iframe) {
+            // Emulador Oficial Ultimate Mortal Kombat 3 (Versus & 2v2 4-Players)
+            iframe.src = "https://www.retrogames.cc/embed/41727-ultimate-mortal-kombat-3-world.html";
+          }
+        });
+      }
+
+      const btnUmk3Invite = document.getElementById('btn-umk3-online-invite');
+      if (btnUmk3Invite) {
+        btnUmk3Invite.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const baseUrl = window.location.href.split('?')[0];
+          const msg = `⚡ Bora jogar Ultimate Mortal Kombat 3 (2v2 Co-op em Duplas / 1v1) no Arcade comigo? Acesse agora: ${baseUrl}`;
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+        });
+      }
+
+      const btnUmk3Menu = document.getElementById('btn-umk3-menu');
+      if (btnUmk3Menu) {
+        btnUmk3Menu.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          const menu = document.getElementById('main-menu');
+          const umk3Screen = document.getElementById('umk3-screen');
+          const iframe = document.getElementById('umk3-emulator-frame');
+          if (umk3Screen) umk3Screen.classList.remove('active');
+          if (iframe) iframe.src = "";
+          if (menu) menu.classList.add('active');
         });
       }
 
@@ -686,78 +655,6 @@
           if (menu) menu.classList.add('active');
         });
       }
-
-      // Seletor de Modo Luta
-      const fightModeBtns = document.querySelectorAll('[data-fight-mode]');
-      fightModeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          fightModeBtns.forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedFightMode = btn.getAttribute('data-fight-mode');
-
-          if (selectedFightMode === 'online') {
-            document.getElementById('lan-modal').classList.add('active');
-          }
-        });
-      });
-
-      // Seletor de Personagem 1
-      const char1Btns = document.querySelectorAll('[data-char1]');
-      char1Btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          char1Btns.forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedChar1 = parseInt(btn.getAttribute('data-char1'), 10);
-        });
-      });
-
-      // Seletor de Personagem 2
-      const char2Btns = document.querySelectorAll('[data-char2]');
-      char2Btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          char2Btns.forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedChar2 = parseInt(btn.getAttribute('data-char2'), 10);
-        });
-      });
-
-      // Seletor de Cenário
-      const stageBtns = document.querySelectorAll('[data-stage]');
-      stageBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          stageBtns.forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedStage = parseInt(btn.getAttribute('data-stage'), 10);
-        });
-      });
-
-      // Iniciar Luta
-      document.getElementById('btn-play-fight').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        window.retroStreetFighter.startFight(selectedFightMode, selectedChar1, selectedChar2, selectedStage);
-      });
-
-      // Voltar ao menu da luta
-      document.getElementById('btn-fight-menu').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        window.retroStreetFighter.returnToMenu();
-      });
-
-      document.getElementById('btn-fight-back-menu').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        window.retroStreetFighter.returnToMenu();
-      });
-
-      document.getElementById('btn-fight-rematch').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        const over = document.getElementById('fight-game-over-screen');
-        if (over) over.classList.remove('active');
-        window.retroStreetFighter.startFight(selectedFightMode, selectedChar1, selectedChar2, selectedStage);
-      });
 
       // Atualiza info de rede LAN (IP e QR Code) de forma assíncrona não-bloqueante
       window.networkManager.fetchNetworkInfo().then(netInfo => {
