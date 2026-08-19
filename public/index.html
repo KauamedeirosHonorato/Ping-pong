@@ -374,14 +374,14 @@
             <div class="station-label">1 PLAYER</div>
             <div class="joystick-unit">
               <div class="joystick-base"></div>
-              <div class="joystick-shaft">
+              <div id="p1-joystick-shaft" class="joystick-shaft">
                 <div class="joystick-ball red-ball"></div>
               </div>
             </div>
             <div class="arcade-button-cluster">
-              <button class="arcade-physical-btn btn-red" title="Ação 1"></button>
-              <button class="arcade-physical-btn btn-blue" title="Ação 2"></button>
-              <button class="arcade-physical-btn btn-yellow" title="Ação 3"></button>
+              <button id="p1-btn-1" class="arcade-physical-btn btn-red" title="Ação 1 (Espaço / Tiro)"></button>
+              <button id="p1-btn-2" class="arcade-physical-btn btn-blue" title="Ação 2 (Drift / Poder)"></button>
+              <button id="p1-btn-3" class="arcade-physical-btn btn-yellow" title="Ação 3 (Turbo)"></button>
             </div>
           </div>
 
@@ -389,11 +389,11 @@
           <div class="coin-door-section">
             <div class="insert-coin-led blink">INSERT COIN [1 CREDIT]</div>
             <div class="coin-slots-pair">
-              <div class="coin-reject-slot">
+              <div class="coin-reject-slot" title="Inserir Ficha 25¢">
                 <span class="coin-val">25¢</span>
                 <div class="coin-intake"></div>
               </div>
-              <div class="coin-reject-slot">
+              <div class="coin-reject-slot" title="Inserir Ficha 25¢">
                 <span class="coin-val">25¢</span>
                 <div class="coin-intake"></div>
               </div>
@@ -405,14 +405,14 @@
             <div class="station-label">2 PLAYERS</div>
             <div class="joystick-unit">
               <div class="joystick-base"></div>
-              <div class="joystick-shaft">
+              <div id="p2-joystick-shaft" class="joystick-shaft">
                 <div class="joystick-ball blue-ball"></div>
               </div>
             </div>
             <div class="arcade-button-cluster">
-              <button class="arcade-physical-btn btn-red" title="Ação 1"></button>
-              <button class="arcade-physical-btn btn-blue" title="Ação 2"></button>
-              <button class="arcade-physical-btn btn-green" title="Ação 3"></button>
+              <button id="p2-btn-1" class="arcade-physical-btn btn-red" title="Ação 1 (P2 Tiro)"></button>
+              <button id="p2-btn-2" class="arcade-physical-btn btn-blue" title="Ação 2 (P2 Drift)"></button>
+              <button id="p2-btn-3" class="arcade-physical-btn btn-green" title="Ação 3 (P2 Turbo)"></button>
             </div>
           </div>
         </div>
@@ -718,6 +718,103 @@
         btn.addEventListener('click', () => {
           window.retroAudio.playPaddleHit(true);
         });
+      });
+
+      // Sincronização em tempo real do teclado com o Fliperama Arcade Físico
+      const p1Joy = document.getElementById('p1-joystick-shaft');
+      const p2Joy = document.getElementById('p2-joystick-shaft');
+      const p1Btn1 = document.getElementById('p1-btn-1');
+      const p1Btn2 = document.getElementById('p1-btn-2');
+      const p1Btn3 = document.getElementById('p1-btn-3');
+      const p2Btn1 = document.getElementById('p2-btn-1');
+      const p2Btn2 = document.getElementById('p2-btn-2');
+      const p2Btn3 = document.getElementById('p2-btn-3');
+
+      const activeKeys = {};
+
+      function updateArcadeDeck() {
+        // Player 1 Joystick (W, S, A, D ou Setas)
+        const p1Up = activeKeys['KeyW'] || activeKeys['w'] || activeKeys['ArrowUp'];
+        const p1Down = activeKeys['KeyS'] || activeKeys['s'] || activeKeys['ArrowDown'];
+        const p1Left = activeKeys['KeyA'] || activeKeys['a'] || activeKeys['ArrowLeft'];
+        const p1Right = activeKeys['KeyD'] || activeKeys['d'] || activeKeys['ArrowRight'];
+
+        if (p1Joy) {
+          p1Joy.className = 'joystick-shaft';
+          if (p1Up && p1Left) p1Joy.classList.add('tilt-up-left');
+          else if (p1Up && p1Right) p1Joy.classList.add('tilt-up-right');
+          else if (p1Down && p1Left) p1Joy.classList.add('tilt-down-left');
+          else if (p1Down && p1Right) p1Joy.classList.add('tilt-down-right');
+          else if (p1Up) p1Joy.classList.add('tilt-up');
+          else if (p1Down) p1Joy.classList.add('tilt-down');
+          else if (p1Left) p1Joy.classList.add('tilt-left');
+          else if (p1Right) p1Joy.classList.add('tilt-right');
+        }
+
+        // Player 1 Buttons (Espaço, Shift, E, Q, F, Enter)
+        if (p1Btn1) {
+          if (activeKeys['Space'] || activeKeys['Enter']) p1Btn1.classList.add('pressed');
+          else p1Btn1.classList.remove('pressed');
+        }
+        if (p1Btn2) {
+          if (activeKeys['ShiftLeft'] || activeKeys['KeyE'] || activeKeys['e']) p1Btn2.classList.add('pressed');
+          else p1Btn2.classList.remove('pressed');
+        }
+        if (p1Btn3) {
+          if (activeKeys['KeyQ'] || activeKeys['q'] || activeKeys['KeyF'] || activeKeys['f']) p1Btn3.classList.add('pressed');
+          else p1Btn3.classList.remove('pressed');
+        }
+
+        // Player 2 Joystick (I, K, J, L ou Numpad 8, 2, 4, 6)
+        const p2Up = activeKeys['KeyI'] || activeKeys['i'] || activeKeys['Numpad8'];
+        const p2Down = activeKeys['KeyK'] || activeKeys['k'] || activeKeys['Numpad2'];
+        const p2Left = activeKeys['KeyJ'] || activeKeys['j'] || activeKeys['Numpad4'];
+        const p2Right = activeKeys['KeyL'] || activeKeys['l'] || activeKeys['Numpad6'];
+
+        if (p2Joy) {
+          p2Joy.className = 'joystick-shaft';
+          if (p2Up && p2Left) p2Joy.classList.add('tilt-up-left');
+          else if (p2Up && p2Right) p2Joy.classList.add('tilt-up-right');
+          else if (p2Down && p2Left) p2Joy.classList.add('tilt-down-left');
+          else if (p2Down && p2Right) p2Joy.classList.add('tilt-down-right');
+          else if (p2Up) p2Joy.classList.add('tilt-up');
+          else if (p2Down) p2Joy.classList.add('tilt-down');
+          else if (p2Left) p2Joy.classList.add('tilt-left');
+          else if (p2Right) p2Joy.classList.add('tilt-right');
+        }
+
+        // Player 2 Buttons
+        if (p2Btn1) {
+          if (activeKeys['NumpadEnter'] || activeKeys['KeyO'] || activeKeys['o']) p2Btn1.classList.add('pressed');
+          else p2Btn1.classList.remove('pressed');
+        }
+        if (p2Btn2) {
+          if (activeKeys['Numpad0'] || activeKeys['KeyU'] || activeKeys['u']) p2Btn2.classList.add('pressed');
+          else p2Btn2.classList.remove('pressed');
+        }
+        if (p2Btn3) {
+          if (activeKeys['NumpadDecimal'] || activeKeys['KeyP'] || activeKeys['p']) p2Btn3.classList.add('pressed');
+          else p2Btn3.classList.remove('pressed');
+        }
+      }
+
+      window.addEventListener('keydown', (e) => {
+        activeKeys[e.code] = true;
+        activeKeys[e.key] = true;
+        activeKeys[e.key.toLowerCase()] = true;
+        updateArcadeDeck();
+
+        if (e.code === 'KeyC' || e.key === 'c' || e.code === 'Digit5') {
+          const slot = document.querySelector('.coin-reject-slot');
+          if (slot) slot.click();
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        activeKeys[e.code] = false;
+        activeKeys[e.key] = false;
+        activeKeys[e.key.toLowerCase()] = false;
+        updateArcadeDeck();
       });
     });
   </script>
