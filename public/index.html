@@ -49,15 +49,15 @@
 
             <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
             <div id="main-menu" class="screen active">
-      <!-- SELETOR DE JOGOS DO HUB NATIVO (JOGOS ORIGINAIS & CLÁSSICOS) -->
+      <!-- SELETOR DE JOGOS DO HUB (JOGOS REAIS COMPLETOS ESTILO FRIV) -->
       <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:6px;">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
-        <button id="tab-game-mario" class="hub-tab" style="border-color:#39ff14; color:#ffea00; font-weight:bold;">🍄 SUPER MARIO LAND (ROM)</button>
-        <button id="tab-game-invaders" class="hub-tab" style="border-color:#39ff14; color:#39ff14;">👾 SPACE INVADERS</button>
-        <button id="tab-game-asteroids" class="hub-tab" style="border-color:#00f0ff; color:#00f0ff;">🚀 ASTEROIDS</button>
-        <button id="tab-game-pacmaze" class="hub-tab" style="border-color:#ffea00; color:#ffea00;">🟡 PAC-MANIA</button>
-        <button id="tab-game-breakout" class="hub-tab" style="border-color:#ff0055; color:#ff0055;">🧱 BRICK BREAKER</button>
-        <button id="tab-game-snake" class="hub-tab" style="border-color:#39ff14; color:#ffea00;">🐍 SNAKE RETRO</button>
+        <button id="tab-game-mario" class="hub-tab" style="border-color:#ff0000; color:#ffea00;">🍄 SUPER MARIO</button>
+        <button id="tab-game-motox3m" class="hub-tab" style="border-color:#ff7700; color:#ff7700;">🏍️ MOTO X3M</button>
+        <button id="tab-game-subway" class="hub-tab" style="border-color:#39ff14; color:#39ff14;">🏃 SUBWAY RUNNER</button>
+        <button id="tab-game-drift" class="hub-tab" style="border-color:#00f0ff; color:#00f0ff;">🏎️ DRIFT HUNTERS</button>
+        <button id="tab-game-retrobowl" class="hub-tab" style="border-color:#ffea00; color:#ffea00;">🏈 RETRO BOWL</button>
+        <button id="tab-game-game2048" class="hub-tab" style="border-color:#ff0055; color:#ff0055;">🔢 2048 ORIGINAL</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -133,106 +133,88 @@
         </div>
       </div>
 
-      <!-- PAINEL SPACE INVADERS (1978 NATIVO) -->
-      <div id="invaders-menu-panel" style="display: none;">
+      <!-- PAINEL MOTO X3M (JOGO REAL ORIGINAL) -->
+      <div id="motox3m-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#39ff14;">👾 TAITO 1978 NATIVO</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#39ff14;">SPACE INVADERS</div>
+            <div class="retro-sub" style="color:#ff7700;">🏍️ MADPUFFERS CLÁSSICO</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">MOTO X3M BIKE RACE</div>
+          </div>
+        </div>
+        <div style="background:rgba(30,15,0,0.85); border:2px solid #ff7700; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffe0cc; line-height:1.6;">
+          <p>• <strong>JOGO REAL COMPLETO:</strong> Mais de 25 níveis cheios de obstáculos insanos, loops, explosões e acrobacias no ar!</p>
+          <p>• <strong>CONTROLES:</strong> [Seta Cima / W] = Acelerar | [Seta Baixo / S] = Frear | [Setas ◄ ► / A D] = Inclinar!</p>
+        </div>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-motox3m" class="btn-play" style="background:linear-gradient(135deg, #ff7700, #441100); color:#fff; border:2px solid #ffea00; font-weight:bold; font-size:1rem; padding:14px 28px;">JOGAR MOTO X3M 🏍️🔥</button>
+        </div>
+      </div>
+
+      <!-- PAINEL SUBWAY SURFERS (JOGO REAL ORIGINAL) -->
+      <div id="subway-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#39ff14;">🏃 SYBO CLÁSSICO</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#39ff14;">SUBWAY SURFERS</div>
           </div>
         </div>
         <div style="background:rgba(0,25,10,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ccffcc; line-height:1.6;">
-          <p>• <strong>100% NATIVO NO CANVAS:</strong> Defenda a Terra das ondas de invasores alienígenas espaciais!</p>
-          <p>• <strong>CONTROLES:</strong> Setas / [A, D] = Mover Canhão | [ESPAÇO / J] = Disparar Laser Laser-Beam!</p>
-          <p>• <strong>ARCADE CABINET:</strong> Totalmente integrado com os botões físicos e iluminação CRT!</p>
+          <p>• <strong>CORRIDA INFINITA 3D:</strong> Corra pelos trilhos de trem, colete moedas e use o Hoverboard e Jetpack!</p>
+          <p>• <strong>CONTROLES:</strong> Setas [◄ ►] = Mudar Trilho | [▲] = Pular | [▼] = Rolar | [Espaço] = Skate!</p>
         </div>
         <div class="play-btn-wrapper">
-          <button id="btn-play-invaders" class="btn-play" style="background:linear-gradient(135deg, #00ff66, #003300); color:#fff; border:2px solid #39ff14;">DEFENDER A TERRA 👾🚀</button>
+          <button id="btn-play-subway" class="btn-play" style="background:linear-gradient(135deg, #39ff14, #004400); color:#000; border:2px solid #39ff14; font-weight:bold; font-size:1rem; padding:14px 28px;">JOGAR SUBWAY SURFERS 🏃🛹</button>
         </div>
       </div>
 
-      <!-- PAINEL ASTEROIDS (1979 NATIVO) -->
-      <div id="asteroids-menu-panel" style="display: none;">
+      <!-- PAINEL DRIFT HUNTERS (JOGO REAL 3D) -->
+      <div id="drift-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#00f0ff;">🚀 ATARI 1979 VETORIAL</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#00f0ff;">ASTEROIDS VECTOR</div>
+            <div class="retro-sub" style="color:#00f0ff;">🏎️ SIMULADOR 3D COMPLETO</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#00f0ff;">DRIFT HUNTERS 3D</div>
           </div>
         </div>
         <div style="background:rgba(0,15,30,0.85); border:2px solid #00f0ff; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#cceeff; line-height:1.6;">
-          <p>• <strong>FÍSICA ESPACIAL 2D:</strong> Navegação inercial em 360°, aceleração com propulsor e destruição de meteoros!</p>
-          <p>• <strong>CONTROLES:</strong> [A, D] / Setas = Girar Nave | [W / Seta Cima] = Acelerar Propulsor | [ESPAÇO] = Tiro!</p>
+          <p>• <strong>MOTOR 3D UNITY:</strong> Mais de 25 carros tunados (Supra, RX7, R34, BMW M3), 10 pistas e física realista de drift!</p>
+          <p>• <strong>CONTROLES:</strong> WASD / Setas = Acelerar/Direção | [ESPAÇO] = Freio de Mão | [C] = Mudar Câmera!</p>
         </div>
         <div class="play-btn-wrapper">
-          <button id="btn-play-asteroids" class="btn-play" style="background:linear-gradient(135deg, #00f0ff, #002244); color:#fff; border:2px solid #00f0ff;">INICIAR ASTEROIDS 🚀💫</button>
+          <button id="btn-play-drift" class="btn-play" style="background:linear-gradient(135deg, #00f0ff, #002244); color:#fff; border:2px solid #00f0ff; font-weight:bold; font-size:1rem; padding:14px 28px;">ACELERAR NO DRIFT 🏎️💨</button>
         </div>
       </div>
 
-      <!-- PAINEL PAC-MANIA (1980 NATIVO) -->
-      <div id="pacmaze-menu-panel" style="display: none;">
+      <!-- PAINEL RETRO BOWL (JOGO REAL ORIGINAL) -->
+      <div id="retrobowl-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#ffea00;">🟡 NAMCO 1980 CLÁSSICO</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">PAC-MANIA MAZE</div>
+            <div class="retro-sub" style="color:#ffea00;">🏈 NEW STAR GAMES</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ffea00;">RETRO BOWL FOOTBALL</div>
           </div>
         </div>
         <div style="background:rgba(25,25,0,0.85); border:2px solid #ffea00; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffffcc; line-height:1.6;">
-          <p>• <strong>LABIRINTO NATIVO:</strong> Coma todas as pastilhas luminosas e fuja dos fantasmas Blinky, Pinky e Inky!</p>
-          <p>• <strong>CONTROLES:</strong> Setas [▲ ▼ ◄ ►] ou [W A S D] = Mudar Direção do Pac!</p>
+          <p>• <strong>FUTEBOL AMERICANO RETRÔ:</strong> Gerencie sua equipe da NFL, faça passes de precisão e marque Touchdowns!</p>
+          <p>• <strong>CONTROLES:</strong> Mouse / Touch / Setas = Mirar o passe e correr com o quarterback!</p>
         </div>
         <div class="play-btn-wrapper">
-          <button id="btn-play-pacmaze" class="btn-play" style="background:linear-gradient(135deg, #ffea00, #443300); color:#000; border:2px solid #ffea00; font-weight:bold;">JOGAR PAC-MANIA 🟡🍒</button>
+          <button id="btn-play-retrobowl" class="btn-play" style="background:linear-gradient(135deg, #ffea00, #443300); color:#000; border:2px solid #ffea00; font-weight:bold; font-size:1rem; padding:14px 28px;">JOGAR RETRO BOWL 🏈🏆</button>
         </div>
       </div>
 
-      <!-- PAINEL BRICK BREAKER (1976 NATIVO) -->
-      <div id="breakout-menu-panel" style="display: none;">
+      <!-- PAINEL 2048 ORIGINAL -->
+      <div id="game2048-menu-panel" style="display: none;">
         <div class="logo-container">
           <div class="retro-title">
-            <div class="retro-sub" style="color:#ff0055;">🧱 ATARI 1976 BREAKOUT</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ff0055;">BRICK BREAKER</div>
+            <div class="retro-sub" style="color:#ff0055;">🔢 GABRIELE CIRULLI ORIGINAL</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ff0055;">2048 PUZZLE</div>
           </div>
         </div>
         <div style="background:rgba(30,0,15,0.85); border:2px solid #ff0055; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffcce0; line-height:1.6;">
-          <p>• <strong>DESTRUIÇÃO DE BLOCOS:</strong> Controle a raquete inferior com rebatidas angulares para quebrar as paredes de tijolos neon!</p>
-          <p>• <strong>CONTROLES:</strong> Setas [◄ ►] ou [A, D] / Mouse = Mover Raquete!</p>
+          <p>• <strong>O QUEBRA-CABEÇA CLÁSSICO:</strong> Deslize os blocos numerados, combine potências de 2 e alcance o bloco 2048!</p>
+          <p>• <strong>CONTROLES:</strong> Setas [▲ ▼ ◄ ►] ou [W A S D] = Deslizar o tabuleiro!</p>
         </div>
         <div class="play-btn-wrapper">
-          <button id="btn-play-breakout" class="btn-play" style="background:linear-gradient(135deg, #ff0055, #440011); color:#fff; border:2px solid #ff0055;">QUEBRAR TIJOLOS 🧱⚡</button>
-        </div>
-      </div>
-
-      <!-- PAINEL SNAKE RETRO (1997 NATIVO) -->
-      <div id="snake-menu-panel" style="display: none;">
-        <div class="logo-container">
-          <div class="retro-title">
-            <div class="retro-sub" style="color:#39ff14;">🐍 NOKIA / ARCADE 1997</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#39ff14;">SNAKE RETRO</div>
-          </div>
-        </div>
-        <div style="background:rgba(5,25,5,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ccffcc; line-height:1.6;">
-          <p>• <strong>CLÁSSICO DA COBRINHA:</strong> Coma as maçãs neon, aumente de tamanho e desvie do próprio corpo!</p>
-          <p>• <strong>CONTROLES:</strong> Setas [▲ ▼ ◄ ►] ou [W A S D] = Controlar a Cobrinha!</p>
-        </div>
-        <div class="play-btn-wrapper">
-          <button id="btn-play-snake" class="btn-play" style="background:linear-gradient(135deg, #39ff14, #004400); color:#000; border:2px solid #39ff14; font-weight:bold;">JOGAR SNAKE 🐍🍏</button>
-        </div>
-      </div>
-
-      <!-- PAINEL FLAPPY ARCADE NEON -->
-      <div id="flappy-menu-panel" style="display: none;">
-        <div class="logo-container">
-          <div class="retro-title">
-            <div class="retro-sub" style="color:#ff7700;">🐤 RETRO FLAPPER</div>
-            <div class="retro-main" style="font-size:1.4rem; color:#ff7700;">FLAPPY ARCADE NEON</div>
-          </div>
-        </div>
-        <div style="background:rgba(25,10,0,0.85); border:2px solid #ff7700; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffe0cc; line-height:1.6;">
-          <p>• <strong>DESVIO DE CANOS NEON:</strong> Voe no ritmo certo e passe pelo máximo de obstáculos luminosos possíveis!</p>
-          <p>• <strong>CONTROLES:</strong> [ESPAÇO] / [W] / [Seta Cima] / Clique = Bater Asas!</p>
-        </div>
-        <div class="play-btn-wrapper">
-          <button id="btn-play-flappy" class="btn-play" style="background:linear-gradient(135deg, #ff7700, #441100); color:#fff; border:2px solid #ff7700; font-weight:bold;">VOAR AGORA 🐤⚡</button>
+          <button id="btn-play-game2048" class="btn-play" style="background:linear-gradient(135deg, #ff0055, #440011); color:#fff; border:2px solid #ff0055; font-weight:bold; font-size:1rem; padding:14px 28px;">JOGAR 2048 ORIGINAL 🔢🧠</button>
         </div>
       </div>
 
@@ -532,39 +514,39 @@
       let selectedMode = 'action';
       let selectedSkill = 'rookie';
 
-      // Abas do Hub Arcade (Ping Pong, Super Mario Land ROM, Space Invaders, Asteroids, Pac-Mania, Brick Breaker, Snake)
+      // Abas do Hub Arcade (Ping Pong, Super Mario Land, Moto X3M, Subway Surfers, Drift Hunters, Retro Bowl, 2048)
       const tabPingpong = document.getElementById('tab-game-pingpong');
       const tabMario = document.getElementById('tab-game-mario');
-      const tabInvaders = document.getElementById('tab-game-invaders');
-      const tabAsteroids = document.getElementById('tab-game-asteroids');
-      const tabPacmaze = document.getElementById('tab-game-pacmaze');
-      const tabBreakout = document.getElementById('tab-game-breakout');
-      const tabSnake = document.getElementById('tab-game-snake');
+      const tabMotox3m = document.getElementById('tab-game-motox3m');
+      const tabSubway = document.getElementById('tab-game-subway');
+      const tabDrift = document.getElementById('tab-game-drift');
+      const tabRetrobowl = document.getElementById('tab-game-retrobowl');
+      const tabGame2048 = document.getElementById('tab-game-game2048');
 
       const panelPingpong = document.getElementById('pingpong-menu-panel');
       const panelMario = document.getElementById('mario-menu-panel');
-      const panelInvaders = document.getElementById('invaders-menu-panel');
-      const panelAsteroids = document.getElementById('asteroids-menu-panel');
-      const panelPacmaze = document.getElementById('pacmaze-menu-panel');
-      const panelBreakout = document.getElementById('breakout-menu-panel');
-      const panelSnake = document.getElementById('snake-menu-panel');
+      const panelMotox3m = document.getElementById('motox3m-menu-panel');
+      const panelSubway = document.getElementById('subway-menu-panel');
+      const panelDrift = document.getElementById('drift-menu-panel');
+      const panelRetrobowl = document.getElementById('retrobowl-menu-panel');
+      const panelGame2048 = document.getElementById('game2048-menu-panel');
 
       function hideAllPanels() {
         tabPingpong.classList.remove('selected');
         if (tabMario) tabMario.classList.remove('selected');
-        if (tabInvaders) tabInvaders.classList.remove('selected');
-        if (tabAsteroids) tabAsteroids.classList.remove('selected');
-        if (tabPacmaze) tabPacmaze.classList.remove('selected');
-        if (tabBreakout) tabBreakout.classList.remove('selected');
-        if (tabSnake) tabSnake.classList.remove('selected');
+        if (tabMotox3m) tabMotox3m.classList.remove('selected');
+        if (tabSubway) tabSubway.classList.remove('selected');
+        if (tabDrift) tabDrift.classList.remove('selected');
+        if (tabRetrobowl) tabRetrobowl.classList.remove('selected');
+        if (tabGame2048) tabGame2048.classList.remove('selected');
 
         panelPingpong.style.display = 'none';
         if (panelMario) panelMario.style.display = 'none';
-        if (panelInvaders) panelInvaders.style.display = 'none';
-        if (panelAsteroids) panelAsteroids.style.display = 'none';
-        if (panelPacmaze) panelPacmaze.style.display = 'none';
-        if (panelBreakout) panelBreakout.style.display = 'none';
-        if (panelSnake) panelSnake.style.display = 'none';
+        if (panelMotox3m) panelMotox3m.style.display = 'none';
+        if (panelSubway) panelSubway.style.display = 'none';
+        if (panelDrift) panelDrift.style.display = 'none';
+        if (panelRetrobowl) panelRetrobowl.style.display = 'none';
+        if (panelGame2048) panelGame2048.style.display = 'none';
       }
 
       tabPingpong.addEventListener('click', () => {
@@ -583,49 +565,65 @@
         });
       }
 
-      if (tabInvaders) {
-        tabInvaders.addEventListener('click', () => {
+      if (tabMotox3m) {
+        tabMotox3m.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabInvaders.classList.add('selected');
-          panelInvaders.style.display = 'block';
+          tabMotox3m.classList.add('selected');
+          panelMotox3m.style.display = 'block';
         });
       }
 
-      if (tabAsteroids) {
-        tabAsteroids.addEventListener('click', () => {
+      if (tabSubway) {
+        tabSubway.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabAsteroids.classList.add('selected');
-          panelAsteroids.style.display = 'block';
+          tabSubway.classList.add('selected');
+          panelSubway.style.display = 'block';
         });
       }
 
-      if (tabPacmaze) {
-        tabPacmaze.addEventListener('click', () => {
+      if (tabDrift) {
+        tabDrift.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabPacmaze.classList.add('selected');
-          panelPacmaze.style.display = 'block';
+          tabDrift.classList.add('selected');
+          panelDrift.style.display = 'block';
         });
       }
 
-      if (tabBreakout) {
-        tabBreakout.addEventListener('click', () => {
+      if (tabRetrobowl) {
+        tabRetrobowl.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabBreakout.classList.add('selected');
-          panelBreakout.style.display = 'block';
+          tabRetrobowl.classList.add('selected');
+          panelRetrobowl.style.display = 'block';
         });
       }
 
-      if (tabSnake) {
-        tabSnake.addEventListener('click', () => {
+      if (tabGame2048) {
+        tabGame2048.addEventListener('click', () => {
           window.retroAudio.playClick();
           hideAllPanels();
-          tabSnake.classList.add('selected');
-          panelSnake.style.display = 'block';
+          tabGame2048.classList.add('selected');
+          panelGame2048.style.display = 'block';
         });
+      }
+
+      // Função Genérica para Carregar Jogos Reais no Monitor CRT
+      function launchRealWebGame(gameUrl) {
+        window.retroAudio.playClick();
+        const menu = document.getElementById('main-menu');
+        const romScreen = document.getElementById('rom-emulator-screen');
+        const container = document.getElementById('emulatorjs-container');
+        if (menu) menu.classList.remove('active');
+        if (romScreen) romScreen.classList.add('active');
+
+        if (container) {
+          container.innerHTML = `
+            <iframe src="${gameUrl}" style="width:100%; height:100%; min-height:540px; border:none; border-radius:6px; background:#000;" allow="autoplay; gamepad; fullscreen; keyboard; cross-origin-isolated"></iframe>
+          `;
+        }
       }
 
       // Iniciar Super Mario Land ROM Original (.GB) via EmulatorJS WebAssembly
@@ -644,7 +642,6 @@
               <div id="game-frame" style="width:100%; height:100%; min-height:520px;"></div>
             `;
 
-            // Configuração do EmulatorJS Core Oficial Game Boy
             window.EJS_player = '#game-frame';
             window.EJS_core = 'gb';
             window.EJS_gameUrl = 'roms/Super%20Mario%20Land%20(World).gb';
@@ -659,6 +656,42 @@
         });
       }
 
+      // Iniciar Jogos Reais Completos (Friv Style)
+      const btnPlayMotox3m = document.getElementById('btn-play-motox3m');
+      if (btnPlayMotox3m) {
+        btnPlayMotox3m.addEventListener('click', () => {
+          launchRealWebGame('https://motox3m.io/');
+        });
+      }
+
+      const btnPlaySubway = document.getElementById('btn-play-subway');
+      if (btnPlaySubway) {
+        btnPlaySubway.addEventListener('click', () => {
+          launchRealWebGame('https://subwaysurfers.com/');
+        });
+      }
+
+      const btnPlayDrift = document.getElementById('btn-play-drift');
+      if (btnPlayDrift) {
+        btnPlayDrift.addEventListener('click', () => {
+          launchRealWebGame('https://html5.gamedistribution.com/13bb33f3eb654a9fa3dc8c1737e4ba39/');
+        });
+      }
+
+      const btnPlayRetrobowl = document.getElementById('btn-play-retrobowl');
+      if (btnPlayRetrobowl) {
+        btnPlayRetrobowl.addEventListener('click', () => {
+          launchRealWebGame('https://game316009.hostingerapp.com/');
+        });
+      }
+
+      const btnPlay2048 = document.getElementById('btn-play-game2048');
+      if (btnPlay2048) {
+        btnPlay2048.addEventListener('click', () => {
+          launchRealWebGame('https://play2048.co/');
+        });
+      }
+
       const btnRomMenu = document.getElementById('btn-rom-emulator-menu');
       if (btnRomMenu) {
         btnRomMenu.addEventListener('click', () => {
@@ -669,63 +702,6 @@
           if (romScreen) romScreen.classList.remove('active');
           if (container) container.innerHTML = '';
           if (menu) menu.classList.add('active');
-        });
-      }
-
-      // Iniciar Jogos Nativos de Arcade
-      const btnPlayInvaders = document.getElementById('btn-play-invaders');
-      if (btnPlayInvaders) {
-        btnPlayInvaders.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.launchGame('invaders');
-        });
-      }
-
-      const btnPlayAsteroids = document.getElementById('btn-play-asteroids');
-      if (btnPlayAsteroids) {
-        btnPlayAsteroids.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.launchGame('asteroids');
-        });
-      }
-
-      const btnPlayPacmaze = document.getElementById('btn-play-pacmaze');
-      if (btnPlayPacmaze) {
-        btnPlayPacmaze.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.launchGame('pacmaze');
-        });
-      }
-
-      const btnPlayBreakout = document.getElementById('btn-play-breakout');
-      if (btnPlayBreakout) {
-        btnPlayBreakout.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.launchGame('breakout');
-        });
-      }
-
-      const btnPlaySnake = document.getElementById('btn-play-snake');
-      if (btnPlaySnake) {
-        btnPlaySnake.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.launchGame('snake');
-        });
-      }
-
-      const btnPlayFlappy = document.getElementById('btn-play-flappy');
-      if (btnPlayFlappy) {
-        btnPlayFlappy.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.launchGame('flappy');
-        });
-      }
-
-      const btnArcadeMenu = document.getElementById('btn-arcade-games-menu');
-      if (btnArcadeMenu) {
-        btnArcadeMenu.addEventListener('click', () => {
-          window.retroAudio.playClick();
-          window.arcadeRetroHub.quitToMenu();
         });
       }
 
