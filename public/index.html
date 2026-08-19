@@ -12,57 +12,114 @@
     <div class="scanlines"></div>
 
     <!-- TELA DE MENU PRINCIPAL -->
+    <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
     <div id="main-menu" class="screen active">
-      <div class="logo-container">
-        <div class="retro-title">
-          <div class="retro-sub">RETRO</div>
-          <div class="retro-main">PING PONG</div>
+      <!-- SELETOR DE JOGOS DO HUB -->
+      <div class="game-hub-tabs">
+        <button id="tab-game-pingpong" class="hub-tab selected">🏓 RETRO PING PONG</button>
+        <button id="tab-game-racing" class="hub-tab">🏎️ CORRIDA DO OLHO DE GATO</button>
+      </div>
+
+      <!-- PAINEL PING PONG -->
+      <div id="pingpong-menu-panel">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub">RETRO</div>
+            <div class="retro-main">PING PONG</div>
+          </div>
+        </div>
+
+        <div class="menu-options">
+          <!-- PLAYERS ROW -->
+          <div class="option-row">
+            <div class="option-label">PLAYERS ▶</div>
+            <div class="option-buttons">
+              <button id="btn-player-1" class="btn-toggle selected" data-player="1p" title="1 Jogador vs IA">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              </button>
+              <button id="btn-player-2" class="btn-toggle" data-player="2p_local" title="2 Jogadores no Mesmo Teclado">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+              </button>
+              <button id="btn-player-4" class="btn-toggle" data-player="4p_local" title="4 Jogadores (2v2 Duplas)">
+                👥 4P (2v2)
+              </button>
+              <button id="btn-player-lan" class="btn-toggle" data-player="2p_lan" style="font-size:0.7rem;" title="Multiplayer Online / Wi-Fi">
+                🌐 ONLINE / LAN
+              </button>
+            </div>
+          </div>
+
+          <!-- MODE ROW -->
+          <div class="option-row">
+            <div class="option-label">MODE ▶</div>
+            <div class="option-buttons">
+              <button id="btn-mode-classic" class="btn-toggle" data-mode="classic">CLASSIC</button>
+              <button id="btn-mode-action" class="btn-toggle selected" data-mode="action">⚡ ACTION</button>
+            </div>
+          </div>
+
+          <!-- SKILL ROW (AI) -->
+          <div class="option-row" id="skill-row">
+            <div class="option-label">SKILL ▶</div>
+            <div class="option-buttons">
+              <button id="btn-skill-rookie" class="btn-toggle selected" data-skill="rookie">ROOKIE</button>
+              <button id="btn-skill-veteran" class="btn-toggle" data-skill="veteran">VETERAN</button>
+              <button id="btn-skill-ace" class="btn-toggle" data-skill="ace">ACE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLAY BUTTON -->
+        <div class="play-btn-wrapper">
+          <button id="btn-play-game" class="btn-play">PLAY PING PONG 🏓</button>
         </div>
       </div>
 
-      <div class="menu-options">
-        <!-- PLAYERS ROW -->
-        <div class="option-row">
-          <div class="option-label">PLAYERS ▶</div>
-          <div class="option-buttons">
-            <button id="btn-player-1" class="btn-toggle selected" data-player="1p" title="1 Jogador vs IA">
-              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            </button>
-            <button id="btn-player-2" class="btn-toggle" data-player="2p_local" title="2 Jogadores no Mesmo Teclado">
-              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-            </button>
-            <button id="btn-player-4" class="btn-toggle" data-player="4p_local" title="4 Jogadores (2v2 Duplas)">
-              👥 4P (2v2)
-            </button>
-            <button id="btn-player-lan" class="btn-toggle" data-player="2p_lan" style="font-size:0.7rem;" title="Multiplayer Online / Wi-Fi">
-              🌐 ONLINE / LAN
-            </button>
+      <!-- PAINEL CORRIDA DO OLHO DE GATO -->
+      <div id="racing-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#ffea00;">2D DRIFT ARCADE</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ff007f;">CORRIDA DO OLHO DE GATO</div>
           </div>
         </div>
 
-        <!-- MODE ROW -->
-        <div class="option-row">
-          <div class="option-label">MODE ▶</div>
-          <div class="option-buttons">
-            <button id="btn-mode-classic" class="btn-toggle" data-mode="classic">CLASSIC</button>
-            <button id="btn-mode-action" class="btn-toggle selected" data-mode="action">⚡ ACTION</button>
+        <div class="menu-options">
+          <!-- RACING PLAYERS ROW -->
+          <div class="option-row">
+            <div class="option-label">MODO ▶</div>
+            <div class="option-buttons">
+              <button id="btn-race-1p" class="btn-toggle selected" data-race-mode="1p">🏁 1P VS BOTS</button>
+              <button id="btn-race-2p" class="btn-toggle" data-race-mode="2p_local">👥 2P LOCAL</button>
+            </div>
+          </div>
+
+          <!-- TRACK ROW -->
+          <div class="option-row">
+            <div class="option-label">PISTA ▶</div>
+            <div class="option-buttons">
+              <button id="btn-track-0" class="btn-toggle selected" data-track="0">🌟 NEON</button>
+              <button id="btn-track-1" class="btn-toggle" data-track="1">🌋 VULCÃO</button>
+              <button id="btn-track-2" class="btn-toggle" data-track="2">🌌 CÓSMICA</button>
+            </div>
+          </div>
+
+          <!-- RACER ROW -->
+          <div class="option-row">
+            <div class="option-label">PILOTO ▶</div>
+            <div class="option-buttons">
+              <button id="btn-racer-0" class="btn-toggle selected" data-racer="0">🐱 GATO NEON</button>
+              <button id="btn-racer-1" class="btn-toggle" data-racer="1">🐯 TIGRE NITRO</button>
+              <button id="btn-racer-2" class="btn-toggle" data-racer="2">🐆 PANTERA</button>
+              <button id="btn-racer-3" class="btn-toggle" data-racer="3">🐈 BLINDADO</button>
+            </div>
           </div>
         </div>
 
-        <!-- SKILL ROW (AI) -->
-        <div class="option-row" id="skill-row">
-          <div class="option-label">SKILL ▶</div>
-          <div class="option-buttons">
-            <button id="btn-skill-rookie" class="btn-toggle selected" data-skill="rookie">ROOKIE</button>
-            <button id="btn-skill-veteran" class="btn-toggle" data-skill="veteran">VETERAN</button>
-            <button id="btn-skill-ace" class="btn-toggle" data-skill="ace">ACE</button>
-          </div>
+        <!-- RACING PLAY BUTTON -->
+        <div class="play-btn-wrapper">
+          <button id="btn-play-racing" class="btn-play" style="background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">LARGADA CORRIDA 🏎️</button>
         </div>
-      </div>
-
-      <!-- PLAY BUTTON -->
-      <div class="play-btn-wrapper">
-        <button id="btn-play-game" class="btn-play">PLAY</button>
       </div>
 
       <!-- FOOTER -->
@@ -228,12 +285,10 @@
 
         <div class="gamepad-center">
           <div class="gamepad-hint-text">👆 DESLIZE NA TELA<br>OU USE OS BOTÕES</div>
-        </div>
-
         <div class="gamepad-side right-side">
           <button id="btn-touch-shoot" class="gamepad-btn btn-action-shoot">💥 ATIRAR</button>
           
-          <div id="p2-touch-group" class="dpad-group p2-group" style="display:none;">
+          <div id="p2-touch-group" class="dpad-group" style="display:none;">
             <button id="btn-touch-p2-up" class="gamepad-btn btn-dpad-up">▲ P2</button>
             <button id="btn-touch-p2-down" class="gamepad-btn btn-dpad-down">▼ P2</button>
           </div>
@@ -241,7 +296,7 @@
       </div>
     </div>
 
-    <!-- TELA DE FIM DE JOGO (VITÓRIA) -->
+    <!-- TELA DE FIM DE JOGO (VITÓRIA PING PONG) -->
     <div id="game-over-screen" class="screen">
       <div id="winner-msg" class="winner-text">PLAYER 1 VENCEU!</div>
       <div id="final-score-msg" class="final-score">7 - 4</div>
@@ -250,17 +305,124 @@
         <button id="btn-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
       </div>
     </div>
+
+    <!-- TELA DO JOGO CORRIDA DO OLHO DE GATO -->
+    <div id="racing-screen" class="screen">
+      <div class="canvas-wrapper">
+        <div class="racing-hud">
+          <button id="btn-race-menu" class="btn-icon-retro" style="pointer-events:auto; font-size:0.55rem; padding:6px 8px;">◀ MENU</button>
+          <div class="race-hud-badge">POSIÇÃO: <span id="race-hud-pos">1º / 4</span></div>
+          <div class="race-hud-badge">VOLTA: <span id="race-hud-lap">1/3</span></div>
+          <div class="race-hud-badge">PODER: <span id="race-hud-item">NENHUM</span></div>
+        </div>
+
+        <canvas id="raceCanvas" width="800" height="600"></canvas>
+      </div>
+    </div>
+
+    <!-- TELA DE FIM DE JOGO (VITÓRIA CORRIDA) -->
+    <div id="race-game-over-screen" class="screen">
+      <div id="race-winner-msg" class="winner-text">🏆 1º LUGAR! CAMPEÃO!</div>
+      <div class="game-over-buttons">
+        <button id="btn-race-rematch" class="btn-play" style="padding:14px 30px; font-size:1rem; background:linear-gradient(135deg, #ff007f, #ffea00); color:#000;">CORRER NOVAMENTE</button>
+        <button id="btn-race-back-menu" class="btn-secondary" style="padding:14px 20px; font-size:0.8rem;">MENU PRINCIPAL</button>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->
   <script src="audio.js"></script>
   <script src="network.js"></script>
   <script src="game.js"></script>
+  <script src="racing.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       let selectedPlayer = '1p';
-      let selectedMode = 'action'; // Default para ACTION!
+      let selectedMode = 'action';
       let selectedSkill = 'rookie';
+
+      let selectedRaceMode = '1p';
+      let selectedTrack = 0;
+      let selectedRacer = 0;
+
+      // Abas do Hub Arcade (Alternar entre Ping Pong e Corrida)
+      const tabPingpong = document.getElementById('tab-game-pingpong');
+      const tabRacing = document.getElementById('tab-game-racing');
+      const panelPingpong = document.getElementById('pingpong-menu-panel');
+      const panelRacing = document.getElementById('racing-menu-panel');
+
+      tabPingpong.addEventListener('click', () => {
+        window.retroAudio.playClick();
+        tabPingpong.classList.add('selected');
+        tabRacing.classList.remove('selected');
+        panelPingpong.style.display = 'block';
+        panelRacing.style.display = 'none';
+      });
+
+      tabRacing.addEventListener('click', () => {
+        window.retroAudio.playClick();
+        tabRacing.classList.add('selected');
+        tabPingpong.classList.remove('selected');
+        panelRacing.style.display = 'block';
+        panelPingpong.style.display = 'none';
+      });
+
+      // Seletor de Modo Corrida
+      const raceModeBtns = document.querySelectorAll('[data-race-mode]');
+      raceModeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          raceModeBtns.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedRaceMode = btn.getAttribute('data-race-mode');
+        });
+      });
+
+      // Seletor de Pista Corrida
+      const trackBtns = document.querySelectorAll('[data-track]');
+      trackBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          trackBtns.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedTrack = parseInt(btn.getAttribute('data-track'), 10);
+        });
+      });
+
+      // Seletor de Piloto Corrida
+      const racerBtns = document.querySelectorAll('[data-racer]');
+      racerBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          racerBtns.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedRacer = parseInt(btn.getAttribute('data-racer'), 10);
+        });
+      });
+
+      // Iniciar Corrida
+      document.getElementById('btn-play-racing').addEventListener('click', () => {
+        window.retroAudio.playClick();
+        window.catsEyeRacing.startRace(selectedRaceMode, selectedTrack, selectedRacer);
+      });
+
+      // Voltar ao menu da corrida
+      document.getElementById('btn-race-menu').addEventListener('click', () => {
+        window.retroAudio.playClick();
+        window.catsEyeRacing.returnToMenu();
+      });
+
+      document.getElementById('btn-race-back-menu').addEventListener('click', () => {
+        window.retroAudio.playClick();
+        window.catsEyeRacing.returnToMenu();
+      });
+
+      document.getElementById('btn-race-rematch').addEventListener('click', () => {
+        window.retroAudio.playClick();
+        const over = document.getElementById('race-game-over-screen');
+        if (over) over.classList.remove('active');
+        window.catsEyeRacing.startRace(selectedRaceMode, selectedTrack, selectedRacer);
+      });
 
       // Atualiza info de rede LAN (IP e QR Code)
       const netInfo = await window.networkManager.fetchNetworkInfo();
@@ -271,7 +433,7 @@
         }
       }
 
-      // Alternância de Players
+      // Alternância de Players Ping Pong
       const playerBtns = document.querySelectorAll('[data-player]');
       playerBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -295,7 +457,7 @@
         });
       });
 
-      // Alternância de Modo (Classic / Action) no Menu Principal
+      // Alternância de Modo (Classic / Action)
       const modeBtns = document.querySelectorAll('[data-mode]');
       modeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -303,38 +465,10 @@
           modeBtns.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedMode = btn.getAttribute('data-mode');
-
-          // Sincroniza botões do modal LAN
-          if (selectedMode === 'action') {
-            document.getElementById('lan-mode-action').classList.add('selected');
-            document.getElementById('lan-mode-classic').classList.remove('selected');
-          } else {
-            document.getElementById('lan-mode-classic').classList.add('selected');
-            document.getElementById('lan-mode-action').classList.remove('selected');
-          }
         });
       });
 
-      // Seletor de Modo DENTRO do Modal LAN
-      document.getElementById('lan-mode-action').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        selectedMode = 'action';
-        document.getElementById('lan-mode-action').classList.add('selected');
-        document.getElementById('lan-mode-classic').classList.remove('selected');
-        modeBtns.forEach(b => b.classList.remove('selected'));
-        document.getElementById('btn-mode-action').classList.add('selected');
-      });
-
-      document.getElementById('lan-mode-classic').addEventListener('click', () => {
-        window.retroAudio.playClick();
-        selectedMode = 'classic';
-        document.getElementById('lan-mode-classic').classList.add('selected');
-        document.getElementById('lan-mode-action').classList.remove('selected');
-        modeBtns.forEach(b => b.classList.remove('selected'));
-        document.getElementById('btn-mode-classic').classList.add('selected');
-      });
-
-      // Alternância de Dificuldade de IA (Rookie / Veteran / Ace)
+      // Alternância de Dificuldade
       const skillBtns = document.querySelectorAll('[data-skill]');
       skillBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -345,7 +479,7 @@
         });
       });
 
-      // Botão PLAY
+      // Botão Play Ping Pong
       document.getElementById('btn-play-game').addEventListener('click', () => {
         window.retroAudio.playClick();
         if (selectedPlayer === '2p_lan') {
@@ -355,41 +489,41 @@
         }
       });
 
-      // Som Toggle
+      // Toggle de Som
       document.getElementById('btn-sound-toggle').addEventListener('click', () => {
-        const isMuted = window.retroAudio.toggleMute();
-        document.getElementById('sound-icon').innerText = isMuted ? '🔇 SOM: MUDO' : '🔊 SOM: LIGADO';
-        if (!isMuted) window.retroAudio.playClick();
+        const enabled = window.retroAudio.toggleSound();
+        document.getElementById('sound-icon').innerText = enabled ? '🔊 SOM: ON' : '🔇 SOM: OFF';
       });
 
       // Modal Regras
+      const rulesModal = document.getElementById('rules-modal');
       document.getElementById('btn-instructions').addEventListener('click', () => {
         window.retroAudio.playClick();
-        document.getElementById('rules-modal').classList.add('active');
+        rulesModal.classList.add('active');
       });
       document.getElementById('btn-close-rules').addEventListener('click', () => {
         window.retroAudio.playClick();
-        document.getElementById('rules-modal').classList.remove('active');
+        rulesModal.classList.remove('active');
       });
 
       // Modal LAN
+      const lanModal = document.getElementById('lan-modal');
       document.getElementById('btn-open-lan').addEventListener('click', () => {
         window.retroAudio.playClick();
-        document.getElementById('lan-modal').classList.add('active');
+        lanModal.classList.add('active');
       });
       document.getElementById('btn-close-lan').addEventListener('click', () => {
         window.retroAudio.playClick();
-        document.getElementById('lan-modal').classList.remove('active');
+        lanModal.classList.remove('active');
       });
 
-      // Copiar Link LAN
+      // Copiar URL do Wi-Fi
       document.getElementById('btn-copy-url').addEventListener('click', () => {
-        const url = document.getElementById('lan-url-text').innerText;
-        navigator.clipboard.writeText(url).then(() => {
-          const btn = document.getElementById('btn-copy-url');
-          const oldText = btn.innerText;
-          btn.innerText = '✅ COPIADO!';
-          setTimeout(() => { btn.innerText = oldText; }, 2000);
+        const urlText = document.getElementById('lan-url-text').innerText;
+        navigator.clipboard.writeText(urlText).then(() => {
+          alert('Link do jogo copiado! Cole no navegador do outro celular ou PC.');
+        }).catch(() => {
+          prompt('Copie o link abaixo:', urlText);
         });
       });
 
@@ -420,7 +554,7 @@
         document.getElementById('lan-ready-btn').innerText = 'AGUARDANDO PARTIDA...';
       });
 
-      // Botões Fim de Jogo
+      // Botões Fim de Jogo Ping Pong
       document.getElementById('btn-rematch').addEventListener('click', () => {
         window.retroAudio.playClick();
         if (selectedPlayer === '2p_lan') {
@@ -429,7 +563,7 @@
         window.retroPingPong.startGame(selectedPlayer, selectedMode, selectedSkill);
       });
 
-      // Botão Tela Cheia (Mobile Fullscreen)
+      // Botão Tela Cheia
       document.getElementById('btn-fullscreen').addEventListener('click', () => {
         window.retroAudio.playClick();
         if (!document.fullscreenElement) {
@@ -443,7 +577,7 @@
         }
       });
 
-      // Botão Voltar ao Menu dentro do jogo
+      // Botão Voltar ao Menu
       document.getElementById('btn-ingame-menu').addEventListener('click', () => {
         window.retroAudio.playClick();
         window.retroPingPong.returnToMenu();

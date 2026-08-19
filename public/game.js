@@ -1178,36 +1178,45 @@ class RetroPingPong {
       if (b.vx > 0 && b.x > targetBall.x) targetBall = b;
     }
 
-    let speed = 5.2;
-    let errorMargin = 20;
-    let predict = targetBall.y;
+    let speed = 4.8;
+    let errorMargin = 16;
+    let targetY = targetBall.y;
 
-    if (this.aiSkill === 'veteran') {
-      speed = 7.0;
+    if (this.aiSkill === 'rookie') {
+      speed = 4.4;
+      errorMargin = 18;
+      targetY = targetBall.y + Math.sin(Date.now() * 0.003) * 20;
+    } else if (this.aiSkill === 'veteran') {
+      speed = 5.8;
       errorMargin = 10;
-    } else if (this.aiSkill === 'ace') {
-      speed = 8.8;
-      errorMargin = 2;
       if (targetBall.vx > 0) {
-        const timeToReach = (this.p2.x - targetBall.x) / targetBall.vx;
-        predict = targetBall.y + targetBall.vy * timeToReach;
-        while (predict < 0 || predict > CANVAS_HEIGHT) {
-          if (predict < 0) predict = -predict;
-          if (predict > CANVAS_HEIGHT) predict = 2 * CANVAS_HEIGHT - predict;
+        const time = (this.p2.x - targetBall.x) / (targetBall.vx || 1);
+        targetY = targetBall.y + targetBall.vy * Math.min(time, 40);
+      }
+    } else if (this.aiSkill === 'ace') {
+      speed = 7.2;
+      errorMargin = 4;
+      if (targetBall.vx > 0) {
+        const timeToReach = (this.p2.x - targetBall.x) / (targetBall.vx || 1);
+        let predict = targetBall.y + targetBall.vy * timeToReach;
+        while (predict < 8 || predict > CANVAS_HEIGHT - 8) {
+          if (predict < 8) predict = 16 - predict;
+          if (predict > CANVAS_HEIGHT - 8) predict = 2 * (CANVAS_HEIGHT - 8) - predict;
         }
+        targetY = predict + (targetBall.y > CANVAS_HEIGHT / 2 ? -16 : 16);
       }
 
       if (this.currentAction && this.currentAction.id === 'blaster' && this.p2.laserCooldown <= 0) {
-        if (Math.abs(this.p2.y - this.p1.y) < 70 && Math.random() < 0.1) {
+        if (Math.abs(this.p2.y - this.p1.y) < 70 && Math.random() < 0.15) {
           this.fireLaser('p2');
         }
       }
     }
 
     const paddleCenter = this.p2.y + this.p2.height / 2;
-    if (paddleCenter < predict - errorMargin) {
+    if (paddleCenter < targetY - errorMargin) {
       this.p2.y += speed;
-    } else if (paddleCenter > predict + errorMargin) {
+    } else if (paddleCenter > targetY + errorMargin) {
       this.p2.y -= speed;
     }
 
