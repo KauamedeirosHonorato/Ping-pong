@@ -49,13 +49,15 @@
 
             <!-- TELA DE MENU PRINCIPAL COM HUB DE JOGOS -->
             <div id="main-menu" class="screen active">
-      <!-- SELETOR DE JOGOS DO HUB NATIVO -->
-      <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:8px;">
+      <!-- SELETOR DE JOGOS DO HUB NATIVO (6 JOGOS CLÁSSICOS) -->
+      <div class="game-hub-tabs" style="display:flex; flex-wrap:wrap; gap:6px;">
         <button id="tab-game-pingpong" class="hub-tab selected">🏓 PING PONG</button>
         <button id="tab-game-invaders" class="hub-tab" style="border-color:#39ff14; color:#39ff14;">👾 SPACE INVADERS</button>
         <button id="tab-game-asteroids" class="hub-tab" style="border-color:#00f0ff; color:#00f0ff;">🚀 ASTEROIDS</button>
         <button id="tab-game-pacmaze" class="hub-tab" style="border-color:#ffea00; color:#ffea00;">🟡 PAC-MANIA</button>
         <button id="tab-game-breakout" class="hub-tab" style="border-color:#ff0055; color:#ff0055;">🧱 BRICK BREAKER</button>
+        <button id="tab-game-snake" class="hub-tab" style="border-color:#39ff14; color:#ffea00;">🐍 SNAKE RETRO</button>
+        <button id="tab-game-flappy" class="hub-tab" style="border-color:#ff7700; color:#ff7700;">🐤 FLAPPY NEON</button>
       </div>
 
       <!-- PAINEL PING PONG -->
@@ -179,6 +181,40 @@
         </div>
         <div class="play-btn-wrapper">
           <button id="btn-play-breakout" class="btn-play" style="background:linear-gradient(135deg, #ff0055, #440011); color:#fff; border:2px solid #ff0055;">QUEBRAR TIJOLOS 🧱⚡</button>
+        </div>
+      </div>
+
+      <!-- PAINEL SNAKE RETRO (1997 NATIVO) -->
+      <div id="snake-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#39ff14;">🐍 NOKIA / ARCADE 1997</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#39ff14;">SNAKE RETRO</div>
+          </div>
+        </div>
+        <div style="background:rgba(5,25,5,0.85); border:2px solid #39ff14; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ccffcc; line-height:1.6;">
+          <p>• <strong>CLÁSSICO DA COBRINHA:</strong> Coma as maçãs neon, aumente de tamanho e desvie do próprio corpo!</p>
+          <p>• <strong>CONTROLES:</strong> Setas [▲ ▼ ◄ ►] ou [W A S D] = Controlar a Cobrinha!</p>
+        </div>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-snake" class="btn-play" style="background:linear-gradient(135deg, #39ff14, #004400); color:#000; border:2px solid #39ff14; font-weight:bold;">JOGAR SNAKE 🐍🍏</button>
+        </div>
+      </div>
+
+      <!-- PAINEL FLAPPY ARCADE NEON -->
+      <div id="flappy-menu-panel" style="display: none;">
+        <div class="logo-container">
+          <div class="retro-title">
+            <div class="retro-sub" style="color:#ff7700;">🐤 RETRO FLAPPER</div>
+            <div class="retro-main" style="font-size:1.4rem; color:#ff7700;">FLAPPY ARCADE NEON</div>
+          </div>
+        </div>
+        <div style="background:rgba(25,10,0,0.85); border:2px solid #ff7700; border-radius:8px; padding:12px; margin:10px auto; max-width:520px; font-size:0.65rem; color:#ffe0cc; line-height:1.6;">
+          <p>• <strong>DESVIO DE CANOS NEON:</strong> Voe no ritmo certo e passe pelo máximo de obstáculos luminosos possíveis!</p>
+          <p>• <strong>CONTROLES:</strong> [ESPAÇO] / [W] / [Seta Cima] / Clique = Bater Asas!</p>
+        </div>
+        <div class="play-btn-wrapper">
+          <button id="btn-play-flappy" class="btn-play" style="background:linear-gradient(135deg, #ff7700, #441100); color:#fff; border:2px solid #ff7700; font-weight:bold;">VOAR AGORA 🐤⚡</button>
         </div>
       </div>
 
@@ -468,18 +504,22 @@
       let selectedMode = 'action';
       let selectedSkill = 'rookie';
 
-      // Abas do Hub Arcade Nativo (Ping Pong, Space Invaders, Asteroids, Pac-Mania, Brick Breaker)
+      // Abas do Hub Arcade Nativo (Ping Pong, Space Invaders, Asteroids, Pac-Mania, Brick Breaker, Snake, Flappy)
       const tabPingpong = document.getElementById('tab-game-pingpong');
       const tabInvaders = document.getElementById('tab-game-invaders');
       const tabAsteroids = document.getElementById('tab-game-asteroids');
       const tabPacmaze = document.getElementById('tab-game-pacmaze');
       const tabBreakout = document.getElementById('tab-game-breakout');
+      const tabSnake = document.getElementById('tab-game-snake');
+      const tabFlappy = document.getElementById('tab-game-flappy');
 
       const panelPingpong = document.getElementById('pingpong-menu-panel');
       const panelInvaders = document.getElementById('invaders-menu-panel');
       const panelAsteroids = document.getElementById('asteroids-menu-panel');
       const panelPacmaze = document.getElementById('pacmaze-menu-panel');
       const panelBreakout = document.getElementById('breakout-menu-panel');
+      const panelSnake = document.getElementById('snake-menu-panel');
+      const panelFlappy = document.getElementById('flappy-menu-panel');
 
       function hideAllPanels() {
         tabPingpong.classList.remove('selected');
@@ -487,12 +527,16 @@
         if (tabAsteroids) tabAsteroids.classList.remove('selected');
         if (tabPacmaze) tabPacmaze.classList.remove('selected');
         if (tabBreakout) tabBreakout.classList.remove('selected');
+        if (tabSnake) tabSnake.classList.remove('selected');
+        if (tabFlappy) tabFlappy.classList.remove('selected');
 
         panelPingpong.style.display = 'none';
         if (panelInvaders) panelInvaders.style.display = 'none';
         if (panelAsteroids) panelAsteroids.style.display = 'none';
         if (panelPacmaze) panelPacmaze.style.display = 'none';
         if (panelBreakout) panelBreakout.style.display = 'none';
+        if (panelSnake) panelSnake.style.display = 'none';
+        if (panelFlappy) panelFlappy.style.display = 'none';
       }
 
       tabPingpong.addEventListener('click', () => {
@@ -538,6 +582,24 @@
         });
       }
 
+      if (tabSnake) {
+        tabSnake.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          hideAllPanels();
+          tabSnake.classList.add('selected');
+          panelSnake.style.display = 'block';
+        });
+      }
+
+      if (tabFlappy) {
+        tabFlappy.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          hideAllPanels();
+          tabFlappy.classList.add('selected');
+          panelFlappy.style.display = 'block';
+        });
+      }
+
       // Iniciar Jogos Nativos de Arcade
       const btnPlayInvaders = document.getElementById('btn-play-invaders');
       if (btnPlayInvaders) {
@@ -568,6 +630,22 @@
         btnPlayBreakout.addEventListener('click', () => {
           window.retroAudio.playClick();
           window.arcadeRetroHub.launchGame('breakout');
+        });
+      }
+
+      const btnPlaySnake = document.getElementById('btn-play-snake');
+      if (btnPlaySnake) {
+        btnPlaySnake.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          window.arcadeRetroHub.launchGame('snake');
+        });
+      }
+
+      const btnPlayFlappy = document.getElementById('btn-play-flappy');
+      if (btnPlayFlappy) {
+        btnPlayFlappy.addEventListener('click', () => {
+          window.retroAudio.playClick();
+          window.arcadeRetroHub.launchGame('flappy');
         });
       }
 

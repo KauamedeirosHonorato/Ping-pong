@@ -560,6 +560,181 @@ class ArcadeRetroHub {
   }
 
   // ==========================================
+  // 5. SNAKE RETRO 1997
+  // ==========================================
+  initSnake() {
+    this.snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+    this.snakeDir = { x: 1, y: 0 };
+    this.nextSnakeDir = { x: 1, y: 0 };
+    this.snakeFood = { x: 18, y: 12 };
+    this.snakeSpeed = 85;
+    this.lastSnakeTick = Date.now();
+  }
+
+  updateSnake() {
+    if (this.gameOver) return;
+
+    if ((this.keys['ArrowUp'] || this.keys['KeyW']) && this.snakeDir.y === 0) this.nextSnakeDir = { x: 0, y: -1 };
+    if ((this.keys['ArrowDown'] || this.keys['KeyS']) && this.snakeDir.y === 0) this.nextSnakeDir = { x: 0, y: 1 };
+    if ((this.keys['ArrowLeft'] || this.keys['KeyA']) && this.snakeDir.x === 0) this.nextSnakeDir = { x: -1, y: 0 };
+    if ((this.keys['ArrowRight'] || this.keys['KeyD']) && this.snakeDir.x === 0) this.nextSnakeDir = { x: 1, y: 0 };
+
+    if (Date.now() - this.lastSnakeTick > this.snakeSpeed) {
+      this.snakeDir = this.nextSnakeDir;
+      const head = { x: this.snake[0].x + this.snakeDir.x, y: this.snake[0].y + this.snakeDir.y };
+
+      // Wall wrap
+      if (head.x < 0) head.x = 31;
+      if (head.x >= 32) head.x = 0;
+      if (head.y < 0) head.y = 23;
+      if (head.y >= 24) head.y = 0;
+
+      // Self collision
+      if (this.snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        this.lives--;
+        if (window.retroAudio) window.retroAudio.playScore();
+        if (this.lives <= 0) this.gameOver = true;
+        else this.initSnake();
+        return;
+      }
+
+      this.snake.unshift(head);
+
+      // Eat Food
+      if (head.x === this.snakeFood.x && head.y === this.snakeFood.y) {
+        this.score += 100;
+        this.snakeFood = {
+          x: Math.floor(Math.random() * 30) + 1,
+          y: Math.floor(Math.random() * 22) + 1
+        };
+        if (window.retroAudio) window.retroAudio.playPaddleHit();
+      } else {
+        this.snake.pop();
+      }
+
+      this.lastSnakeTick = Date.now();
+    }
+  }
+
+  drawSnake() {
+    const ctx = this.ctx;
+    ctx.fillStyle = '#06180a';
+    ctx.fillRect(0, 0, 800, 600);
+
+    // Grid border
+    ctx.strokeStyle = '#39ff14';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(10, 40, 780, 545);
+
+    // Food
+    ctx.fillStyle = '#ff0055';
+    ctx.shadowColor = '#ff0055';
+    ctx.shadowBlur = 10;
+    ctx.fillRect(this.snakeFood.x * 24 + 16, this.snakeFood.y * 22 + 48, 18, 18);
+    ctx.shadowBlur = 0;
+
+    // Snake Body
+    this.snake.forEach((seg, idx) => {
+      ctx.fillStyle = idx === 0 ? '#ffea00' : '#39ff14';
+      ctx.fillRect(seg.x * 24 + 16, seg.y * 22 + 48, 20, 18);
+    });
+
+    this.drawHUD('SNAKE NOSTALGIA 1997');
+  }
+
+  // ==========================================
+  // 6. FLAPPY ARCADE NEON
+  // ==========================================
+  initFlappy() {
+    this.bird = { x: 180, y: 300, vy: 0, r: 16 };
+    this.pipes = [];
+    this.pipeSpeed = 4.2;
+    this.lastPipeSpawn = Date.now();
+
+    this.pipes.push({ x: 700, topH: 180, bottomY: 340, passed: false });
+  }
+
+  updateFlappy() {
+    if (this.gameOver) return;
+
+    if (this.keys['Space'] || this.keys['ArrowUp'] || this.keys['KeyW'] || this.keys['KeyJ']) {
+      if (!this.lastFlap || Date.now() - this.lastFlap > 180) {
+        this.bird.vy = -7.5;
+        this.lastFlap = Date.now();
+        if (window.retroAudio) window.retroAudio.playPaddleHit();
+      }
+    }
+
+    this.bird.vy += 0.42; // Gravity
+    this.bird.y += this.bird.vy;
+
+    if (this.bird.y > 580 || this.bird.y < 20) {
+      this.lives--;
+      if (this.lives <= 0) this.gameOver = true;
+      else this.initFlappy();
+    }
+
+    // Pipes Spawn & Move
+    if (Date.now() - this.lastPipeSpawn > 1400) {
+      const topH = Math.floor(Math.random() * 240) + 60;
+      this.pipes.push({ x: 800, topH: topH, bottomY: topH + 160, passed: false });
+      this.lastPipeSpawn = Date.now();
+    }
+
+    this.pipes.forEach((p, idx) => {
+      p.x -= this.pipeSpeed;
+
+      // Pass & Score
+      if (!p.passed && p.x < this.bird.x) {
+        p.passed = true;
+        this.score += 200;
+        if (window.retroAudio) window.retroAudio.playWallHit();
+      }
+
+      // Pipe Collision
+      if (this.bird.x + this.bird.r > p.x && this.bird.x - this.bird.r < p.x + 60) {
+        if (this.bird.y - this.bird.r < p.topH || this.bird.y + this.bird.r > p.bottomY) {
+          this.lives--;
+          if (window.retroAudio) window.retroAudio.playScore();
+          if (this.lives <= 0) this.gameOver = true;
+          else this.initFlappy();
+        }
+      }
+
+      if (p.x < -80) this.pipes.splice(idx, 1);
+    });
+  }
+
+  drawFlappy() {
+    const ctx = this.ctx;
+    ctx.fillStyle = '#0a001a';
+    ctx.fillRect(0, 0, 800, 600);
+
+    // Pipes
+    this.pipes.forEach(p => {
+      ctx.fillStyle = '#39ff14';
+      ctx.shadowColor = '#39ff14';
+      ctx.shadowBlur = 8;
+      ctx.fillRect(p.x, 0, 56, p.topH);
+      ctx.fillRect(p.x, p.bottomY, 56, 600 - p.bottomY);
+      ctx.shadowBlur = 0;
+    });
+
+    // Bird
+    ctx.fillStyle = '#ffea00';
+    ctx.shadowColor = '#ffea00';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(this.bird.x, this.bird.y, this.bird.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.fillRect(this.bird.x + 6, this.bird.y - 6, 4, 4);
+    ctx.shadowBlur = 0;
+
+    this.drawHUD('FLAPPY ARCADE NEON');
+  }
+
+  // ==========================================
   // HUD & MAIN LOOP
   // ==========================================
   drawHUD(title) {
@@ -602,6 +777,12 @@ class ArcadeRetroHub {
     } else if (this.activeGame === 'pacmaze') {
       this.updatePacMaze();
       this.drawPacMaze();
+    } else if (this.activeGame === 'snake') {
+      this.updateSnake();
+      this.drawSnake();
+    } else if (this.activeGame === 'flappy') {
+      this.updateFlappy();
+      this.drawFlappy();
     }
 
     requestAnimationFrame(this.loop);
@@ -609,3 +790,4 @@ class ArcadeRetroHub {
 }
 
 window.arcadeRetroHub = new ArcadeRetroHub();
+
